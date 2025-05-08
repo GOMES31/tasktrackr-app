@@ -32,6 +32,12 @@ data class AppTypography(
     val placeholder: TextStyle,
 )
 
+// Dark / Light Mode
+data class AppThemeState(
+    val isDarkMode: Boolean,
+    val toggle: () -> Unit
+)
+
 val LocalAppColorScheme = staticCompositionLocalOf {
     AppColorScheme(
         primary = Color.Unspecified,
@@ -63,3 +69,10 @@ val LocalAppTypography = staticCompositionLocalOf {
         placeholder = TextStyle.Default
     )
 }
+
+val LocalAppThemeState = staticCompositionLocalOf {
+    AppThemeState(
+        isDarkMode = false,
+        toggle = {}
+    )
+ }

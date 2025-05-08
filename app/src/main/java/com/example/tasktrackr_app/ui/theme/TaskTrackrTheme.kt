@@ -4,6 +4,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -118,12 +122,17 @@ fun TaskTrackrTheme(
     isDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ){
-    val colorScheme = if (isDarkTheme) darkColorScheme else lightColorScheme
+    var isDarkMode by remember { mutableStateOf(isDarkTheme)}
+    val toggle = { isDarkMode = !isDarkMode }
+
+    val colorScheme = if (isDarkMode) darkColorScheme else lightColorScheme
     CompositionLocalProvider(
         LocalAppColorScheme provides colorScheme,
         LocalAppTypography provides typography,
-        content = content
-    )
+        LocalAppThemeState provides AppThemeState(isDarkMode, toggle)
+    ){
+       content()
+    }
 }
 
 object TaskTrackrTheme {
