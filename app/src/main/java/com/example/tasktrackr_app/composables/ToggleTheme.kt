@@ -2,27 +2,30 @@ package com.example.tasktrackr_app.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.tasktrackr_app.R
+import com.example.tasktrackr_app.ui.theme.LocalAppThemeState
 
 @Composable
-fun ToggleTheme(
-    isDarkTheme: Boolean = false,
-//    onToggleTheme: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val iconRes = if (isDarkTheme) R.drawable.sun else R.drawable.moon
-    val contentDescription = if (isDarkTheme) "Switch to Light Mode" else "Switch to Dark Mode"
+fun ToggleTheme(modifier: Modifier = Modifier, ) {
+    val (isDarkMode, toggle) = LocalAppThemeState.current
+    val iconRes = if(isDarkMode){
+        R.drawable.sun
+    } else {
+        R.drawable.moon
+    }
+
 
     Image(
         painter = painterResource(id = iconRes),
-        contentDescription = contentDescription,
+        contentDescription = null,
         modifier = modifier
             .size(30.dp)
-            .clickable { /*onToggleTheme()*/ }
+            .clickable { toggle() }
     )
 }
