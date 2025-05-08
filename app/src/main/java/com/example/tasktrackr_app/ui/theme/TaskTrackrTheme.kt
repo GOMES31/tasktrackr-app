@@ -31,7 +31,7 @@ private val darkColorScheme = AppColorScheme(
         secondary = Color(0xFF1976D2),
         tertiary = Color(0xFF388E3C),
         accent = Color(0xFFFBC02D),
-        background = Color(0xFF121212),
+        background = Color(0xFF121211),
         text = Color(0xFFF5F5F5),
         cardBackground = Color(0xFF1E1E1E),
         buttonText = Color(0xFFFFFFFF),
@@ -104,14 +104,13 @@ private val typography = AppTypography(
 
         label = TextStyle(
         fontFamily = Roboto,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         lineHeight = 20.sp
         ),
 
         placeholder = TextStyle(
-        fontFamily = Roboto,
-        fontWeight = FontWeight.Normal,
+        fontFamily = RobotoItalic,
         fontSize = 12.sp,
         lineHeight = 16.sp
         )

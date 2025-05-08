@@ -7,8 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.tasktrackr_app.composables.SignInScreen
 import java.util.Locale
-import com.example.tasktrackr_app.ui.screens.authentication.SignInScreen
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 

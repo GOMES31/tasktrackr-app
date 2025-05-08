@@ -1,30 +1,15 @@
-package com.example.tasktrackr_app.ui.screens.authentication
+package com.example.tasktrackr_app.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.tasktrackr_app.R
-import com.example.tasktrackr_app.composables.AuthLink
-import com.example.tasktrackr_app.composables.CustomButton
-import com.example.tasktrackr_app.composables.LanguageMenu
-import com.example.tasktrackr_app.composables.TaskTrackrLogo
-import com.example.tasktrackr_app.composables.TextInputField
-import com.example.tasktrackr_app.composables.ToggleTheme
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import java.util.Locale
 
@@ -37,7 +22,8 @@ fun SignInScreen(
         modifier = modifier
             .fillMaxSize()
             .background(TaskTrackrTheme.colorScheme.background)
-            .padding(16.dp)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
             modifier = Modifier
@@ -73,13 +59,21 @@ fun SignInScreen(
         Spacer(modifier = Modifier.height(30.dp))
 
         TextInputField(
-            label = stringResource(R.string.email)
+            label = stringResource(R.string.email),
+            placeholder = stringResource(R.string.email_input_placeholder),
+            modifier = Modifier
+                .width(320.dp)
+                .padding(vertical = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         TextInputField(
-            label = stringResource(R.string.password)
+            label = stringResource(R.string.password),
+            placeholder = stringResource(R.string.password_input_placeholder),
+            modifier = Modifier
+                .width(320.dp)
+                .padding(vertical = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -91,6 +85,9 @@ fun SignInScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        CustomButton(text = stringResource(R.string.sign_in))
+        CustomButton(
+            text = stringResource(R.string.sign_in),
+            modifier = Modifier.width(200.dp)
+        )
     }
 }

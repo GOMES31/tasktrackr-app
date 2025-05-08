@@ -25,7 +25,7 @@ fun LanguageMenu(
 
         // Globe Icon
         Image(
-            painter           = painterResource(R.drawable.globe),
+            painter = painterResource(R.drawable.globe),
             contentDescription = null,
             modifier = Modifier
                 .size(30.dp)
@@ -33,22 +33,22 @@ fun LanguageMenu(
         )
 
         DropdownMenu(
-            expanded         = expanded,
+            expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier         = Modifier.wrapContentSize()
+            modifier = Modifier.wrapContentSize()
         ) {
             // Portuguese
             DropdownMenuItem(
                 text = {
                     Row(
-                        modifier            = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment     = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
-                            painter            = painterResource(R.drawable.pt_flag),
+                            painter = painterResource(R.drawable.pt_flag),
                             contentDescription = null,
-                            modifier           = Modifier
+                            modifier  = Modifier
                                 .width(35.dp)
                                 .aspectRatio(1f)
                         )
@@ -64,14 +64,14 @@ fun LanguageMenu(
             DropdownMenuItem(
                 text = {
                     Row(
-                        modifier            = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment     = Alignment.CenterVertically
                     ) {
                         Image(
-                            painter            = painterResource(R.drawable.uk_flag),
+                            painter = painterResource(R.drawable.uk_flag),
                             contentDescription = null,
-                            modifier           = Modifier
+                            modifier = Modifier
                                 .width(35.dp)
                                 .aspectRatio(1f)
                         )

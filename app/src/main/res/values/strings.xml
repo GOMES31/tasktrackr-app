@@ -6,4 +6,6 @@
     <string name="sign_up_link_message">Don\'t have an account yet?</string>
     <string name="sign_in_link_message">Already have an account?</string>
     <string name="sign_up">Sign Up</string>
+    <string name="password_input_placeholder">Insert your password here</string>
+    <string name="email_input_placeholder">Insert your email here</string>
 </resources>
