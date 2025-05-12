@@ -8,4 +8,7 @@
     <string name="sign_up">Sign Up</string>
     <string name="password_input_placeholder">Insert your password here</string>
     <string name="email_input_placeholder">Insert your email here</string>
+    <string name="name">Name:</string>
+    <string name="confirm_password">Confirm Password:</string>
+    <string name="name_input_placeholder">Insert your name here</string>
 </resources>

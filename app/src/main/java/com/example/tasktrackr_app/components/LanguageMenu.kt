@@ -1,4 +1,4 @@
-package com.example.tasktrackr_app.composables
+package com.example.tasktrackr_app.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

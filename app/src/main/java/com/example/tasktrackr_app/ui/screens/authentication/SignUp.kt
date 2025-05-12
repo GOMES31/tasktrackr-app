@@ -20,7 +20,7 @@ import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import java.util.Locale
 
 @Composable
-fun SignIn(
+fun SignUp(
     navController: NavController,
     modifier: Modifier = Modifier,
     onLanguageSelected: (Locale) -> Unit = {}
@@ -56,11 +56,21 @@ fun SignIn(
         Spacer(modifier = Modifier.height(30.dp))
 
         Text(
-            text = stringResource(R.string.sign_in),
+            text = stringResource(R.string.sign_up),
             color = TaskTrackrTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             style = TaskTrackrTheme.typography.header,
             modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        TextInputField(
+            label = stringResource(R.string.name),
+            placeholder = stringResource(R.string.name_input_placeholder),
+            modifier = Modifier
+                .width(320.dp)
+                .padding(vertical = 8.dp)
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -85,16 +95,26 @@ fun SignIn(
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        TextInputField(
+            label = stringResource(R.string.confirm_password),
+            placeholder = stringResource(R.string.password_input_placeholder),
+            modifier = Modifier
+                .width(320.dp)
+                .padding(vertical = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
         AuthLink(
-            text = stringResource(R.string.sign_up_link_message),
-            redirect = stringResource(R.string.sign_up),
-            onClick = { navController.navigate("signup") }
+            text = stringResource(R.string.sign_in_link_message),
+            redirect = stringResource(R.string.sign_in),
+            onClick = { navController.navigate("signin") }
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
         CustomButton(
-            text = stringResource(R.string.sign_in),
+            text = stringResource(R.string.sign_up),
             modifier = Modifier.width(200.dp)
         )
     }
