@@ -1,11 +1,11 @@
-package com.example.tasktrackr_app.composables
+package com.example.tasktrackr_app.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,7 +16,10 @@ import androidx.compose.ui.unit.dp
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 
 @Composable
-fun AuthLink(text: String, redirect: String) {
+fun AuthLink(
+    text: String,
+    redirect: String,
+    onClick: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -34,7 +37,8 @@ fun AuthLink(text: String, redirect: String) {
             color = TaskTrackrTheme.colorScheme.accent,
             fontStyle = FontStyle.Italic,
             textDecoration = TextDecoration.Underline,
-            style = TaskTrackrTheme.typography.caption
+            style = TaskTrackrTheme.typography.caption,
+            modifier = Modifier.clickable { onClick()}
         )
     }
 }

@@ -9,4 +9,7 @@
     <string name="sign_up">Criar Conta</string>
     <string name="password_input_placeholder">Insira a sua password aqui</string>
     <string name="email_input_placeholder">Insira o seu email aqui</string>
+    <string name="name">Nome:</string>
+    <string name="confirm_password">Confirmar Palavra-passe:</string>
+    <string name="name_input_placeholder">Insira o seu nome aqui</string>
 </resources>

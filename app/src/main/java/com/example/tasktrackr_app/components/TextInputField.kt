@@ -1,4 +1,4 @@
-package com.example.tasktrackr_app.composables
+package com.example.tasktrackr_app.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 

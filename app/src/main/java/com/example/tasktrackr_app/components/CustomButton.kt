@@ -1,4 +1,4 @@
-package com.example.tasktrackr_app.composables
+package com.example.tasktrackr_app.components
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
