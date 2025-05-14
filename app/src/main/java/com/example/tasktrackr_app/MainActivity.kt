@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tasktrackr_app.ui.screens.authentication.SignIn
 import com.example.tasktrackr_app.ui.screens.authentication.SignUp
+import com.example.tasktrackr_app.ui.screens.introduction.IntroSlider
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import java.util.Locale
@@ -23,7 +24,10 @@ class MainActivity : ComponentActivity() {
 
             LocalizationProvider(locale = currentLocale) {
                 TaskTrackrTheme(isDarkTheme = false) {
-                    NavHost(navController = navController, startDestination = "signin") {
+                    NavHost(navController = navController, startDestination = "intro") {
+                        composable("intro") {
+                            IntroSlider(navController = navController)
+                        }
                         composable("signin") {
                             SignIn(
                                 navController = navController,
