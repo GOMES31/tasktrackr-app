@@ -12,4 +12,8 @@
     <string name="name">Name:</string>
     <string name="confirm_password">Confirm Password:</string>
     <string name="name_input_placeholder">Insert your name here</string>
+    <string name="error_user_exists">User already exists</string>
+    <string name="error_invalid_credentials">Invalid credentials</string>
+    <string name="error_user_not_found">User not registered</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
 </resources>

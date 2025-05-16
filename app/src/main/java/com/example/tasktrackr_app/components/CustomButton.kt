@@ -12,21 +12,22 @@ import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 
 @Composable
 fun CustomButton(
+    modifier: Modifier = Modifier,
     text: String,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     Button(
-        onClick = {  },
+        onClick = onClick,
         modifier = modifier
             .height(48.dp),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = TaskTrackrTheme.colorScheme.primary,
-            contentColor   = TaskTrackrTheme.colorScheme.buttonText
+            contentColor = TaskTrackrTheme.colorScheme.buttonText
         )
     ) {
         Text(
-            text  = text,
+            text = text,
             style = TaskTrackrTheme.typography.button
         )
     }

@@ -48,7 +48,7 @@ fun LanguageMenu(
                         Image(
                             painter = painterResource(R.drawable.pt_flag),
                             contentDescription = null,
-                            modifier  = Modifier
+                            modifier = Modifier
                                 .width(35.dp)
                                 .aspectRatio(1f)
                         )
@@ -66,7 +66,7 @@ fun LanguageMenu(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment     = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Image(
                             painter = painterResource(R.drawable.uk_flag),

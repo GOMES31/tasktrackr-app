@@ -9,14 +9,19 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 
 @Composable
 fun TextInputField(
+    modifier: Modifier = Modifier,
     label: String,
     placeholder: String = "",
-    modifier: Modifier = Modifier
+    value: String,
+    onValueChange: (String) -> Unit,
+    isPassword: Boolean = false
 ) {
     var text by remember { mutableStateOf("") }
 
@@ -44,7 +49,7 @@ fun TextInputField(
                 )
                 .padding(16.dp)
         ) {
-            if (text.isEmpty() && placeholder.isNotEmpty()) {
+            if (value.isEmpty() && placeholder.isNotEmpty()) {
                 Text(
                     text = placeholder,
                     style = TaskTrackrTheme.typography.placeholder,
@@ -53,10 +58,11 @@ fun TextInputField(
             }
 
             BasicTextField(
-                value = text,
-                onValueChange = { text = it },
+                value = value,
+                onValueChange = onValueChange,
                 singleLine = true,
                 textStyle = TaskTrackrTheme.typography.body,
+                visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
                 modifier = Modifier.fillMaxWidth()
             )
         }

@@ -33,7 +33,7 @@ fun TaskTrackrIcon(modifier: Modifier = Modifier) {
     }
 
     Image(
-        painter  = painterResource(logoRes),
+        painter = painterResource(logoRes),
         contentDescription = "Logo",
         modifier = modifier
     )
