@@ -36,6 +36,14 @@ fun SignUp(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
+    val isFormValid = (
+            name.isNotBlank() &&
+                    email.isNotBlank() &&
+                    password.isNotBlank() &&
+                    confirmPassword.isNotBlank()
+    )
+
+
     val signUpSuccess by viewModel.signUpSuccess.collectAsState()
     val errorCode by viewModel.errorCode.collectAsState()
 
@@ -154,10 +162,14 @@ fun SignUp(
 
         Spacer(Modifier.height(30.dp))
 
+
         CustomButton(
             text = stringResource(R.string.sign_up),
             modifier = Modifier.width(200.dp),
-            onClick = { viewModel.signUp(name,email,password) }
+            enabled = isFormValid,
+            onClick = {
+                viewModel.signUp(name, email, password)
+            }
         )
     }
 }

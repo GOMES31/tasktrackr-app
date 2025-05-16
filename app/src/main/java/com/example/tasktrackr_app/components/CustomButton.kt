@@ -14,12 +14,14 @@ import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 fun CustomButton(
     modifier: Modifier = Modifier,
     text: String,
+    enabled: Boolean = false,
     onClick: () -> Unit
 ) {
     Button(
         onClick = onClick,
         modifier = modifier
             .height(48.dp),
+        enabled = enabled,
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = TaskTrackrTheme.colorScheme.primary,
