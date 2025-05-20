@@ -13,10 +13,11 @@ import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 @Composable
 fun CustomButton(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Button(
-        onClick = {  },
+        onClick = onClick,
         modifier = modifier
             .height(48.dp),
         shape = RoundedCornerShape(8.dp),

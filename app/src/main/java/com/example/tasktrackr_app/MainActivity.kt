@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tasktrackr_app.ui.screens.authentication.SignIn
 import com.example.tasktrackr_app.ui.screens.authentication.SignUp
+import com.example.tasktrackr_app.ui.screens.profile.ProfileScreen
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import java.util.Locale
@@ -39,6 +40,9 @@ class MainActivity : ComponentActivity() {
                                     currentLocale = newLocale
                                 }
                             )
+                        }
+                        composable("profile") {
+                            ProfileScreen()
                         }
                     }
                 }

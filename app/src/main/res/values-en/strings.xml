@@ -12,4 +12,7 @@
     <string name="name">Name:</string>
     <string name="confirm_password">Confirm Password:</string>
     <string name="name_input_placeholder">Insert your name here</string>
+    <string name="my_profile">My Profile</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="edit_profile">Edit Profile</string>
 </resources>

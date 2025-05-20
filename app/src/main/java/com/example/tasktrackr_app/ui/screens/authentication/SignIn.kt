@@ -95,7 +95,10 @@ fun SignIn(
 
         CustomButton(
             text = stringResource(R.string.sign_in),
-            modifier = Modifier.width(200.dp)
+            modifier = Modifier.width(200.dp),
+            onClick = {
+                navController.navigate("profile")
+            }
         )
     }
 }
