@@ -16,4 +16,7 @@
     <string name="error_invalid_credentials">Invalid credentials</string>
     <string name="error_user_not_found">User not registered</string>
     <string name="error_password_mismatch">Passwords do not match</string>
+    <string name="my_profile">My Profile</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="edit_profile">Edit Profile</string>
 </resources>

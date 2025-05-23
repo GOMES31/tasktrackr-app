@@ -1,3 +1,4 @@
+
 package com.example.tasktrackr_app.ui.screens.authentication
 
 import androidx.compose.foundation.background
@@ -53,14 +54,7 @@ fun SignIn(
             .background(TaskTrackrTheme.colorScheme.background)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(60.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+      ){
             ToggleTheme()
             Spacer(Modifier.width(1.dp))
             LanguageMenu(onLanguageSelected = onLanguageSelected)
@@ -68,12 +62,14 @@ fun SignIn(
 
         Spacer(Modifier.height(30.dp))
 
-        TaskTrackrLogo(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(88.dp)
-                .padding(bottom = 30.dp)
-        )
+            Spacer(modifier = Modifier.height(30.dp))
+
+            TaskTrackrLogo(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(88.dp)
+                    .padding(bottom = 30.dp)
+            )
 
         Text(
             modifier = Modifier.fillMaxWidth(),
@@ -124,14 +120,13 @@ fun SignIn(
 
         Spacer(Modifier.height(20.dp))
 
-        AuthLink(
-            text = stringResource(R.string.sign_up_link_message),
-            redirect = stringResource(R.string.sign_up),
-            onClick = { navController.navigate("signup") }
-        )
+            AuthLink(
+                text = stringResource(R.string.sign_up_link_message),
+                redirect = stringResource(R.string.sign_up),
+                onClick = { navController.navigate("signup") }
+            )
 
         Spacer(Modifier.height(30.dp))
-
 
         CustomButton(
             modifier = Modifier.width(200.dp),
