@@ -19,4 +19,5 @@
     <string name="my_profile">Meu Perfil</string>
     <string name="recent_activity">Atividade Recente</string>
     <string name="edit_profile">Editar Perfil</string>
+    <string name="app_description">A app TaskTrackr permite manter todas as suas tarefas, prazos e projetos de equipa num único lugar.</string>
 </resources>

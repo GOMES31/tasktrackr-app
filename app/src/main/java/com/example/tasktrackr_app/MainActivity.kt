@@ -45,13 +45,14 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
-                        composable("profile"){
+                        composable("profile") {
                             ProfileScreen(
                                 navController = navController,
                                 onLanguageSelected = { newLocale ->
                                     currentLocale = newLocale
                                 }
                             )
+                        }
                     }
                 }
             }

@@ -1,4 +1,3 @@
-
 package com.example.tasktrackr_app.ui.screens.authentication
 
 import androidx.compose.foundation.background
@@ -13,18 +12,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
-import com.example.tasktrackr_app.components.AuthLink
-import com.example.tasktrackr_app.components.CustomButton
-import com.example.tasktrackr_app.components.ErrorMessage
-import com.example.tasktrackr_app.components.LanguageMenu
-import com.example.tasktrackr_app.components.TaskTrackrLogo
-import com.example.tasktrackr_app.components.TextInputField
-import com.example.tasktrackr_app.components.ToggleTheme
+import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import java.net.HttpURLConnection
 import java.util.Locale
-
 
 @Composable
 fun SignIn(
@@ -54,87 +46,85 @@ fun SignIn(
             .background(TaskTrackrTheme.colorScheme.background)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-      ){
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             ToggleTheme()
-            Spacer(Modifier.width(1.dp))
             LanguageMenu(onLanguageSelected = onLanguageSelected)
         }
 
-        Spacer(Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-            Spacer(modifier = Modifier.height(30.dp))
-
-            TaskTrackrLogo(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(88.dp)
-                    .padding(bottom = 30.dp)
-            )
-
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = stringResource(R.string.sign_in),
-            color = TaskTrackrTheme.colorScheme.primary,
-            textAlign = TextAlign.Center,
-            style = TaskTrackrTheme.typography.header
+        TaskTrackrLogo(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(88.dp)
+                .padding(bottom = 16.dp)
         )
 
-        Spacer(Modifier.height(30.dp))
+        Text(
+            text = stringResource(R.string.sign_in),
+            color = TaskTrackrTheme.colorScheme.primary,
+            style = TaskTrackrTheme.typography.header,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.email),
             value = email,
             onValueChange = { email = it },
-            placeholder = stringResource(R.string.email_input_placeholder)
+            label = stringResource(R.string.email),
+            placeholder = stringResource(R.string.email_input_placeholder),
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(vertical = 8.dp)
         )
         if (errorCode == HttpURLConnection.HTTP_NOT_FOUND) {
             ErrorMessage(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(start = 16.dp, bottom = 8.dp),
-                text = stringResource(R.string.error_user_not_found)
+                text = stringResource(R.string.error_user_not_found),
+                modifier = Modifier.padding(bottom = 8.dp)
             )
         }
 
         TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.password),
             value = password,
             onValueChange = { password = it },
+            label = stringResource(R.string.password),
             placeholder = stringResource(R.string.password_input_placeholder),
-            isPassword = true
+            isPassword = true,
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(vertical = 8.dp)
         )
         if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
             ErrorMessage(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(start = 16.dp, bottom = 8.dp),
-                text = stringResource(R.string.error_invalid_credentials)
+                text = stringResource(R.string.error_invalid_credentials),
+                modifier = Modifier.padding(bottom = 8.dp)
             )
         }
 
-        Spacer(Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            AuthLink(
-                text = stringResource(R.string.sign_up_link_message),
-                redirect = stringResource(R.string.sign_up),
-                onClick = { navController.navigate("signup") }
-            )
+        AuthLink(
+            text = stringResource(R.string.sign_up_link_message),
+            redirect = stringResource(R.string.sign_up),
+            onClick = { navController.navigate("signup") }
+        )
 
-        Spacer(Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         CustomButton(
-            modifier = Modifier.width(200.dp),
             text = stringResource(R.string.sign_in),
             enabled = isFormValid,
-            onClick = {
-                viewModel.signIn(email, password)
-                 }
+            onClick = { viewModel.signIn(email, password) },
+            modifier = Modifier.fillMaxWidth(0.5f)
         )
     }
 }
