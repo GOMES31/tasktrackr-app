@@ -11,7 +11,7 @@ import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.ui.theme.LocalAppThemeState
 
 @Composable
-fun ToggleTheme(modifier: Modifier = Modifier, ) {
+fun ToggleTheme(modifier: Modifier = Modifier) {
     val (isDarkMode, toggle) = LocalAppThemeState.current
     val iconRes = if(isDarkMode){
         R.drawable.sun

@@ -12,6 +12,10 @@
     <string name="name">Nome:</string>
     <string name="confirm_password">Confirmar Palavra-passe:</string>
     <string name="name_input_placeholder">Insira o seu nome aqui</string>
+    <string name="error_user_exists">Utilizador já registado</string>
+    <string name="error_invalid_credentials">Credenciais inválidas</string>
+    <string name="error_user_not_found">Utilizador não registado</string>
+    <string name="error_password_mismatch">Passwords não coincidem</string>
     <string name="my_profile">Meu Perfil</string>
     <string name="recent_activity">Atividade Recente</string>
     <string name="edit_profile">Editar Perfil</string>
