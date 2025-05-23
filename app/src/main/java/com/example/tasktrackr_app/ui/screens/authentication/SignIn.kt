@@ -135,7 +135,7 @@ fun SignIn(
 
         CustomButton(
             modifier = Modifier.width(200.dp),
-            text = stringResource(R.string.sign_up),
+            text = stringResource(R.string.sign_in),
             enabled = isFormValid,
             onClick = {
                 viewModel.signIn(email, password)
