@@ -20,4 +20,11 @@
     <string name="recent_activity">Recent Activity</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="app_description">TaskTrackr allows you to keep all your tasks, deadlines, and team projects in one place.</string>
+    <string name="sign_out">Sign out</string>
+    <string name="language">Language:</string>
+    <string name="theme">Theme:</string>
+    <string name="my_tasks">My Tasks</string>
+    <string name="my_projects">My Projects</string>
+    <string name="teams">Teams</string>
+    <string name="reports">Reports</string>
 </resources>

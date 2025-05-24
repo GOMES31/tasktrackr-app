@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tasktrackr_app.ui.screens.authentication.SignIn
 import com.example.tasktrackr_app.ui.screens.authentication.SignUp
-import com.example.tasktrackr_app.ui.screens.profile.ProfileScreen
+import com.example.tasktrackr_app.ui.screens.profile.UserProfile
 import com.example.tasktrackr_app.ui.screens.introduction.IntroSlider
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
@@ -20,11 +20,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             var currentLocale by remember { mutableStateOf(Locale.getDefault()) }
+            var isDarkTheme by remember { mutableStateOf(false) }
 
             val navController = rememberNavController()
 
             LocalizationProvider(locale = currentLocale) {
-                TaskTrackrTheme(isDarkTheme = false) {
+                TaskTrackrTheme(isDarkTheme = isDarkTheme) {
                     NavHost(navController = navController, startDestination = "intro") {
                         composable("intro") {
                             IntroSlider(navController = navController)
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 onLanguageSelected = { newLocale ->
                                     currentLocale = newLocale
-                                }
+                                },
                             )
                         }
                         composable("signup") {
@@ -42,15 +43,15 @@ class MainActivity : ComponentActivity() {
                                 navController = navController,
                                 onLanguageSelected = { newLocale ->
                                     currentLocale = newLocale
-                                }
+                                },
                             )
                         }
                         composable("profile") {
-                            ProfileScreen(
+                            UserProfile(
                                 navController = navController,
                                 onLanguageSelected = { newLocale ->
                                     currentLocale = newLocale
-                                }
+                                },
                             )
                         }
                     }
