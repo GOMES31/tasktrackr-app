@@ -25,14 +25,10 @@ fun TopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Always show the icon_lightmode
-        Image(
-            painter = painterResource(id = R.drawable.icon_lightmode),
-            contentDescription = stringResource(R.string.app_name),
+        TaskTrackrIcon(
             modifier = Modifier.size(40.dp)
         )
 
-        // Always show the burger menu icon
         Image(
             painter = painterResource(id = R.drawable.menu_burger),
             contentDescription = "Menu",
