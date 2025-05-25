@@ -21,6 +21,7 @@ import com.example.tasktrackr_app.components.TextInputField
 import com.example.tasktrackr_app.components.ToggleTheme
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
+import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.net.HttpURLConnection
 import java.util.Locale
 
@@ -28,7 +29,8 @@ import java.util.Locale
 fun SignUp(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: AuthViewModel = viewModel(),
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var name by remember { mutableStateOf("") }
@@ -44,12 +46,14 @@ fun SignUp(
     )
 
 
-    val signUpSuccess by viewModel.signUpSuccess.collectAsState()
-    val errorCode by viewModel.errorCode.collectAsState()
+    val signUpSuccess by authViewModel.signUpSuccess.collectAsState()
+    val userData by authViewModel.userData.collectAsState()
+    val errorCode by authViewModel.errorCode.collectAsState()
 
     LaunchedEffect(signUpSuccess) {
-        if (signUpSuccess) {
-            navController.navigate("profile") {
+        if (signUpSuccess && userData != null) {
+            userViewModel.loadProfile(userData!!)
+            navController.navigate("user-profile") {
                 popUpTo("signup") { inclusive = true }
             }
         }
@@ -168,7 +172,7 @@ fun SignUp(
             modifier = Modifier.width(200.dp),
             enabled = isFormValid,
             onClick = {
-                viewModel.signUp(name, email, password)
+                authViewModel.signUp(name, email, password)
             }
         )
     }

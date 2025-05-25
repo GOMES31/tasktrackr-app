@@ -1,7 +1,7 @@
 package com.example.tasktrackr_app.data.remote.api
 
 import android.content.Context
-import com.example.tasktrackr_app.data.local.AuthRepository
+import com.example.tasktrackr_app.data.local.TokenRepository
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -20,7 +20,7 @@ object ApiClient {
 
         // auth interceptor
         val authInterceptor = Interceptor { chain ->
-            val repo = AuthRepository(context)
+            val repo = TokenRepository(context)
             val original = chain.request()
             val builder  = original.newBuilder()
             repo.getAccessToken()?.let { token ->
@@ -44,4 +44,7 @@ object ApiClient {
 
     fun authApi(context: Context): AuthApi =
         retrofit(context).create(AuthApi::class.java)
+
+    fun userApi(context: Context): UserApi =
+        retrofit(context).create(UserApi::class.java)
 }

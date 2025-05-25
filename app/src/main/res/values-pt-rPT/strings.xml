@@ -27,4 +27,8 @@
     <string name="my_projects">Os Meus Projetos</string>
     <string name="teams">Equipas</string>
     <string name="reports">Relatórios</string>
+    <string name="confirm_changes">Confirmar Alterações</string>
+    <string name="upload_avatar">Carregar Foto</string>
+    <string name="new_password">Nova Palavra-passe:</string>
+    <string name="confirm_new_password">Confirmar Nova Palavra-passe:</string>
 </resources>
