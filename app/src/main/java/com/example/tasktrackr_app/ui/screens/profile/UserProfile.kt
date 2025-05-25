@@ -14,20 +14,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
 
 @Composable
 fun UserProfile(
     modifier: Modifier = Modifier,
     navController: NavController,
+    viewModel: UserViewModel,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var isSideMenuVisible by remember { mutableStateOf(false) }
+    val userData by viewModel.userData.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -56,31 +60,40 @@ fun UserProfile(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Image(
-                    painter = painterResource(id = R.drawable.default_profile),
-                    contentDescription = stringResource(R.string.my_profile),
-                    modifier = Modifier
-                        .size(90.dp)
-                        .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
-                    contentScale = ContentScale.Crop
-                )
+                if (userData?.avatarUrl != null) {
+                    Image(
+                        painter = rememberAsyncImagePainter(userData!!.avatarUrl),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(90.dp)
+                            .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.default_profile),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(90.dp)
+                            .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "John Doe",
+                    text = userData?.name.orEmpty(),
                     color = TaskTrackrTheme.colorScheme.secondary,
-                    style = TaskTrackrTheme.typography.subHeader,
-                    textAlign = TextAlign.Center
+                    style = TaskTrackrTheme.typography.header
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "johndoe@gmail.com",
+                    text = userData?.email.orEmpty(),
                     color = TaskTrackrTheme.colorScheme.accent,
-                    style = TaskTrackrTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center
+                    style = TaskTrackrTheme.typography.body
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -88,7 +101,8 @@ fun UserProfile(
                 CustomButton(
                     text = stringResource(R.string.edit_profile),
                     modifier = Modifier.width(180.dp),
-                    onClick = { }
+                    enabled = true,
+                    onClick = { navController.navigate("edit-user-profile") }
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))

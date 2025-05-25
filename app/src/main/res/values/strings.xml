@@ -25,4 +25,8 @@
     <string name="my_projects">My Projects</string>
     <string name="teams">Teams</string>
     <string name="reports">Reports</string>
+    <string name="confirm_changes">Confirm Changes</string>
+    <string name="upload_avatar">Upload Avatar</string>
+    <string name="new_password">New Password:</string>
+    <string name="confirm_new_password">Confirm New Password:</string>
 </resources>

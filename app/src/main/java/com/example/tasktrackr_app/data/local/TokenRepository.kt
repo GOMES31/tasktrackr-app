@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 
-class AuthRepository(context: Context) {
+class TokenRepository(context: Context) {
     companion object {
-        private const val PREFS_NAME  = "jwt_tokens"
+        private const val PREFS_NAME  = "token_prefs"
         private const val KEY_ACCESS  = "ACCESS_TOKEN"
         private const val KEY_REFRESH = "REFRESH_TOKEN"
     }
