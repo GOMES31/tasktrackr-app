@@ -1,4 +1,3 @@
-// TaskTrackrApp.kt
 package com.example.tasktrackr_app
 
 import android.annotation.SuppressLint

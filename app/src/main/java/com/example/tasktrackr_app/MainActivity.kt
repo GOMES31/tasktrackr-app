@@ -17,13 +17,18 @@ import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import com.example.tasktrackr_app.utils.LocalImageStorage
 import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        LocalImageStorage.init(this)
+
         setContent {
             TaskTrackrApp()
         }
     }
 }
+
