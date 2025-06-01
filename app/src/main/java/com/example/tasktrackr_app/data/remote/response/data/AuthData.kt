@@ -9,7 +9,7 @@ data class AuthData(
         @SerializedName("email")
         val email: String,
 
-        @SerializedName("avatarUrl")
+        @SerializedName("avatar_url")
         val avatarUrl: String,
 
         @SerializedName("access_token")

@@ -1,10 +1,12 @@
 package com.example.tasktrackr_app.ui.screens.profile
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,6 +27,7 @@ import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import com.example.tasktrackr_app.utils.LocalImageStorage
 import java.util.Locale
 
 @Composable
@@ -78,20 +82,46 @@ fun EditUserProfile(
         Box(
             modifier = Modifier
                 .size(100.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            val painter = if (!userData?.avatarUrl.isNullOrEmpty()) {
-                rememberAsyncImagePainter(userData!!.avatarUrl)
-            } else {
-                painterResource(R.drawable.default_profile)
+            when {
+                avatarUri != null -> {
+                    AsyncImage(
+                        model = avatarUri,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+                !userData?.avatarUrl.isNullOrEmpty() -> {
+                    val imageFile = LocalImageStorage.getImageFile(LocalContext.current, userData!!.avatarUrl)
+                    if (imageFile != null) {
+                        AsyncImage(
+                            model = imageFile,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.default_profile),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+                else -> {
+                    Image(
+                        painter = painterResource(R.drawable.default_profile),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
-            Image(
-                painter = painter,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
         }
 
         Spacer(Modifier.height(8.dp))
@@ -155,7 +185,7 @@ fun EditUserProfile(
                 viewModel.updateProfile(
                     name = name,
                     password = newPassword.takeIf { it.isNotBlank() },
-                    avatarUrl = avatarUri?.lastPathSegment
+                    avatarUri = avatarUri
                 )
                 navController.popBackStack()
             }

@@ -18,7 +18,7 @@ object ApiClient {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
-        // auth interceptor
+//        // auth interceptor
         val authInterceptor = Interceptor { chain ->
             val repo = TokenRepository(context)
             val original = chain.request()
