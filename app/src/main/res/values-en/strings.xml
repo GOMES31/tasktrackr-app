@@ -31,4 +31,10 @@
     <string name="upload_avatar">Upload Avatar</string>
     <string name="new_password">New Password:</string>
     <string name="confirm_new_password">Confirm New Password:</string>
+    <string name="create_team">Create Team</string>
+    <string name="team_name">Team Name:</string>
+    <string name="department">Department:</string>
+    <string name="team_name_placeholder">Insert team name here</string>
+    <string name="department_placeholder">Insert department here</string>
+    <string name="no_teams_message">You are not in a team.\nYou can either create one or be invited to one.</string>
 </resources>

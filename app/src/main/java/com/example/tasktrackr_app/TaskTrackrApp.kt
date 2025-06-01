@@ -21,6 +21,7 @@ import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
 import androidx.compose.runtime.CompositionLocalProvider
+import com.example.tasktrackr_app.ui.screens.profile.UserTeams
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -74,6 +75,14 @@ fun TaskTrackrApp() {
 
                     composable("edit-user-profile") {
                         EditUserProfile(
+                            navController = navController,
+                            viewModel = userViewModel,
+                            onLanguageSelected = { newLocale -> currentLocale = newLocale }
+                        )
+                    }
+
+                    composable("user-teams"){
+                        UserTeams(
                             navController = navController,
                             viewModel = userViewModel,
                             onLanguageSelected = { newLocale -> currentLocale = newLocale }

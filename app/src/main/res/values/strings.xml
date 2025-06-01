@@ -14,7 +14,8 @@
     <string name="error_user_exists">User already exists</string>
     <string name="error_invalid_credentials">Invalid credentials</string>
     <string name="error_user_not_found">User not registered</string>
-    <string name="error_password_mismatch">Passwords do not match</string><string name="my_profile">My Profile</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+    <string name="my_profile">My Profile</string>
     <string name="recent_activity">Recent Activity</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="app_description">TaskTrackr allows you to keep all your tasks, deadlines, and team projects in one place.</string>
@@ -29,4 +30,10 @@
     <string name="upload_avatar">Upload Avatar</string>
     <string name="new_password">New Password:</string>
     <string name="confirm_new_password">Confirm New Password:</string>
+    <string name="create_team">Create Team</string>
+    <string name="team_name">Team Name:</string>
+    <string name="department">Department:</string>
+    <string name="team_name_placeholder">Insert team name here</string>
+    <string name="department_placeholder">Insert department here</string>
+    <string name="no_teams_message">You are not in a team.\nYou can either create one or be invited to one.</string>
 </resources>

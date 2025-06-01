@@ -31,4 +31,10 @@
     <string name="upload_avatar">Carregar Foto</string>
     <string name="new_password">Nova Palavra-passe:</string>
     <string name="confirm_new_password">Confirmar Nova Palavra-passe:</string>
+    <string name="create_team">Criar Equipa</string>
+    <string name="team_name">Nome da Equipa:</string>
+    <string name="department">Departamento:</string>
+    <string name="team_name_placeholder">Insira o nome da equipa aqui</string>
+    <string name="department_placeholder">Insira o departamento aqui</string>
+    <string name="no_teams_message">Não estás em nenhuma equipa.\nPodes criar uma ou ser convidado para uma.</string>
 </resources>

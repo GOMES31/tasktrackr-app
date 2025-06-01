@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tasktrackr_app.data.local.TokenRepository
+import com.example.tasktrackr_app.data.remote.response.data.UserTeamsData
 import com.example.tasktrackr_app.data.remote.api.ApiClient
 import com.example.tasktrackr_app.data.remote.api.UserApi
 import com.example.tasktrackr_app.data.remote.request.UpdateUserProfileRequest
@@ -23,6 +24,10 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val _userData = MutableStateFlow<AuthData?>(null)
     val userData = _userData.asStateFlow()
     private val _errorCode = MutableStateFlow<Int?>(null)
+    private val _userTeams = MutableStateFlow<List<UserTeamsData>?>(null)
+    val userTeams = _userTeams.asStateFlow()
+    private val _isLoadingTeams = MutableStateFlow(false)
+    val isLoadingTeams = _isLoadingTeams.asStateFlow()
 
     fun loadProfile(data: AuthData) {
         _userData.value = data
@@ -71,6 +76,25 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             } catch (e: Exception) {
                 _errorCode.value = -1
                 Log.e("UserViewModel", "Error updating profile", e)
+            }
+        }
+    }
+
+    fun fetchUserTeams() {
+        viewModelScope.launch {
+            _isLoadingTeams.value = true
+            try {
+                val response = userApi.getUserTeams()
+                if (response.isSuccessful) {
+                    response.body()?.data?.let { teams ->
+                        _userTeams.value = teams
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Error fetching teams", e)
+                _userTeams.value = emptyList()
+            } finally {
+                _isLoadingTeams.value = false
             }
         }
     }
