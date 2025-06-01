@@ -40,15 +40,15 @@ import java.util.Locale
 fun UserTeams(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: UserViewModel,
+    userViewModel: UserViewModel,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var isSideMenuVisible by remember { mutableStateOf(false) }
-    val teams by viewModel.userTeams.collectAsState()
-    val isLoading by viewModel.isLoadingTeams.collectAsState()
+    val teams by userViewModel.userTeams.collectAsState()
+    val isLoading by userViewModel.isLoadingTeams.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchUserTeams()
+        userViewModel.fetchUserTeams()
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -101,7 +101,7 @@ fun UserTeams(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
                 CustomButton(
                     text = stringResource(R.string.create_team),

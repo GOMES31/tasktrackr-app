@@ -1,6 +1,6 @@
 package com.example.tasktrackr_app.data.remote.api
 
-import com.example.tasktrackr_app.data.remote.response.data.UserTeamsData
+import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.data.remote.request.UpdateUserProfileRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.AuthData
@@ -16,6 +16,6 @@ interface UserApi {
             Response<ApiResponse<AuthData>>
 
     @GET("user/teams")
-    suspend fun getUserTeams(): Response<ApiResponse<List<UserTeamsData>>>
+    suspend fun getUserTeams(): Response<ApiResponse<List<TeamData>>>
 }
 

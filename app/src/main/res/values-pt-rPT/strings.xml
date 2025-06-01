@@ -6,6 +6,7 @@
     <string name="password">Palavra-passe:</string>
     <string name="sign_up_link_message">Ainda não tem conta?</string>
     <string name="sign_in_link_message">Já tem uma conta?</string>
+    <string name="sign_in_link_message">Já tem uma conta?</string>
     <string name="sign_up">Criar Conta</string>
     <string name="password_input_placeholder">Insira a sua password aqui</string>
     <string name="email_input_placeholder">Insira o seu email aqui</string>
@@ -37,4 +38,8 @@
     <string name="team_name_placeholder">Insira o nome da equipa aqui</string>
     <string name="department_placeholder">Insira o departamento aqui</string>
     <string name="no_teams_message">Não estás em nenhuma equipa.\nPodes criar uma ou ser convidado para uma.</string>
+    <string name="email">Email:</string>
+    <string name="password">Palavra-passe:</string>
+    <string name="sign_up_link_message">Ainda não tem conta?</string>
+    <string name="upload_team_logo">Carregar Logo da Equipa (Opcional)</string>
 </resources>

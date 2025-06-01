@@ -1,29 +1,47 @@
 package com.example.tasktrackr_app.ui.screens.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import java.util.Locale
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 
 @Composable
 fun CreateTeam(
     modifier: Modifier = Modifier,
+    teamViewModel: TeamViewModel,
     navController: NavController,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var teamName by remember { mutableStateOf("") }
     var department by remember { mutableStateOf("") }
     var isSideMenuVisible by remember { mutableStateOf(false) }
+    var logoUri by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let { logoUri = it }
+    }
 
     val formValid = teamName.isNotBlank() && department.isNotBlank()
 
@@ -42,6 +60,42 @@ fun CreateTeam(
             style = TaskTrackrTheme.typography.header,
             modifier = Modifier.padding(vertical = 24.dp)
         )
+
+        Text(
+            text = stringResource(R.string.upload_team_logo),
+            color = TaskTrackrTheme.colorScheme.text,
+            style = TaskTrackrTheme.typography.subHeader
+        )
+
+        Spacer(Modifier.height(8.dp))
+
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .clip(CircleShape)
+                .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape)
+                .clickable { launcher.launch("image/*") },
+            contentAlignment = Alignment.Center
+        ) {
+            when {
+                logoUri != null -> {
+                    AsyncImage(
+                        model = logoUri,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
+                else -> {
+                    Image(
+                        painter = painterResource(R.drawable.default_profile),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+        }
 
         Spacer(Modifier.height(32.dp))
 
@@ -72,7 +126,7 @@ fun CreateTeam(
             enabled = formValid,
             modifier = Modifier.width(200.dp),
             onClick = {
-                // TODO: Implement team creation logic
+                teamViewModel.createTeam(teamName, department, logoUri)
                 navController.popBackStack()
             }
         )

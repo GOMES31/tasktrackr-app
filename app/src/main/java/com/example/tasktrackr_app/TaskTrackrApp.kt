@@ -21,7 +21,9 @@ import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
 import androidx.compose.runtime.CompositionLocalProvider
+import com.example.tasktrackr_app.ui.screens.profile.CreateTeam
 import com.example.tasktrackr_app.ui.screens.profile.UserTeams
+import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -32,6 +34,8 @@ fun TaskTrackrApp() {
 
     val authViewModel: AuthViewModel = viewModel()
     val userViewModel: UserViewModel = viewModel()
+    val teamViewModel: TeamViewModel = viewModel()
+
     val activity = LocalContext.current as ComponentActivity
 
     LocalizationProvider(locale = currentLocale) {
@@ -84,7 +88,15 @@ fun TaskTrackrApp() {
                     composable("user-teams"){
                         UserTeams(
                             navController = navController,
-                            viewModel = userViewModel,
+                            userViewModel = userViewModel,
+                            onLanguageSelected = { newLocale -> currentLocale = newLocale }
+                        )
+                    }
+
+                    composable("create-team") {
+                        CreateTeam(
+                            navController = navController,
+                            teamViewModel = teamViewModel,
                             onLanguageSelected = { newLocale -> currentLocale = newLocale }
                         )
                     }

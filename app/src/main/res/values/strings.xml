@@ -36,4 +36,5 @@
     <string name="team_name_placeholder">Insert team name here</string>
     <string name="department_placeholder">Insert department here</string>
     <string name="no_teams_message">You are not in a team.\nYou can either create one or be invited to one.</string>
+    <string name="upload_team_logo">Upload Team Logo (Optional)</string>
 </resources>

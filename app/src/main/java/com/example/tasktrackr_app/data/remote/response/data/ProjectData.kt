@@ -3,10 +3,8 @@ package com.example.tasktrackr_app.data.remote.response.data
 import com.google.gson.annotations.SerializedName
 
 data class ProjectData(
-    @SerializedName("title")
     val title: String,
 
-    @SerializedName("description")
     val description: String? = null,
 
     @SerializedName("start_date")
@@ -15,9 +13,7 @@ data class ProjectData(
     @SerializedName("end_date")
     val endDate: String? = null,
 
-    @SerializedName("status")
     val status: String,
 
-    @SerializedName("project_tasks")
     val tasks: List<ProjectTaskResponse>
 )

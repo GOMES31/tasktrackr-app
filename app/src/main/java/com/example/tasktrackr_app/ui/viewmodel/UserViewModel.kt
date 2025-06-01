@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tasktrackr_app.data.local.TokenRepository
-import com.example.tasktrackr_app.data.remote.response.data.UserTeamsData
+import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.data.remote.api.ApiClient
 import com.example.tasktrackr_app.data.remote.api.UserApi
 import com.example.tasktrackr_app.data.remote.request.UpdateUserProfileRequest
@@ -24,7 +24,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val _userData = MutableStateFlow<AuthData?>(null)
     val userData = _userData.asStateFlow()
     private val _errorCode = MutableStateFlow<Int?>(null)
-    private val _userTeams = MutableStateFlow<List<UserTeamsData>?>(null)
+    private val _userTeams = MutableStateFlow<List<TeamData>?>(null)
     val userTeams = _userTeams.asStateFlow()
     private val _isLoadingTeams = MutableStateFlow(false)
     val isLoadingTeams = _isLoadingTeams.asStateFlow()
@@ -38,11 +38,10 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 val localAvatarPath = if (avatarUri != null) {
-                    LocalImageStorage.saveProfileImage(getApplication(), avatarUri)?.also {
-                        Log.d("UserViewModel", "Saved image to local path: $it")
-                    }
+                    Log.d("UserViewModel", "Processing new avatar: $avatarUri")
+                    LocalImageStorage.saveProfileImage(getApplication(), avatarUri)
                 } else {
-                    userData.value?.avatarUrl // Mantém o avatar atual se não houver nova imagem
+                    userData.value?.avatarUrl
                 }
 
                 val request = UpdateUserProfileRequest(
@@ -51,31 +50,19 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     avatarUrl = localAvatarPath
                 )
 
-                Log.d("UserViewModel", "Sending update request with data: $request")
                 val response: Response<ApiResponse<AuthData>> = userApi.updateProfile(request)
 
-                Log.d("UserViewModel", "Raw response from backend: ${response.raw()}")
-                Log.d("UserViewModel", "Response code: ${response.code()}")
-                Log.d("UserViewModel", "Response headers: ${response.headers()}")
-
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    Log.d("UserViewModel", "Response body: $responseBody")
-                    val updatedData = responseBody?.data
+                    val updatedData = response.body()?.data
                     if (updatedData != null) {
-                        Log.d("UserViewModel", "Profile updated successfully with data: $updatedData")
                         _userData.value = updatedData
-                    } else {
-                        Log.e("UserViewModel", "Response body data is null")
                     }
                 } else {
-                    val errorBody = response.errorBody()?.string()
-                    Log.e("UserViewModel", "Failed to update profile: ${response.code()}, Error: $errorBody")
                     _errorCode.value = response.code()
                 }
             } catch (e: Exception) {
-                _errorCode.value = -1
                 Log.e("UserViewModel", "Error updating profile", e)
+                _errorCode.value = -1
             }
         }
     }
