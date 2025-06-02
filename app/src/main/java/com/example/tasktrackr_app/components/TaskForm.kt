@@ -35,11 +35,15 @@ fun TaskForm(
     var location by remember { mutableStateOf(existingTask?.location ?: "") }
     var startDate by remember { mutableStateOf(existingTask?.startDate ?: "") }
     var endDate by remember { mutableStateOf(existingTask?.endDate ?: "") }
-    var progress by remember { mutableStateOf(existingTask?.progress ?: 0) }
+    var progress by remember { mutableIntStateOf(existingTask?.progress ?: 0) }
     var timeSpent by remember { mutableStateOf(existingTask?.timeSpent ?: "") }
     var isCompleted by remember { mutableStateOf(existingTask?.isCompleted ?: false) }
-    var observations by remember { mutableStateOf(existingTask?.observations?.toMutableList() ?: mutableListOf("")) }
-    var selectedObservationIndex by remember { mutableStateOf(0) }
+    val observations = remember {
+        mutableStateListOf<String>().apply {
+            addAll(existingTask?.observations ?: listOf(""))
+        }
+    }
+    var selectedObservationIndex by remember { mutableIntStateOf(0) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
 
     var showTitleError by remember { mutableStateOf(false) }

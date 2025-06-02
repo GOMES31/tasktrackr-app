@@ -41,7 +41,7 @@ fun TaskDetail(
 ) {
     if (!isVisible) return
 
-    var selectedObservationIndex by remember { mutableStateOf(0) }
+    var selectedObservationIndex by remember { mutableIntStateOf(0) }
     var isDropdownExpanded by remember { mutableStateOf(false) }
 
     Box(
@@ -139,7 +139,7 @@ fun TaskDetail(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 LinearProgressIndicator(
-                    progress = progress / 100f,
+                    progress = { progress / 100f },
                     modifier = Modifier.fillMaxWidth(),
                     color = TaskTrackrTheme.colorScheme.tertiary,
                     trackColor = TaskTrackrTheme.colorScheme.inputBackground
