@@ -23,7 +23,7 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val logoPath = logoUri?.let { uri ->
                     Log.d("TeamViewModel", "Processing team logo: $uri")
-                    LocalImageStorage.saveProfileImage(getApplication(), uri)
+                    LocalImageStorage.saveTeamLogo(getApplication(), uri)
                 }
 
                 val request = CreateTeamRequest(
@@ -32,10 +32,17 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
                     imageUrl = logoPath
                 )
 
-                val response = teamApi.createTeam(request)
+                try {
+                    val response = teamApi.createTeam(request)
+                    Log.d("TeamViewModel", "Response code: ${response.code()}")
 
-                if (!response.isSuccessful) {
-                    _errorCode.value = response.code()
+                    if (!response.isSuccessful) {
+                        Log.e("TeamViewModel", "Error response: ${response.errorBody()?.string()}")
+                        _errorCode.value = response.code()
+                    }
+                } catch (e: Exception) {
+                    Log.e("TeamViewModel", "Network error", e)
+                    _errorCode.value = -1
                 }
             } catch (e: Exception) {
                 Log.e("TeamViewModel", "Error creating team", e)

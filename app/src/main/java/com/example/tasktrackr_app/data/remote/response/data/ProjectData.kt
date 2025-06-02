@@ -15,5 +15,5 @@ data class ProjectData(
 
     val status: String,
 
-    val tasks: List<ProjectTaskResponse>
+    val tasks: List<ProjectTaskData>
 )

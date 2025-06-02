@@ -12,6 +12,7 @@ import com.example.tasktrackr_app.data.remote.api.UserApi
 import com.example.tasktrackr_app.data.remote.request.UpdateUserProfileRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.AuthData
+import com.example.tasktrackr_app.data.remote.response.data.UserProfileData
 import com.example.tasktrackr_app.utils.LocalImageStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val tokenRepository: TokenRepository = TokenRepository(application)
     private val _userData = MutableStateFlow<AuthData?>(null)
     val userData = _userData.asStateFlow()
+    private val _profileData = MutableStateFlow<UserProfileData?>(null)
+    private val profileData = _profileData.asStateFlow()
     private val _errorCode = MutableStateFlow<Int?>(null)
     private val _userTeams = MutableStateFlow<List<TeamData>?>(null)
     val userTeams = _userTeams.asStateFlow()
@@ -31,6 +34,12 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadProfile(data: AuthData) {
         _userData.value = data
+        // Initialize profileData from AuthData
+        _profileData.value = UserProfileData(
+            name = data.name,
+            email = data.email,
+            avatarUrl = data.avatarUrl
+        )
     }
 
     fun updateProfile(name: String?, password: String?, avatarUri: Uri?) {
@@ -41,21 +50,27 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                     Log.d("UserViewModel", "Processing new avatar: $avatarUri")
                     LocalImageStorage.saveProfileImage(getApplication(), avatarUri)
                 } else {
-                    userData.value?.avatarUrl
+                    profileData.value?.avatarUrl
                 }
 
                 val request = UpdateUserProfileRequest(
-                    name = name ?: userData.value?.name,
+                    name = name ?: profileData.value?.name,
                     password = password,
                     avatarUrl = localAvatarPath
                 )
 
-                val response: Response<ApiResponse<AuthData>> = userApi.updateProfile(request)
+                val response = userApi.updateProfile(request)
 
                 if (response.isSuccessful) {
-                    val updatedData = response.body()?.data
-                    if (updatedData != null) {
-                        _userData.value = updatedData
+                    val updatedProfile = response.body()?.data
+                    if (updatedProfile != null) {
+                        _profileData.value = updatedProfile
+                        _userData.value = updatedProfile.avatarUrl?.let {
+                            _userData.value?.copy(
+                                name = updatedProfile.name,
+                                avatarUrl = it
+                            )
+                        }
                     }
                 } else {
                     _errorCode.value = response.code()

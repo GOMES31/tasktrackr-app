@@ -2,7 +2,7 @@ package com.example.tasktrackr_app.data.remote.response.data
 
 import com.google.gson.annotations.SerializedName
 
-data class ProjectTaskResponse(
+data class ProjectTaskData(
     val title: String,
 
     val description: String? = null,

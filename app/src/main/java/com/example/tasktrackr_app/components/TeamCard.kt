@@ -17,6 +17,7 @@ import coil.request.ImageRequest
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.data.remote.response.data.TeamMemberData
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.utils.LocalImageStorage
 
 @Composable
 fun TeamCard(
@@ -25,6 +26,8 @@ fun TeamCard(
     members: List<TeamMemberData>,
     imageUrl: String? = null,
 ) {
+    val context = LocalContext.current
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = TaskTrackrTheme.colorScheme.cardBackground
@@ -38,29 +41,38 @@ fun TeamCard(
             verticalAlignment = Alignment.Top
         ) {
             // Team Logo
-            if (imageUrl.isNullOrEmpty()) {
-                Image(
-                    painter = painterResource(id = R.drawable.default_profile),
-                    contentDescription = "Team Profile",
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-            } else {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(imageUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Team Profile",
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.default_profile),
-                    fallback = painterResource(id = R.drawable.default_profile)
-                )
+            Box(
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+            ) {
+                if (imageUrl.isNullOrEmpty()) {
+                    Image(
+                        painter = painterResource(id = R.drawable.default_profile),
+                        contentDescription = "Team Profile",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    val imageFile = LocalImageStorage.getImageFile(context, imageUrl)
+                    if (imageFile != null) {
+                        AsyncImage(
+                            model = imageFile,
+                            contentDescription = "Team Profile",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(id = R.drawable.default_profile),
+                            fallback = painterResource(id = R.drawable.default_profile)
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.default_profile),
+                            contentDescription = "Team Profile",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))

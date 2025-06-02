@@ -13,6 +13,7 @@ import java.util.UUID
 object LocalImageStorage {
     private const val STORAGE_DIR = "storage"
     private const val PROFILE_DIR = "profile"
+    private const val TEAM_DIR = "team"
 
     fun init(context: Context) {
         try {
@@ -20,7 +21,12 @@ object LocalImageStorage {
             val storageDir = File(baseDir, STORAGE_DIR).apply {
                 if (!exists()) mkdirs()
             }
+            // Create profile directory
             File(storageDir, PROFILE_DIR).apply {
+                if (!exists()) mkdirs()
+            }
+            // Create team directory
+            File(storageDir, TEAM_DIR).apply {
                 if (!exists()) mkdirs()
             }
         } catch (e: Exception) {
@@ -32,7 +38,7 @@ object LocalImageStorage {
         return UUID.randomUUID().toString().substring(0, 8)
     }
 
-    fun saveProfileImage(context: Context, imageUri: Uri): String? {
+    private fun saveImage(context: Context, imageUri: Uri, directory: String): String? {
         return try {
             val inputStream = context.contentResolver.openInputStream(imageUri)
             val bitmap = BitmapFactory.decodeStream(inputStream)
@@ -43,12 +49,12 @@ object LocalImageStorage {
             }
 
             val baseDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            val profileDir = File(File(baseDir, STORAGE_DIR), PROFILE_DIR).apply {
+            val targetDir = File(File(baseDir, STORAGE_DIR), directory).apply {
                 if (!exists()) mkdirs()
             }
 
             val fileName = "${generateShortUUID()}.jpg"
-            val file = File(profileDir, fileName)
+            val file = File(targetDir, fileName)
 
             FileOutputStream(file).use { out ->
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
@@ -58,11 +64,19 @@ object LocalImageStorage {
             bitmap.recycle()
             inputStream?.close()
 
-            "$PROFILE_DIR/$fileName"
+            "$directory/$fileName"
         } catch (e: Exception) {
-            Log.e("LocalImageStorage", "Error saving profile image", e)
+            Log.e("LocalImageStorage", "Error saving image to $directory", e)
             null
         }
+    }
+
+    fun saveProfileImage(context: Context, imageUri: Uri): String? {
+        return saveImage(context, imageUri, PROFILE_DIR)
+    }
+
+    fun saveTeamLogo(context: Context, imageUri: Uri): String? {
+        return saveImage(context, imageUri, TEAM_DIR)
     }
 
     fun getImageFile(context: Context, relativePath: String?): File? {

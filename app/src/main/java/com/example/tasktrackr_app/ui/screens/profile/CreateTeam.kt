@@ -39,9 +39,9 @@ fun CreateTeam(
     var department by remember { mutableStateOf("") }
     var isSideMenuVisible by remember { mutableStateOf(false) }
     var logoUri by remember { mutableStateOf<Uri?>(null) }
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        uri?.let { logoUri = it }
-    }
+    val pickImage = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { logoUri = it }
 
     val formValid = teamName.isNotBlank() && department.isNotBlank()
 
@@ -63,7 +63,7 @@ fun CreateTeam(
 
         Text(
             text = stringResource(R.string.upload_team_logo),
-            color = TaskTrackrTheme.colorScheme.text,
+            color = TaskTrackrTheme.colorScheme.secondary,
             style = TaskTrackrTheme.typography.subHeader
         )
 
@@ -73,8 +73,7 @@ fun CreateTeam(
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
-                .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape)
-                .clickable { launcher.launch("image/*") },
+                .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
             contentAlignment = Alignment.Center
         ) {
             when {
@@ -96,6 +95,15 @@ fun CreateTeam(
                 }
             }
         }
+
+        Spacer(Modifier.height(8.dp))
+
+        CustomButton(
+            text = stringResource(R.string.upload_team_logo),
+            modifier = Modifier.width(200.dp),
+            enabled = true,
+            onClick = { pickImage.launch("image/*") }
+        )
 
         Spacer(Modifier.height(32.dp))
 

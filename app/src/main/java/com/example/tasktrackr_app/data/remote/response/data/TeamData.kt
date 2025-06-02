@@ -10,7 +10,8 @@ data class TeamData(
     @SerializedName("image_url")
     val imageUrl: String?,
 
-    val projects: List<ProjectData>,
+    val members: List<TeamMemberData>,
 
-    val members: List<TeamMemberData>
+    val projects: List<ProjectData>
+
 )

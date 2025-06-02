@@ -4,6 +4,7 @@ import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.data.remote.request.UpdateUserProfileRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.AuthData
+import com.example.tasktrackr_app.data.remote.response.data.UserProfileData
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,7 +14,7 @@ interface UserApi {
 
     @PUT("user/update-profile")
     suspend fun updateProfile(@Body body: UpdateUserProfileRequest):
-            Response<ApiResponse<AuthData>>
+            Response<ApiResponse<UserProfileData>>
 
     @GET("user/teams")
     suspend fun getUserTeams(): Response<ApiResponse<List<TeamData>>>

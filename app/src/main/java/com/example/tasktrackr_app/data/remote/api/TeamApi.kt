@@ -6,12 +6,12 @@ import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
-import retrofit2.http.PUT
 
 interface TeamApi {
 
-    @POST("teams/create")
+    @POST("team/create")
     suspend fun createTeam(@Body body: CreateTeamRequest):
-            Response<ApiResponse<TeamData>>
+            Response<ApiResponse<Void>>
 
 }
+

@@ -37,5 +37,5 @@
     <string name="team_name_placeholder">Insira o nome da equipa aqui</string>
     <string name="department_placeholder">Insira o departamento aqui</string>
     <string name="no_teams_message">Não estás em nenhuma equipa.\nPodes criar uma ou ser convidado para uma.</string>
-    <string name="upload_team_logo">Carregar Logo da Equipa (Opcional)</string>
+    <string name="upload_team_logo">Carregar Logo da Equipa</string>
 </resources>
