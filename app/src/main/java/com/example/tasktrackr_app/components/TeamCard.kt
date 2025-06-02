@@ -1,6 +1,7 @@
 package com.example.tasktrackr_app.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -25,6 +26,8 @@ fun TeamCard(
     name: String,
     members: List<TeamMemberData>,
     imageUrl: String? = null,
+    teamId: String,
+    onTeamClick: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -32,7 +35,9 @@ fun TeamCard(
         colors = CardDefaults.cardColors(
             containerColor = TaskTrackrTheme.colorScheme.cardBackground
         ),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onTeamClick(teamId) }
     ) {
         Row(
             modifier = Modifier

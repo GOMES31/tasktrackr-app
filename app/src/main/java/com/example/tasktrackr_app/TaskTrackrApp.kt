@@ -13,16 +13,19 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tasktrackr_app.ui.screens.authentication.SignIn
 import com.example.tasktrackr_app.ui.screens.authentication.SignUp
 import com.example.tasktrackr_app.ui.screens.introduction.IntroSlider
-import com.example.tasktrackr_app.ui.screens.profile.EditUserProfile
-import com.example.tasktrackr_app.ui.screens.profile.UserProfile
+import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
+import com.example.tasktrackr_app.ui.screens.user.UserProfile
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
 import androidx.compose.runtime.CompositionLocalProvider
-import com.example.tasktrackr_app.ui.screens.profile.CreateTeam
-import com.example.tasktrackr_app.ui.screens.profile.UserTeams
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.tasktrackr_app.ui.screens.team.CreateTeam
+import com.example.tasktrackr_app.ui.screens.team.TeamProfile
+import com.example.tasktrackr_app.ui.screens.user.UserTeams
 import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 
 @SuppressLint("ContextCastToActivity")
@@ -100,6 +103,22 @@ fun TaskTrackrApp() {
                             onLanguageSelected = { newLocale -> currentLocale = newLocale }
                         )
                     }
+
+                    composable(
+                        route = "team-profile/{teamId}",
+                        arguments = listOf(navArgument("teamId") { type = NavType.StringType })
+                    ) { backStackEntry ->
+                        val teamId = backStackEntry.arguments?.getString("teamId")
+                        if (teamId != null) {
+                            TeamProfile(
+                                navController = navController,
+                                teamViewModel = teamViewModel,
+                                onLanguageSelected = { newLocale -> currentLocale = newLocale },
+                                teamId = teamId
+                            )
+                        }
+                    }
+
                 }
             }
         }

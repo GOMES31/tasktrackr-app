@@ -1,4 +1,4 @@
-package com.example.tasktrackr_app.ui.screens.profile
+package com.example.tasktrackr_app.ui.screens.user
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -27,7 +27,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.collectAsState
 import com.example.tasktrackr_app.R
-import com.example.tasktrackr_app.components.ActivityCard
 import com.example.tasktrackr_app.components.CustomButton
 import com.example.tasktrackr_app.components.SideMenu
 import com.example.tasktrackr_app.components.TeamCard
@@ -94,7 +93,11 @@ fun UserTeams(
                             TeamCard(
                                 name = team.name,
                                 members = team.members,
-                                imageUrl = team.imageUrl
+                                imageUrl = team.imageUrl,
+                                teamId = team.id.toString(),
+                                onTeamClick = { teamId ->
+                                    navController.navigate("team-profile/$teamId")
+                                }
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                         }

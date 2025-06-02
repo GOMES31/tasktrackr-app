@@ -1,4 +1,4 @@
-package com.example.tasktrackr_app.ui.screens.profile
+package com.example.tasktrackr_app.ui.screens.user
 
 import android.util.Log
 import androidx.compose.foundation.Image

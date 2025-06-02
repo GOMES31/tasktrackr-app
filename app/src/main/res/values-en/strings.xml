@@ -38,4 +38,10 @@
     <string name="department_placeholder">Insert department here</string>
     <string name="no_teams_message">You are not in a team.\nYou can either create one or be invited to one.</string>
     <string name="upload_team_logo">"Upload Team Logo "</string>
+    <string name="team_profile">Team Profile</string>
+    <string name="edit_team">Edit\nTeam</string>
+    <string name="add_members">Add\nMembers</string>
+    <string name="manage_members">Manage\nMembers</string>
+    <string name="recent_projects">Recent Projects</string>
 </resources>
+

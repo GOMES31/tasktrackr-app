@@ -38,4 +38,9 @@
     <string name="department_placeholder">Insira o departamento aqui</string>
     <string name="no_teams_message">Não estás em nenhuma equipa.\nPodes criar uma ou ser convidado para uma.</string>
     <string name="upload_team_logo">Carregar Logo da Equipa</string>
+    <string name="team_profile">Perfil da Equipa</string>
+    <string name="edit_team">Editar\nEquipa</string>
+    <string name="add_members">Adicionar\nMembros</string>
+    <string name="manage_members">Gerir\nMembros</string>
+    <string name="recent_projects">Projetos Recentes</string>
 </resources>
