@@ -16,10 +16,12 @@ import com.example.tasktrackr_app.ui.screens.authentication.SignUp
 import com.example.tasktrackr_app.ui.screens.introduction.IntroSlider
 import com.example.tasktrackr_app.ui.screens.profile.EditUserProfile
 import com.example.tasktrackr_app.ui.screens.profile.UserProfile
+import com.example.tasktrackr_app.ui.screens.tasks.MyTasks
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+
 import java.util.Locale
 import androidx.compose.runtime.CompositionLocalProvider
 
@@ -77,6 +79,13 @@ fun TaskTrackrApp() {
                         EditUserProfile(
                             navController = navController,
                             viewModel = userViewModel,
+                            onLanguageSelected = { newLocale -> currentLocale = newLocale }
+                        )
+                    }
+
+                    composable("my-tasks") {
+                        MyTasks(
+                            navController = navController,
                             onLanguageSelected = { newLocale -> currentLocale = newLocale }
                         )
                     }
