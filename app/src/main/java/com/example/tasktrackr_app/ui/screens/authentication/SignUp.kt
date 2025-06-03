@@ -43,9 +43,10 @@ fun SignUp(
 
     val isFormValid = (
             name.isNotBlank() &&
-                    email.isNotBlank() &&
-                    password.isNotBlank() &&
-                    confirmPassword.isNotBlank()
+            email.isNotBlank() &&
+            password.isNotBlank() &&
+            confirmPassword.isNotBlank() &&
+            password == confirmPassword
     )
 
 
@@ -55,7 +56,7 @@ fun SignUp(
 
     LaunchedEffect(signUpSuccess) {
         if (signUpSuccess && userData != null) {
-            NotificationHelper.showNotification(context, R.string.signup_success)
+            NotificationHelper.showNotification(context, R.string.signup_success, true)
             authViewModel.resetSignUpSuccess()
             userViewModel.loadProfile(userData!!)
             navController.navigate("user-profile") {

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tasktrackr_app.data.remote.api.ApiClient
 import com.example.tasktrackr_app.data.remote.api.TeamApi
 import com.example.tasktrackr_app.data.local.TokenRepository
+import com.example.tasktrackr_app.data.remote.request.AddTeamMemberRequest
 import com.example.tasktrackr_app.data.remote.request.CreateTeamRequest
 import com.example.tasktrackr_app.data.remote.request.UpdateTeamRequest
 import com.example.tasktrackr_app.data.remote.response.data.TeamData
@@ -29,6 +30,8 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
     val updateTeamSuccess = _updateTeamSuccess.asStateFlow()
     private val _createTeamSuccess = MutableStateFlow(false)
     val createTeamSuccess = _createTeamSuccess.asStateFlow()
+    private val _addMemberSuccess = MutableStateFlow(false)
+    val addMemberSuccess = _addMemberSuccess.asStateFlow()
 
     fun createTeam(name: String, department: String, logoUri: Uri? = null) {
         viewModelScope.launch {
@@ -141,6 +144,26 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun addMember(teamId: String, request: AddTeamMemberRequest) {
+        viewModelScope.launch {
+            try {
+                val response = teamApi.addMember(teamId, request)
+                Log.d("TeamViewModel", "Response code: ${response.code()}")
+
+                if (response.isSuccessful) {
+                    loadTeam(teamId)
+                    _addMemberSuccess.value = true
+                } else {
+                    Log.e("TeamViewModel", "Error response: ${response.errorBody()?.string()}")
+                    _errorCode.value = response.code()
+                }
+            } catch (e: Exception) {
+                Log.e("TeamViewModel", "Error adding member", e)
+                _errorCode.value = -1
+            }
+        }
+    }
+
     fun resetMemberRemoved() {
         _memberRemoved.value = false
     }
@@ -151,6 +174,19 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
 
     fun resetCreateTeamSuccess() {
         _createTeamSuccess.value = false
+    }
+
+    fun resetAddMemberSuccess() {
+        _addMemberSuccess.value = false
+    }
+
+    fun clearData() {
+        _errorCode.value = null
+        _selectedTeam.value = null
+        _memberRemoved.value = false
+        _updateTeamSuccess.value = false
+        _createTeamSuccess.value = false
+        _addMemberSuccess.value = false
     }
 
 }

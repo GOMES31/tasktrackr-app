@@ -39,8 +39,8 @@
     <string name="no_teams_message">Não estás em nenhuma equipa.\nPodes criar uma ou ser convidado para uma.</string>
     <string name="upload_team_logo">Carregar Logo da Equipa</string>
     <string name="team_profile">Perfil da Equipa</string>
-    <string name="edit_team">Editar\nEquipa</string>
-    <string name="add_member">Adicionar\nMembro\n</string>
+    <string name="edit_team">Editar Equipa</string>
+    <string name="add_member">Adicionar Membro</string>
     <string name="team_members">Membros da Equipa</string>
     <string name="recent_projects">Projetos Recentes</string>
     <string name="team_no_recent_projects">Esta equipa não tem nenhum projeto recente.</string>
@@ -53,4 +53,5 @@
     <string name="user_edit_profile_success">Perfil atualizado com sucesso!</string>
     <string name="signup_success">Conta criada com sucesso!</string>
     <string name="team_member_removed_success">Membro da equipa removido com sucesso!</string>
+    <string name="team_role">Cargo:</string>
 </resources>

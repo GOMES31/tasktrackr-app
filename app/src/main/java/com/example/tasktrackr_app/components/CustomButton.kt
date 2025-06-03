@@ -26,7 +26,9 @@ fun CustomButton(
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = TaskTrackrTheme.colorScheme.primary,
-            contentColor = TaskTrackrTheme.colorScheme.buttonText
+            contentColor = TaskTrackrTheme.colorScheme.buttonText,
+            disabledContainerColor = TaskTrackrTheme.colorScheme.primary.copy(alpha = 0.5f),
+            disabledContentColor = TaskTrackrTheme.colorScheme.buttonText.copy(alpha = 0.7f)
         )
     ) {
         Text(

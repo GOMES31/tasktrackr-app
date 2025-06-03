@@ -107,4 +107,13 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    fun clearData() {
+        _userData.value = null
+        _profileData.value = null
+        _userTeams.value = null
+        _errorCode.value = null
+        _isLoadingTeams.value = false
+        _updateProfileSuccess.value = false
+    }
 }

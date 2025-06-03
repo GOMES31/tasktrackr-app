@@ -21,6 +21,7 @@ fun TeamMemberCard(
     modifier: Modifier = Modifier,
     member: TeamMemberData,
     isAdmin: Boolean = false,
+    showActions: Boolean = isAdmin,
     onEditClick: () -> Unit = {},
     onRemoveClick: () -> Unit = {},
 ) {
@@ -40,8 +41,7 @@ fun TeamMemberCard(
             // Member Profile Picture
             Box(
                 modifier = Modifier
-                    .size(40.dp)
-                    .border(1.dp, TaskTrackrTheme.colorScheme.text),
+                    .size(40.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -62,7 +62,7 @@ fun TeamMemberCard(
                 Text(
                     text = member.name,
                     color = TaskTrackrTheme.colorScheme.secondary,
-                    style = TaskTrackrTheme.typography.subHeader
+                    style = TaskTrackrTheme.typography.smallTitles
                 )
 
                 Text(
@@ -73,7 +73,7 @@ fun TeamMemberCard(
             }
         }
 
-        if (isAdmin) {
+        if (showActions) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {

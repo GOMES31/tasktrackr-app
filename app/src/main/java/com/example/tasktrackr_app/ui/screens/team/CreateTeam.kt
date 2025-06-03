@@ -43,7 +43,7 @@ fun CreateTeam(
 
     LaunchedEffect(createTeamSuccess) {
         if (createTeamSuccess) {
-            NotificationHelper.showNotification(context, R.string.create_team_success)
+            NotificationHelper.showNotification(context, R.string.create_team_success, true)
             teamViewModel.resetCreateTeamSuccess()
             navController.popBackStack()
         }

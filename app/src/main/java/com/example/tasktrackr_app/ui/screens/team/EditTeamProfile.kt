@@ -57,7 +57,7 @@ fun EditTeamProfile(
 
     LaunchedEffect(updateTeamSuccess) {
         if (updateTeamSuccess) {
-            NotificationHelper.showNotification(context, R.string.team_edit_profile_success)
+            NotificationHelper.showNotification(context, R.string.team_edit_profile_success, true)
             teamViewModel.resetUpdateTeamSuccess()
             navController.popBackStack()
         }
@@ -91,7 +91,7 @@ fun EditTeamProfile(
             style = TaskTrackrTheme.typography.subHeader
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         Box(
             modifier = Modifier
@@ -138,7 +138,7 @@ fun EditTeamProfile(
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         CustomButton(
             text = stringResource(R.string.upload_team_logo),
@@ -172,7 +172,9 @@ fun EditTeamProfile(
         CustomButton(
             text = stringResource(R.string.confirm_changes),
             enabled = formValid,
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier
+                .width(110.dp)
+                .height(60.dp),
             onClick = {
                 teamViewModel.updateTeam(
                     teamId = teamId,

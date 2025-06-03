@@ -50,7 +50,7 @@ fun EditUserProfile(
 
     LaunchedEffect(updateProfileSuccess) {
         if (updateProfileSuccess) {
-            NotificationHelper.showNotification(context, R.string.user_edit_profile_success)
+            NotificationHelper.showNotification(context, R.string.user_edit_profile_success, true)
             viewModel.resetUpdateProfileSuccess()
             navController.popBackStack()
         }
@@ -195,7 +195,6 @@ fun EditUserProfile(
                     password = newPassword.takeIf { it.isNotBlank() },
                     avatarUri = avatarUri
                 )
-                navController.popBackStack()
             }
         )
     }

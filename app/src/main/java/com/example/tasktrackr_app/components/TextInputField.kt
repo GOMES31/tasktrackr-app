@@ -53,7 +53,7 @@ fun TextInputField(
                 Text(
                     text = placeholder,
                     style = TaskTrackrTheme.typography.placeholder,
-                    color = TaskTrackrTheme.colorScheme.text.copy(alpha = 0.5f)
+                    color = TaskTrackrTheme.colorScheme.text
                 )
             }
 
@@ -61,7 +61,7 @@ fun TextInputField(
                 value = value,
                 onValueChange = onValueChange,
                 singleLine = true,
-                textStyle = TaskTrackrTheme.typography.body,
+                textStyle = TaskTrackrTheme.typography.body.copy(color = TaskTrackrTheme.colorScheme.text),
                 visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
                 modifier = Modifier.fillMaxWidth()
             )

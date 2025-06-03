@@ -25,6 +25,7 @@ fun SideMenu(
     navController: NavController,
     onDismiss: () -> Unit = {},
     onLanguageSelected: (Locale) -> Unit = {},
+    onSignOut: () -> Unit = {}
 ) {
     if (isVisible) {
         Box(modifier = modifier.fillMaxSize()) {
@@ -113,6 +114,7 @@ fun SideMenu(
                                 navController.navigate("signin") {
                                     popUpTo("signin") { inclusive = true }
                                 }
+                                onSignOut()
                                 onDismiss()
                             }
                             .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -222,3 +224,4 @@ private fun MenuItemRow(
         )
     }
 }
+

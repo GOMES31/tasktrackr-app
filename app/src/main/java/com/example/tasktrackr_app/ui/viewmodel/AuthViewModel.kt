@@ -67,7 +67,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 val response: Response<ApiResponse<AuthData>> = authApi.signIn(SignInRequest(email, password))
-                handleResponse(response, isSignUp = false)
+                handleResponse(response, false)
             } catch (e: Exception) {
                 _authenticationErrorCode.value = -1
             }
@@ -93,6 +93,32 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             _authenticationErrorCode.value = response.code()
         }
+    }
+
+    fun signOut(onSignOutComplete: (() -> Unit)? = null) {
+        viewModelScope.launch {
+            try {
+                val response = authApi.signOut()
+                if (response.isSuccessful) {
+                    clearData()
+                    onSignOutComplete?.invoke()
+                } else {
+                    clearData()
+                    onSignOutComplete?.invoke()
+                }
+            } catch (e: Exception) {
+                clearData()
+                onSignOutComplete?.invoke()
+            }
+        }
+    }
+
+    private fun clearData() {
+        tokenRepository.clearTokens()
+        _userData.value = null
+        _signInSuccess.value = false
+        _signUpSuccess.value = false
+        _authenticationErrorCode.value = null
     }
 
     fun resetSignUpSuccess() {

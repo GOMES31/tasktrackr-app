@@ -45,7 +45,7 @@ fun TeamMembers(
 
     LaunchedEffect(memberRemoved) {
         if (memberRemoved) {
-            NotificationHelper.showNotification(context, R.string.team_member_removed_success)
+            NotificationHelper.showNotification(context, R.string.team_member_removed_success, true)
             teamViewModel.resetMemberRemoved()
         }
     }
@@ -81,9 +81,14 @@ fun TeamMembers(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(teamData?.members ?: emptyList()) { member ->
+                        val adminMember = teamData?.members?.find { it.role == "ADMIN" }
+
+                        val isCurrentMemberAdmin = member.id == adminMember?.id
+
                         TeamMemberCard(
                             member = member,
                             isAdmin = isAdmin,
+                            showActions = !isCurrentMemberAdmin && isAdmin,
                             onEditClick = {
                                 navController.navigate("edit-team-member/${teamId}/${member.id}")
                             },
