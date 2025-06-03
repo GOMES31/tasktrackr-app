@@ -25,6 +25,7 @@ import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import com.example.tasktrackr_app.utils.LocalImageStorage
+import com.example.tasktrackr_app.utils.NotificationHelper
 import java.util.Locale
 
 @Composable
@@ -35,14 +36,24 @@ fun EditUserProfile(
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     val userData by viewModel.userData.collectAsState()
+    val updateProfileSuccess by viewModel.updateProfileSuccess.collectAsState()
     var name by remember { mutableStateOf(userData?.name.orEmpty()) }
     var newPassword by remember { mutableStateOf("") }
     var confirmNewPassword by remember { mutableStateOf("") }
     var avatarUri by remember { mutableStateOf<Uri?>(null) }
     var isSideMenuVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(userData) {
         name = userData?.name.orEmpty()
+    }
+
+    LaunchedEffect(updateProfileSuccess) {
+        if (updateProfileSuccess) {
+            NotificationHelper.showNotification(context, R.string.user_edit_profile_success)
+            viewModel.resetUpdateProfileSuccess()
+            navController.popBackStack()
+        }
     }
 
     val pickImage = rememberLauncherForActivityResult(

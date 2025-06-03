@@ -31,6 +31,8 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     val userTeams = _userTeams.asStateFlow()
     private val _isLoadingTeams = MutableStateFlow(false)
     val isLoadingTeams = _isLoadingTeams.asStateFlow()
+    private val _updateProfileSuccess = MutableStateFlow(false)
+    val updateProfileSuccess = _updateProfileSuccess.asStateFlow()
 
     fun loadProfile(data: AuthData) {
         _userData.value = data
@@ -71,6 +73,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                                 avatarUrl = it
                             )
                         }
+                        _updateProfileSuccess.value = true
                     }
                 } else {
                     _errorCode.value = response.code()
@@ -80,6 +83,10 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 _errorCode.value = -1
             }
         }
+    }
+
+    fun resetUpdateProfileSuccess() {
+        _updateProfileSuccess.value = false
     }
 
     fun fetchUserTeams() {

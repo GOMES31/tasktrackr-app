@@ -39,7 +39,17 @@
     <string name="upload_team_logo">Upload Team Logo</string>
     <string name="team_profile">Team Profile</string>
     <string name="edit_team">Edit\nTeam</string>
-    <string name="add_members">Add\nMembers</string>
-    <string name="manage_members">Manage\nMembers</string>
+    <string name="add_member">Add\nMember</string>
+    <string name="team_members">Team Members</string>
     <string name="recent_projects">Recent Projects</string>
+    <string name="team_no_recent_projects">This team has no recent projects.</string>
+    <string name="user_no_recent_tasks">You don\'t have any recent tasks.</string>
+    <string name="view_team_members">View Members</string>
+    <string name="team_member_added_success">Team member added successfully!</string>
+    <string name="team_member_added_error">Error adding member to the team!</string>
+    <string name="create_team_success">Team created successfully!</string>
+    <string name="team_edit_profile_success">Team profile updated successfully!</string>
+    <string name="user_edit_profile_success">Profile updated successfully!</string>
+    <string name="signup_success">Account created successfully!</string>
+    <string name="team_member_removed_success">Team member removed successfully!</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.tasktrackr_app.ui.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tasktrackr_app.data.local.TokenRepository
@@ -18,13 +19,11 @@ import retrofit2.Response
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Retrofit auth endpoints
     private val authApi: AuthApi = ApiClient.authApi(application)
 
-    // stores access & refresh tokens
+    // access & refresh tokens
     private val tokenRepository: TokenRepository =  TokenRepository(application)
 
-    // holds current user data
     private val _userData = MutableStateFlow<AuthData?>(null)
     val userData: StateFlow<AuthData?> = _userData.asStateFlow()
 
@@ -34,20 +33,28 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     // true after success sign up
     private val _signUpSuccess = MutableStateFlow(false)
-    val signUpSuccess: StateFlow<Boolean> = _signUpSuccess.asStateFlow()
+    val signUpSuccess = _signUpSuccess.asStateFlow()
 
     private val _authenticationErrorCode = MutableStateFlow<Int?>(null)
     val errorCode: StateFlow<Int?> = _authenticationErrorCode.asStateFlow()
 
+
     // Register a new user
     fun signUp(name: String, email: String, password: String) {
-        _authenticationErrorCode.value = null
-
         viewModelScope.launch {
             try {
-                val response: Response<ApiResponse<AuthData>> = authApi.signUp(SignUpRequest(name, email, password))
-                handleResponse(response, isSignUp = true)
+                val response = authApi.signUp(SignUpRequest(name, email, password))
+
+                if (response.isSuccessful) {
+                    response.body()?.data?.let { auth ->
+                        _userData.value = auth
+                        _signUpSuccess.value = true
+                    }
+                } else {
+                    _authenticationErrorCode.value = response.code()
+                }
             } catch (e: Exception) {
+                Log.e("AuthViewModel", "Error during sign up", e)
                 _authenticationErrorCode.value = -1
             }
         }
@@ -86,5 +93,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             _authenticationErrorCode.value = response.code()
         }
+    }
+
+    fun resetSignUpSuccess() {
+        _signUpSuccess.value = false
     }
 }

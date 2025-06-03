@@ -40,7 +40,17 @@
     <string name="upload_team_logo">Carregar Logo da Equipa</string>
     <string name="team_profile">Perfil da Equipa</string>
     <string name="edit_team">Editar\nEquipa</string>
-    <string name="add_members">Adicionar\nMembros</string>
-    <string name="manage_members">Gerir\nMembros</string>
+    <string name="add_member">Adicionar\nMembro\n</string>
+    <string name="team_members">Membros da Equipa</string>
     <string name="recent_projects">Projetos Recentes</string>
+    <string name="team_no_recent_projects">Esta equipa não tem nenhum projeto recente.</string>
+    <string name="user_no_recent_tasks">Não tens nenhuma tarefa recente.</string>
+    <string name="view_team_members">Ver Membros</string>
+    <string name="team_member_added_success">Membro adicionado com sucesso!</string>
+    <string name="team_member_added_error">Erro ao adicionar o membro à equipa!</string>
+    <string name="create_team_success">Equipa criada com sucesso!</string>
+    <string name="team_edit_profile_success">Perfil da equipa atualizado com sucesso!</string>
+    <string name="user_edit_profile_success">Perfil atualizado com sucesso!</string>
+    <string name="signup_success">Conta criada com sucesso!</string>
+    <string name="team_member_removed_success">Membro da equipa removido com sucesso!</string>
 </resources>

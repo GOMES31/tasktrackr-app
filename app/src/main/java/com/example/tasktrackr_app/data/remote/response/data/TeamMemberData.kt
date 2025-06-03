@@ -10,5 +10,8 @@ data class TeamMemberData(
 
     val email: String,
 
+    @SerializedName("avatar_url")
+    val avatarUrl: String?,
+
     val role: String
 )

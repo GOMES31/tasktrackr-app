@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -22,6 +23,7 @@ import com.example.tasktrackr_app.components.ToggleTheme
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import com.example.tasktrackr_app.utils.NotificationHelper
 import java.net.HttpURLConnection
 import java.util.Locale
 
@@ -37,6 +39,7 @@ fun SignUp(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     val isFormValid = (
             name.isNotBlank() &&
@@ -52,6 +55,8 @@ fun SignUp(
 
     LaunchedEffect(signUpSuccess) {
         if (signUpSuccess && userData != null) {
+            NotificationHelper.showNotification(context, R.string.signup_success)
+            authViewModel.resetSignUpSuccess()
             userViewModel.loadProfile(userData!!)
             navController.navigate("user-profile") {
                 popUpTo("signup") { inclusive = true }

@@ -20,7 +20,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
-import com.example.tasktrackr_app.data.remote.response.data.TeamMemberData
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import com.example.tasktrackr_app.utils.LocalImageStorage
@@ -141,7 +140,7 @@ fun TeamProfile(
                         )
 
                         CustomButton(
-                            text = stringResource(R.string.add_members),
+                            text = stringResource(R.string.add_member),
                             modifier = Modifier
                                 .width(110.dp)
                                 .height(60.dp),
@@ -150,12 +149,12 @@ fun TeamProfile(
                         )
 
                         CustomButton(
-                            text = stringResource(R.string.manage_members),
+                            text = stringResource(R.string.view_team_members),
                             modifier = Modifier
                                 .width(110.dp)
                                 .height(60.dp),
                             enabled = true,
-                            onClick = { navController.navigate("manage-team-members/$teamId") }
+                            onClick = { navController.navigate("team-members/$teamId") }
                         )
                     }
                 }
@@ -178,10 +177,20 @@ fun TeamProfile(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Placeholder for projects
-                repeat(3) {
-                    ActivityCard()
-                    Spacer(modifier = Modifier.height(12.dp))
+                if (teamData?.projects.isNullOrEmpty()) {
+                    Text(
+                        text = stringResource(R.string.team_no_recent_projects),
+                        color = TaskTrackrTheme.colorScheme.text,
+                        style = TaskTrackrTheme.typography.body,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                } else {
+                    // Placeholder for projects
+                    repeat(3) {
+                        ActivityCard()
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
         }

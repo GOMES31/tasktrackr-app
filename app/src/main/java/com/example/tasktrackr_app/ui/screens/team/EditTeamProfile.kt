@@ -1,5 +1,9 @@
 package com.example.tasktrackr_app.ui.screens.team
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -8,6 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -17,34 +24,41 @@ import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
-import java.util.Locale
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import com.example.tasktrackr_app.utils.LocalImageStorage
 import com.example.tasktrackr_app.utils.NotificationHelper
+import java.util.Locale
 
 @Composable
-fun CreateTeam(
+fun EditTeamProfile(
     modifier: Modifier = Modifier,
-    teamViewModel: TeamViewModel,
     navController: NavController,
-    onLanguageSelected: (Locale) -> Unit = {}
+    teamViewModel: TeamViewModel,
+    onLanguageSelected: (Locale) -> Unit = {},
+    teamId: String
 ) {
-    var teamName by remember { mutableStateOf("") }
+    val teamData by teamViewModel.selectedTeam.collectAsState()
+    val updateTeamSuccess by teamViewModel.updateTeamSuccess.collectAsState()
+    var name by remember { mutableStateOf("") }
     var department by remember { mutableStateOf("") }
-    var isSideMenuVisible by remember { mutableStateOf(false) }
     var logoUri by remember { mutableStateOf<Uri?>(null) }
+    var isSideMenuVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val createTeamSuccess by teamViewModel.createTeamSuccess.collectAsState()
 
-    LaunchedEffect(createTeamSuccess) {
-        if (createTeamSuccess) {
-            NotificationHelper.showNotification(context, R.string.create_team_success)
-            teamViewModel.resetCreateTeamSuccess()
+    LaunchedEffect(teamId) {
+        teamViewModel.loadTeam(teamId)
+    }
+
+    LaunchedEffect(teamData) {
+        teamData?.let {
+            name = it.name
+            department = it.department
+        }
+    }
+
+    LaunchedEffect(updateTeamSuccess) {
+        if (updateTeamSuccess) {
+            NotificationHelper.showNotification(context, R.string.team_edit_profile_success)
+            teamViewModel.resetUpdateTeamSuccess()
             navController.popBackStack()
         }
     }
@@ -53,7 +67,7 @@ fun CreateTeam(
         ActivityResultContracts.GetContent()
     ) { logoUri = it }
 
-    val formValid = teamName.isNotBlank() && department.isNotBlank()
+    val formValid = name.isNotBlank() && department.isNotBlank()
 
     Column(
         modifier = modifier
@@ -65,7 +79,7 @@ fun CreateTeam(
         TopBar(onMenuClick = { isSideMenuVisible = true })
 
         Text(
-            text = stringResource(R.string.create_team),
+            text = stringResource(R.string.edit_team),
             color = TaskTrackrTheme.colorScheme.primary,
             style = TaskTrackrTheme.typography.header,
             modifier = Modifier.padding(vertical = 24.dp)
@@ -95,6 +109,24 @@ fun CreateTeam(
                         contentScale = ContentScale.Crop,
                     )
                 }
+                !teamData?.imageUrl.isNullOrEmpty() -> {
+                    val imageFile = LocalImageStorage.getImageFile(context, teamData!!.imageUrl)
+                    if (imageFile != null) {
+                        AsyncImage(
+                            model = imageFile,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop,
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.default_profile),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
                 else -> {
                     Image(
                         painter = painterResource(R.drawable.default_profile),
@@ -115,16 +147,15 @@ fun CreateTeam(
             onClick = { pickImage.launch("image/*") }
         )
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(24.dp))
 
         TextInputField(
             modifier = Modifier
                 .width(320.dp)
                 .padding(vertical = 8.dp),
             label = stringResource(R.string.team_name),
-            value = teamName,
-            onValueChange = { teamName = it },
-            placeholder = stringResource(R.string.team_name_placeholder)
+            value = name,
+            onValueChange = { name = it }
         )
 
         TextInputField(
@@ -133,18 +164,23 @@ fun CreateTeam(
                 .padding(vertical = 8.dp),
             label = stringResource(R.string.department),
             value = department,
-            onValueChange = { department = it },
-            placeholder = stringResource(R.string.department_placeholder)
+            onValueChange = { department = it }
         )
 
         Spacer(Modifier.height(32.dp))
 
         CustomButton(
-            text = stringResource(R.string.create_team),
+            text = stringResource(R.string.confirm_changes),
             enabled = formValid,
             modifier = Modifier.width(200.dp),
             onClick = {
-                teamViewModel.createTeam(teamName, department, logoUri)
+                teamViewModel.updateTeam(
+                    teamId = teamId,
+                    name = name,
+                    department = department,
+                    logoUri = logoUri
+                )
+                navController.popBackStack()
             }
         )
     }
