@@ -13,12 +13,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tasktrackr_app.ui.screens.authentication.SignIn
 import com.example.tasktrackr_app.ui.screens.authentication.SignUp
 import com.example.tasktrackr_app.ui.screens.introduction.IntroSlider
-import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
-import com.example.tasktrackr_app.ui.screens.user.UserProfile
+import com.example.tasktrackr_app.ui.screens.profile.EditUserProfile
+import com.example.tasktrackr_app.ui.screens.profile.UserProfile
+import com.example.tasktrackr_app.ui.screens.tasks.MyTasks
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+
 import java.util.Locale
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavType
@@ -212,6 +214,12 @@ fun TaskTrackrApp() {
 //                            }
 //                        }
 //                    )
+                    composable("my-tasks") {
+                        MyTasks(
+                            navController = navController,
+                            onLanguageSelected = { newLocale -> currentLocale = newLocale }
+                        )
+                    }
                 }
             }
         }

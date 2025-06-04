@@ -81,7 +81,10 @@ fun SideMenu(
                     MenuItemRow(
                         text = stringResource(R.string.my_tasks),
                         iconRes = R.drawable.clipboard,
-                        onClick = { onDismiss() }
+                        onClick = {
+                            navController.navigate("my-tasks")
+                            onDismiss()
+                        }
                     )
                     DividerWithSpecificPadding()
 
