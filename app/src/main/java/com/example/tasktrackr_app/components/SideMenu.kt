@@ -67,7 +67,10 @@ fun SideMenu(
                             painter = painterResource(id = R.drawable.default_avatar_menu),
                             contentDescription = "Profile Icon",
                             modifier = Modifier.size(40.dp)
-                                .clickable { navController.navigate("user-profile") }
+                                .clickable { 
+                                    navController.navigate("user-profile")
+                                    onDismiss()
+                                }
                         )
                     }
 
