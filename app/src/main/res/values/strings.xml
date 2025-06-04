@@ -30,7 +30,29 @@
     <string name="upload_avatar">Upload Avatar</string>
     <string name="new_password">New Password:</string>
     <string name="confirm_new_password">Confirm New Password:</string>
-
+    <string name="create_team">Create Team</string>
+    <string name="team_name">Team Name:</string>
+    <string name="department">Department:</string>
+    <string name="team_name_placeholder">Insert team name here</string>
+    <string name="department_placeholder">Insert department here</string>
+    <string name="no_teams_message">You are not in a team.\nYou can either create one or be invited to one.</string>
+    <string name="upload_team_logo">Upload Team Logo</string>
+    <string name="team_profile">Team Profile</string>
+    <string name="edit_team">Edit Team</string>
+    <string name="add_member">Add Member</string>
+    <string name="team_members">Team Members</string>
+    <string name="recent_projects">Recent Projects</string>
+    <string name="team_no_recent_projects">This team has no recent projects.</string>
+    <string name="user_no_recent_tasks">You don\'t have any recent tasks.</string>
+    <string name="view_team_members">View Members</string>
+    <string name="team_member_added_success">Team member added successfully!</string>
+    <string name="team_member_added_error">Error adding member to the team!</string>
+    <string name="create_team_success">Team created successfully!</string>
+    <string name="team_edit_profile_success">Team profile updated successfully!</string>
+    <string name="user_edit_profile_success">Profile updated successfully!</string>
+    <string name="signup_success">Account created successfully!</string>
+    <string name="team_member_removed_success">Team member removed successfully!</string>
+    <string name="team_role">Team Role:</string>
     <string name="add_task_title">Add Task</string>
     <string name="edit_task_title">Edit Task</string>
     <string name="task_title_label">Title:</string>
@@ -56,7 +78,6 @@
     <string name="observation_input_placeholder">Enter observation...</string>
     <string name="save_task_button">Save Task</string>
     <string name="update_task_button">Update Task</string>
-
     <string name="add_task_button">Add Task</string>
     <string name="tab_today">Today</string>
     <string name="tab_pending">Pending</string>

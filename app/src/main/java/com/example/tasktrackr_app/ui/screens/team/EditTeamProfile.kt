@@ -1,7 +1,6 @@
-package com.example.tasktrackr_app.ui.screens.profile
+package com.example.tasktrackr_app.ui.screens.team
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -9,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,38 +20,54 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
-import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import com.example.tasktrackr_app.utils.LocalImageStorage
+import com.example.tasktrackr_app.utils.NotificationHelper
 import java.util.Locale
 
 @Composable
-fun EditUserProfile(
+fun EditTeamProfile(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: UserViewModel,
-    onLanguageSelected: (Locale) -> Unit = {}
+    teamViewModel: TeamViewModel,
+    onLanguageSelected: (Locale) -> Unit = {},
+    teamId: String
 ) {
-    val userData by viewModel.userData.collectAsState()
-    var name by remember { mutableStateOf(userData?.name.orEmpty()) }
-    var newPassword by remember { mutableStateOf("") }
-    var confirmNewPassword by remember { mutableStateOf("") }
-    var avatarUri by remember { mutableStateOf<Uri?>(null) }
+    val teamData by teamViewModel.selectedTeam.collectAsState()
+    val updateTeamSuccess by teamViewModel.updateTeamSuccess.collectAsState()
+    var name by remember { mutableStateOf("") }
+    var department by remember { mutableStateOf("") }
+    var logoUri by remember { mutableStateOf<Uri?>(null) }
     var isSideMenuVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    LaunchedEffect(userData) {
-        name = userData?.name.orEmpty()
+    LaunchedEffect(teamId) {
+        teamViewModel.loadTeam(teamId)
+    }
+
+    LaunchedEffect(teamData) {
+        teamData?.let {
+            name = it.name
+            department = it.department
+        }
+    }
+
+    LaunchedEffect(updateTeamSuccess) {
+        if (updateTeamSuccess) {
+            NotificationHelper.showNotification(context, R.string.team_edit_profile_success, true)
+            teamViewModel.resetUpdateTeamSuccess()
+            navController.popBackStack()
+        }
     }
 
     val pickImage = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
-    ) { avatarUri = it }
+    ) { logoUri = it }
 
-    val formValid = name.isNotBlank() &&
-            (newPassword.isEmpty() || newPassword == confirmNewPassword)
+    val formValid = name.isNotBlank() && department.isNotBlank()
 
     Column(
         modifier = modifier
@@ -65,19 +79,19 @@ fun EditUserProfile(
         TopBar(onMenuClick = { isSideMenuVisible = true })
 
         Text(
-            text = stringResource(R.string.edit_profile),
+            text = stringResource(R.string.edit_team),
             color = TaskTrackrTheme.colorScheme.primary,
             style = TaskTrackrTheme.typography.header,
             modifier = Modifier.padding(vertical = 24.dp)
         )
 
         Text(
-            text = stringResource(R.string.upload_avatar),
+            text = stringResource(R.string.upload_team_logo),
             color = TaskTrackrTheme.colorScheme.secondary,
             style = TaskTrackrTheme.typography.subHeader
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         Box(
             modifier = Modifier
@@ -87,16 +101,16 @@ fun EditUserProfile(
             contentAlignment = Alignment.Center
         ) {
             when {
-                avatarUri != null -> {
+                logoUri != null -> {
                     AsyncImage(
-                        model = avatarUri,
+                        model = logoUri,
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
                     )
                 }
-                !userData?.avatarUrl.isNullOrEmpty() -> {
-                    val imageFile = LocalImageStorage.getImageFile(LocalContext.current, userData!!.avatarUrl)
+                !teamData?.imageUrl.isNullOrEmpty() -> {
+                    val imageFile = LocalImageStorage.getImageFile(context, teamData!!.imageUrl)
                     if (imageFile != null) {
                         AsyncImage(
                             model = imageFile,
@@ -124,10 +138,10 @@ fun EditUserProfile(
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(12.dp))
 
         CustomButton(
-            text = stringResource(R.string.upload_avatar),
+            text = stringResource(R.string.upload_team_logo),
             modifier = Modifier.width(200.dp),
             enabled = true,
             onClick = { pickImage.launch("image/*") }
@@ -139,7 +153,7 @@ fun EditUserProfile(
             modifier = Modifier
                 .width(320.dp)
                 .padding(vertical = 8.dp),
-            label = stringResource(R.string.name),
+            label = stringResource(R.string.team_name),
             value = name,
             onValueChange = { name = it }
         )
@@ -148,44 +162,25 @@ fun EditUserProfile(
             modifier = Modifier
                 .width(320.dp)
                 .padding(vertical = 8.dp),
-            label = stringResource(R.string.new_password),
-            placeholder = stringResource(R.string.password_input_placeholder),
-            value = newPassword,
-            onValueChange = { newPassword = it },
-            isPassword = true
+            label = stringResource(R.string.department),
+            value = department,
+            onValueChange = { department = it }
         )
-
-        TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.confirm_new_password),
-            placeholder = stringResource(R.string.password_input_placeholder),
-            value = confirmNewPassword,
-            onValueChange = { confirmNewPassword = it },
-            isPassword = true
-        )
-
-        if (newPassword.isNotEmpty() && newPassword != confirmNewPassword) {
-            ErrorMessage(
-                modifier = Modifier
-                    .width(320.dp)
-                    .padding(start = 16.dp, top = 4.dp),
-                text = stringResource(R.string.error_password_mismatch)
-            )
-        }
 
         Spacer(Modifier.height(32.dp))
 
         CustomButton(
             text = stringResource(R.string.confirm_changes),
             enabled = formValid,
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier
+                .width(110.dp)
+                .height(60.dp),
             onClick = {
-                viewModel.updateProfile(
+                teamViewModel.updateTeam(
+                    teamId = teamId,
                     name = name,
-                    password = newPassword.takeIf { it.isNotBlank() },
-                    avatarUri = avatarUri
+                    department = department,
+                    logoUri = logoUri
                 )
                 navController.popBackStack()
             }

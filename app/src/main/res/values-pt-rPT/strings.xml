@@ -31,7 +31,29 @@
     <string name="upload_avatar">Carregar Foto</string>
     <string name="new_password">Nova Palavra-passe:</string>
     <string name="confirm_new_password">Confirmar Nova Palavra-passe:</string>
-
+    <string name="create_team">Criar Equipa</string>
+    <string name="team_name">Nome da Equipa:</string>
+    <string name="department">Departamento:</string>
+    <string name="team_name_placeholder">Insira o nome da equipa aqui</string>
+    <string name="department_placeholder">Insira o departamento aqui</string>
+    <string name="no_teams_message">Não estás em nenhuma equipa.\nPodes criar uma ou ser convidado para uma.</string>
+    <string name="upload_team_logo">Carregar Logo da Equipa</string>
+    <string name="team_profile">Perfil da Equipa</string>
+    <string name="edit_team">Editar Equipa</string>
+    <string name="add_member">Adicionar Membro</string>
+    <string name="team_members">Membros da Equipa</string>
+    <string name="recent_projects">Projetos Recentes</string>
+    <string name="team_no_recent_projects">Esta equipa não tem nenhum projeto recente.</string>
+    <string name="user_no_recent_tasks">Não tens nenhuma tarefa recente.</string>
+    <string name="view_team_members">Ver Membros</string>
+    <string name="team_member_added_success">Membro adicionado com sucesso!</string>
+    <string name="team_member_added_error">Erro ao adicionar o membro à equipa!</string>
+    <string name="create_team_success">Equipa criada com sucesso!</string>
+    <string name="team_edit_profile_success">Perfil da equipa atualizado com sucesso!</string>
+    <string name="user_edit_profile_success">Perfil atualizado com sucesso!</string>
+    <string name="signup_success">Conta criada com sucesso!</string>
+    <string name="team_member_removed_success">Membro da equipa removido com sucesso!</string>
+    <string name="team_role">Cargo:</string>
     <string name="add_task_title">Adicionar Tarefa</string>
     <string name="edit_task_title">Editar Tarefa</string>
     <string name="task_title_label">Título:</string>
@@ -57,7 +79,6 @@
     <string name="observation_input_placeholder">Insira observação...</string>
     <string name="save_task_button">Guardar Tarefa</string>
     <string name="update_task_button">Atualizar Tarefa</string>
-
     <string name="add_task_button">Adicionar Tarefa</string>
     <string name="tab_today">Hoje</string>
     <string name="tab_pending">Pendente</string>

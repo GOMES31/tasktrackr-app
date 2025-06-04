@@ -16,4 +16,8 @@ interface AuthApi {
     @POST("auth/signin")
     suspend fun signIn(@Body body: SignInRequest):
             Response<ApiResponse<AuthData>>
+
+    @POST("auth/signout")
+    suspend fun signOut():
+            Response<ApiResponse<Void>>
 }

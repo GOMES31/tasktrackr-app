@@ -2,10 +2,9 @@ package com.example.tasktrackr_app.data.remote.request
 
 import com.google.gson.annotations.SerializedName
 
-data class UpdateUserProfileRequest(
+data class UpdateTeamRequest(
     val name: String?,
-    val password: String?,
-
-    @SerializedName("avatar_url")
-    val avatarUrl: String?
+    val department: String?,
+    @SerializedName("image_url")
+    val imageUrl: String?
 )

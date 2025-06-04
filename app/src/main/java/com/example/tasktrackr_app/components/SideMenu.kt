@@ -25,6 +25,7 @@ fun SideMenu(
     navController: NavController,
     onDismiss: () -> Unit = {},
     onLanguageSelected: (Locale) -> Unit = {},
+    onSignOut: () -> Unit = {}
 ) {
     if (isVisible) {
         Box(modifier = modifier.fillMaxSize()) {
@@ -66,6 +67,10 @@ fun SideMenu(
                             painter = painterResource(id = R.drawable.default_avatar_menu),
                             contentDescription = "Profile Icon",
                             modifier = Modifier.size(40.dp)
+                                .clickable { 
+                                    navController.navigate("user-profile")
+                                    onDismiss()
+                                }
                         )
                     }
 
@@ -93,7 +98,10 @@ fun SideMenu(
                     MenuItemRow(
                         text = stringResource(R.string.teams),
                         iconRes = R.drawable.calendar,
-                        onClick = { onDismiss() }
+                        onClick = {
+                            onDismiss()
+                            navController.navigate("user-teams")
+                        }
                     )
                     DividerWithSpecificPadding()
 
@@ -115,6 +123,7 @@ fun SideMenu(
                                 navController.navigate("signin") {
                                     popUpTo("signin") { inclusive = true }
                                 }
+                                onSignOut()
                                 onDismiss()
                             }
                             .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -224,3 +233,4 @@ private fun MenuItemRow(
         )
     }
 }
+
