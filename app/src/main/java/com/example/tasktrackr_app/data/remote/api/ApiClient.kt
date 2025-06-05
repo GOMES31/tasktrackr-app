@@ -56,4 +56,7 @@ object ApiClient {
 
     fun observationApi(context: Context): ObservationApi =
         retrofit(context).create(ObservationApi::class.java)
+
+    fun projectApi(context: Context): ProjectApi =
+        retrofit(context).create(ProjectApi::class.java)
 }
