@@ -13,14 +13,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tasktrackr_app.ui.screens.authentication.SignIn
 import com.example.tasktrackr_app.ui.screens.authentication.SignUp
 import com.example.tasktrackr_app.ui.screens.introduction.IntroSlider
-import com.example.tasktrackr_app.ui.screens.profile.EditUserProfile
-import com.example.tasktrackr_app.ui.screens.profile.UserProfile
+import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
+import com.example.tasktrackr_app.ui.screens.user.UserProfile
 import com.example.tasktrackr_app.ui.screens.tasks.MyTasks
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
-
 import java.util.Locale
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavType
@@ -38,7 +37,6 @@ import androidx.compose.ui.Modifier
 import com.example.tasktrackr_app.components.CustomToast
 import com.example.tasktrackr_app.utils.NotificationHelper
 import androidx.compose.ui.Alignment
-import com.example.tasktrackr_app.components.SideMenu
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -110,7 +108,7 @@ fun TaskTrackrApp() {
                             )
                         }
 
-                        composable("user-teams"){
+                        composable("user-teams") {
                             UserTeams(
                                 navController = navController,
                                 userViewModel = userViewModel,
@@ -186,6 +184,12 @@ fun TaskTrackrApp() {
                             }
                         }
 
+                        composable("my-tasks") {
+                            MyTasks(
+                                navController = navController,
+                                onLanguageSelected = { newLocale -> currentLocale = newLocale }
+                            )
+                        }
                     }
 
                     Box(
@@ -200,26 +204,23 @@ fun TaskTrackrApp() {
                         )
                     }
 
-//                    SideMenu(
-//                        isVisible = isSideMenuVisible,
-//                        navController = navController,
-//                        onDismiss = { isSideMenuVisible = false },
-//                        onLanguageSelected = onLanguageSelected,
-//                        onSignOut = {
-//                            authViewModel.signOut {
-//                                clearAppData()
-//                                navController.navigate("signin") {
-//                                    popUpTo(0) { inclusive = true }
-//                                }
-//                            }
-//                        }
-//                    )
-                    composable("my-tasks") {
-                        MyTasks(
-                            navController = navController,
-                            onLanguageSelected = { newLocale -> currentLocale = newLocale }
-                        )
-                    }
+                    // Uncomment and implement this if SideMenu becomes active
+                    /*
+                    SideMenu(
+                        isVisible = isSideMenuVisible,
+                        navController = navController,
+                        onDismiss = { isSideMenuVisible = false },
+                        onLanguageSelected = onLanguageSelected,
+                        onSignOut = {
+                            authViewModel.signOut {
+                                clearAppData()
+                                navController.navigate("signin") {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        }
+                    )
+                    */
                 }
             }
         }
