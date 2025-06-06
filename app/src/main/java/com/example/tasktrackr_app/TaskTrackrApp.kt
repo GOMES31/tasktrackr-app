@@ -13,8 +13,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.tasktrackr_app.ui.screens.authentication.SignIn
 import com.example.tasktrackr_app.ui.screens.authentication.SignUp
 import com.example.tasktrackr_app.ui.screens.introduction.IntroSlider
-import com.example.tasktrackr_app.ui.screens.profile.EditUserProfile
-import com.example.tasktrackr_app.ui.screens.profile.UserProfile
 import com.example.tasktrackr_app.ui.screens.tasks.MyTasks
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
@@ -39,10 +37,13 @@ import com.example.tasktrackr_app.components.CustomToast
 import com.example.tasktrackr_app.utils.NotificationHelper
 import androidx.compose.ui.Alignment
 import com.example.tasktrackr_app.components.SideMenu
+import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
+import com.example.tasktrackr_app.ui.screens.user.UserProfile
 
 @SuppressLint("ContextCastToActivity")
 @Composable
 fun TaskTrackrApp() {
+    var isSideMenuVisible by rememberSaveable { mutableStateOf(false) }
     var currentLocale by rememberSaveable { mutableStateOf(Locale.getDefault()) }
     val isDarkTheme by rememberSaveable { mutableStateOf(false) }
     val navController = rememberNavController()
@@ -68,6 +69,21 @@ fun TaskTrackrApp() {
                 LocalActivityResultRegistryOwner provides activity
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
+                    SideMenu(
+                        isVisible = isSideMenuVisible,
+                        navController = navController,
+                        onDismiss = { isSideMenuVisible = false },
+                        onLanguageSelected = { newLocale -> currentLocale = newLocale },
+                        onSignOut = {
+                            authViewModel.signOut {
+                                clearAppData()
+                                navController.navigate("signin") {
+                                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                }
+                                NotificationHelper.showNotification(activity, R.string.session_expired, false)
+                            }
+                        }
+                    )
                     NavHost(
                         navController = navController,
                         startDestination = "intro"
@@ -186,6 +202,13 @@ fun TaskTrackrApp() {
                             }
                         }
 
+                        composable("my-tasks") {
+                            MyTasks(
+                                navController = navController,
+                                onLanguageSelected = { newLocale -> currentLocale = newLocale }
+                            )
+                        }
+
                     }
 
                     Box(
@@ -197,27 +220,6 @@ fun TaskTrackrApp() {
                             isVisible = isToastVisible,
                             isSuccess = isToastSuccess,
                             onDismiss = { NotificationHelper.hideToast() }
-                        )
-                    }
-
-//                    SideMenu(
-//                        isVisible = isSideMenuVisible,
-//                        navController = navController,
-//                        onDismiss = { isSideMenuVisible = false },
-//                        onLanguageSelected = onLanguageSelected,
-//                        onSignOut = {
-//                            authViewModel.signOut {
-//                                clearAppData()
-//                                navController.navigate("signin") {
-//                                    popUpTo(0) { inclusive = true }
-//                                }
-//                            }
-//                        }
-//                    )
-                    composable("my-tasks") {
-                        MyTasks(
-                            navController = navController,
-                            onLanguageSelected = { newLocale -> currentLocale = newLocale }
                         )
                     }
                 }

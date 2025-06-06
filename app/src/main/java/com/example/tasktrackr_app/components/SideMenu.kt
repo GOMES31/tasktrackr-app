@@ -120,9 +120,6 @@ fun SideMenu(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                navController.navigate("signin") {
-                                    popUpTo("signin") { inclusive = true }
-                                }
                                 onSignOut()
                                 onDismiss()
                             }
@@ -165,6 +162,7 @@ fun SideMenu(
                                         .size(40.dp)
                                         .clickable {
                                             onLanguageSelected(Locale("pt", "PT"))
+                                            onDismiss()
                                         }
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -175,6 +173,7 @@ fun SideMenu(
                                         .size(40.dp)
                                         .clickable {
                                             onLanguageSelected(Locale("en", "US"))
+                                            onDismiss()
                                         }
                                 )
                             }
@@ -187,7 +186,12 @@ fun SideMenu(
                                 style = TaskTrackrTheme.typography.label
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            ToggleTheme()
+                            ToggleTheme(
+                                modifier = Modifier
+                                    .clickable {
+                                        onDismiss()
+                                    }
+                            )
                         }
                     }
                 }

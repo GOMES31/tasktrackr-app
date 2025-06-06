@@ -74,7 +74,8 @@ fun CreateTeam(
         Text(
             text = stringResource(R.string.upload_team_logo),
             color = TaskTrackrTheme.colorScheme.secondary,
-            style = TaskTrackrTheme.typography.subHeader
+            style = TaskTrackrTheme.typography.subHeader,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         Spacer(Modifier.height(8.dp))
