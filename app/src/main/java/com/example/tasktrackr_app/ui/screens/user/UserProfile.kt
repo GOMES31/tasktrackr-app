@@ -66,7 +66,6 @@ fun UserProfile(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Log.d("UserProfile", "Avatar URL from userData: ${userData?.avatarUrl}")
 
                 Box(
                     modifier = Modifier

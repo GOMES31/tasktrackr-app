@@ -36,9 +36,11 @@ fun TeamMembers(
     val teamData by teamViewModel.selectedTeam.collectAsState()
     val memberRemoved by teamViewModel.memberRemoved.collectAsState()
     val context = LocalContext.current
+    val userData by authViewModel.userData.collectAsState()
 
-    val isAdmin = teamData?.members?.any {
-        it.role == "ADMIN"
+    val currentUserEmail = userData?.email
+    val isCurrentUserAdmin = teamData?.members?.any {
+        it.email == currentUserEmail && it.role == "ADMIN"
     } ?: false
 
     LaunchedEffect(teamId) {
@@ -84,14 +86,12 @@ fun TeamMembers(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(teamData?.members ?: emptyList()) { member ->
-                        val adminMember = teamData?.members?.find { it.role == "ADMIN" }
-
-                        val isCurrentMemberAdmin = member.id == adminMember?.id
+                        val showActions = isCurrentUserAdmin && member.email != currentUserEmail && member.role != "ADMIN"
 
                         TeamMemberCard(
                             member = member,
-                            isAdmin = isAdmin,
-                            showActions = !isCurrentMemberAdmin && isAdmin,
+                            isAdmin = isCurrentUserAdmin,
+                            showActions = showActions,
                             onEditClick = {
                                 navController.navigate("edit-team-member/${teamId}/member/${member.id}")
                             },
