@@ -25,8 +25,9 @@ fun SideMenu(
     navController: NavController,
     onDismiss: () -> Unit = {},
     onLanguageSelected: (Locale) -> Unit = {},
-    onSignOut: () -> Unit = {}
+    onSignOut: () -> Unit,
 ) {
+
     if (isVisible) {
         Box(modifier = modifier.fillMaxSize()) {
             Box(
@@ -119,10 +120,6 @@ fun SideMenu(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                onSignOut()
-                                onDismiss()
-                            }
                             .padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -135,7 +132,12 @@ fun SideMenu(
                         Image(
                             painter = painterResource(id = R.drawable.sign_out),
                             contentDescription = "Sign Out",
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    android.util.Log.d("SideMenu", "Sign out icon clicked")
+                                    onSignOut()
+                                }
                         )
                     }
 
@@ -237,4 +239,3 @@ private fun MenuItemRow(
         )
     }
 }
-

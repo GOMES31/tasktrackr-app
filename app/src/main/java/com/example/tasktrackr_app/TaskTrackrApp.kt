@@ -39,6 +39,9 @@ import androidx.compose.ui.Alignment
 import com.example.tasktrackr_app.components.SideMenu
 import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
 import com.example.tasktrackr_app.ui.screens.user.UserProfile
+import androidx.compose.runtime.rememberCoroutineScope
+import com.example.tasktrackr_app.utils.SessionManager
+import kotlinx.coroutines.launch
 
 @SuppressLint("ContextCastToActivity")
 @Composable
@@ -61,6 +64,33 @@ fun TaskTrackrApp() {
     fun clearAppData() {
         userViewModel.clearData()
         teamViewModel.clearData()
+        authViewModel.clearData()
+    }
+
+    val scope = rememberCoroutineScope()
+
+    // Register session expiration
+    DisposableEffect(Unit) {
+        val job = scope.launch {
+            SessionManager.sessionEvents.collect { event ->
+                when (event) {
+                    is SessionManager.SessionEvent.SessionExpired -> {
+                        // Clear app data on session expiration
+                        clearAppData()
+
+                        // Navigate to sign-in screen
+                        navController.navigate("signin") {
+                            popUpTo(0) { inclusive = true }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        onDispose {
+            job.cancel()
+        }
     }
 
     LocalizationProvider(locale = currentLocale) {
@@ -77,10 +107,10 @@ fun TaskTrackrApp() {
                         onSignOut = {
                             authViewModel.signOut {
                                 clearAppData()
+                                isSideMenuVisible = false
                                 navController.navigate("signin") {
-                                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                    popUpTo(0) { inclusive = true }
                                 }
-                                NotificationHelper.showNotification(activity, R.string.session_expired, false)
                             }
                         }
                     )
@@ -114,6 +144,7 @@ fun TaskTrackrApp() {
                             UserProfile(
                                 navController = navController,
                                 viewModel = userViewModel,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -122,6 +153,7 @@ fun TaskTrackrApp() {
                             EditUserProfile(
                                 navController = navController,
                                 viewModel = userViewModel,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -130,6 +162,7 @@ fun TaskTrackrApp() {
                             UserTeams(
                                 navController = navController,
                                 userViewModel = userViewModel,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -138,6 +171,7 @@ fun TaskTrackrApp() {
                             CreateTeam(
                                 navController = navController,
                                 teamViewModel = teamViewModel,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -151,6 +185,7 @@ fun TaskTrackrApp() {
                                 TeamProfile(
                                     navController = navController,
                                     teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
                                 )
@@ -166,6 +201,7 @@ fun TaskTrackrApp() {
                                 EditTeamProfile(
                                     navController = navController,
                                     teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
                                 )
@@ -181,6 +217,7 @@ fun TaskTrackrApp() {
                                 AddTeamMember(
                                     navController = navController,
                                     teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
                                 )
@@ -196,6 +233,7 @@ fun TaskTrackrApp() {
                                 TeamMembers(
                                     navController = navController,
                                     teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
                                 )
@@ -205,6 +243,7 @@ fun TaskTrackrApp() {
                         composable("my-tasks") {
                             MyTasks(
                                 navController = navController,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
