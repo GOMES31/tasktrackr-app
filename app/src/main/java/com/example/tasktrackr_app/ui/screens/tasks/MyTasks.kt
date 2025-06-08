@@ -14,6 +14,8 @@ import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
+import java.util.Locale
 
 @Composable
 fun AddTaskButton(
@@ -33,7 +35,8 @@ fun AddTaskButton(
 fun MyTasks(
     modifier: Modifier = Modifier,
     navController: NavController,
-    onLanguageSelected: (java.util.Locale) -> Unit = {}
+    authViewModel: AuthViewModel,
+    onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var selectedFilter by remember { mutableStateOf(TaskFilter.TODAY) }
     var isSideMenuVisible by remember { mutableStateOf(false) }
@@ -94,6 +97,14 @@ fun MyTasks(
             navController = navController,
             onDismiss = { isSideMenuVisible = false },
             onLanguageSelected = onLanguageSelected,
+            onSignOut = {
+                authViewModel.signOut {
+                    isSideMenuVisible = false
+                    navController.navigate("signin") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
         )
 
         TaskDetail(

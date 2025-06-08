@@ -25,8 +25,9 @@ fun SideMenu(
     navController: NavController,
     onDismiss: () -> Unit = {},
     onLanguageSelected: (Locale) -> Unit = {},
-    onSignOut: () -> Unit = {}
+    onSignOut: () -> Unit,
 ) {
+
     if (isVisible) {
         Box(modifier = modifier.fillMaxSize()) {
             Box(
@@ -119,13 +120,6 @@ fun SideMenu(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                navController.navigate("signin") {
-                                    popUpTo("signin") { inclusive = true }
-                                }
-                                onSignOut()
-                                onDismiss()
-                            }
                             .padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -138,7 +132,12 @@ fun SideMenu(
                         Image(
                             painter = painterResource(id = R.drawable.sign_out),
                             contentDescription = "Sign Out",
-                            modifier = Modifier.size(40.dp)
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    android.util.Log.d("SideMenu", "Sign out icon clicked")
+                                    onSignOut()
+                                }
                         )
                     }
 
@@ -165,6 +164,7 @@ fun SideMenu(
                                         .size(40.dp)
                                         .clickable {
                                             onLanguageSelected(Locale("pt", "PT"))
+                                            onDismiss()
                                         }
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
@@ -175,6 +175,7 @@ fun SideMenu(
                                         .size(40.dp)
                                         .clickable {
                                             onLanguageSelected(Locale("en", "US"))
+                                            onDismiss()
                                         }
                                 )
                             }
@@ -187,7 +188,12 @@ fun SideMenu(
                                 style = TaskTrackrTheme.typography.label
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            ToggleTheme()
+                            ToggleTheme(
+                                modifier = Modifier
+                                    .clickable {
+                                        onDismiss()
+                                    }
+                            )
                         }
                     }
                 }
@@ -233,4 +239,3 @@ private fun MenuItemRow(
         )
     }
 }
-

@@ -18,6 +18,7 @@ import com.example.tasktrackr_app.components.SideMenu
 import com.example.tasktrackr_app.components.TeamMemberCard
 import com.example.tasktrackr_app.components.TopBar
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import com.example.tasktrackr_app.utils.NotificationHelper
 import java.util.Locale
@@ -27,6 +28,7 @@ fun TeamMembers(
     modifier: Modifier = Modifier,
     navController: NavController,
     teamViewModel: TeamViewModel,
+    authViewModel: AuthViewModel,
     onLanguageSelected: (Locale) -> Unit = {},
     teamId: String
 ) {
@@ -105,7 +107,15 @@ fun TeamMembers(
             isVisible = isSideMenuVisible,
             navController = navController,
             onDismiss = { isSideMenuVisible = false },
-            onLanguageSelected = onLanguageSelected
+            onLanguageSelected = onLanguageSelected,
+            onSignOut = {
+                authViewModel.signOut {
+                    isSideMenuVisible = false
+                    navController.navigate("signin") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
         )
     }
 }

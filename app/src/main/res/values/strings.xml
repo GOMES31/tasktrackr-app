@@ -93,4 +93,6 @@
     <string name="summary_time_spent_label">Time Spent:</string>
     <string name="summary_average_progress_label">Average Progress:</string>
     <string name="summary_average_time_spent_label">Average Time Spent:</string>
+    <string name="session_expired">Session expired!</string>
 </resources>
+

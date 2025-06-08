@@ -18,7 +18,7 @@ interface TeamApi {
 
     @POST("team/create")
     suspend fun createTeam(@Body body: CreateTeamRequest):
-            Response<ApiResponse<Void>>
+            Response<ApiResponse<TeamData>>
 
     @GET("team/{teamId}")
     suspend fun getTeam(@Path("teamId") teamId: String):

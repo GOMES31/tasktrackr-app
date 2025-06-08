@@ -26,12 +26,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import com.example.tasktrackr_app.utils.NotificationHelper
+import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 
 @Composable
 fun CreateTeam(
     modifier: Modifier = Modifier,
     teamViewModel: TeamViewModel,
     navController: NavController,
+    authViewModel: AuthViewModel,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var teamName by remember { mutableStateOf("") }
@@ -74,7 +76,8 @@ fun CreateTeam(
         Text(
             text = stringResource(R.string.upload_team_logo),
             color = TaskTrackrTheme.colorScheme.secondary,
-            style = TaskTrackrTheme.typography.subHeader
+            style = TaskTrackrTheme.typography.subHeader,
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         Spacer(Modifier.height(8.dp))
@@ -153,6 +156,14 @@ fun CreateTeam(
         isVisible = isSideMenuVisible,
         navController = navController,
         onDismiss = { isSideMenuVisible = false },
-        onLanguageSelected = onLanguageSelected
+        onLanguageSelected = onLanguageSelected,
+        onSignOut = {
+            authViewModel.signOut {
+                isSideMenuVisible = false
+                navController.navigate("signin") {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        }
     )
 }
