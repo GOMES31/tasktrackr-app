@@ -49,6 +49,7 @@ fun TeamMembers(
         if (memberRemoved) {
             NotificationHelper.showNotification(context, R.string.team_member_removed_success, true)
             teamViewModel.resetMemberRemoved()
+            navController.popBackStack()
         }
     }
 
@@ -92,7 +93,7 @@ fun TeamMembers(
                             isAdmin = isAdmin,
                             showActions = !isCurrentMemberAdmin && isAdmin,
                             onEditClick = {
-                                navController.navigate("edit-team-member/${teamId}/${member.id}")
+                                navController.navigate("edit-team-member/${teamId}/member/${member.id}")
                             },
                             onRemoveClick = {
                                 teamViewModel.removeMember(teamId, member.id)

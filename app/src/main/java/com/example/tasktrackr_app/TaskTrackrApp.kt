@@ -25,6 +25,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.tasktrackr_app.ui.screens.team.AddTeamMember
 import com.example.tasktrackr_app.ui.screens.team.CreateTeam
+import com.example.tasktrackr_app.ui.screens.team.EditTeamMember
 import com.example.tasktrackr_app.ui.screens.team.EditTeamProfile
 import com.example.tasktrackr_app.ui.screens.team.TeamMembers
 import com.example.tasktrackr_app.ui.screens.team.TeamProfile
@@ -236,6 +237,27 @@ fun TaskTrackrApp() {
                                     authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
+                                )
+                            }
+                        }
+
+                        composable(
+                            route = "edit-team-member/{teamId}/member/{memberId}",
+                            arguments = listOf(
+                                navArgument("teamId") { type = NavType.StringType },
+                                navArgument("memberId") { type = NavType.StringType }
+                            )
+                        ) { backStackEntry ->
+                            val teamId = backStackEntry.arguments?.getString("teamId")
+                            val memberId = backStackEntry.arguments?.getString("memberId")
+                            if (teamId != null && memberId != null) {
+                                EditTeamMember(
+                                    navController = navController,
+                                    teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
+                                    onLanguageSelected = { newLocale -> currentLocale = newLocale },
+                                    teamId = teamId,
+                                    memberId = memberId.replace("member", "")
                                 )
                             }
                         }

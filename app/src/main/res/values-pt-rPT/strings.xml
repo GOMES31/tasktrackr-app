@@ -95,4 +95,7 @@
     <string name="summary_average_progress_label">Progresso Médio:</string>
     <string name="summary_average_time_spent_label">Tempo Médio Gasto:</string>
     <string name="session_expired">Sessão expirada!</string>
+    <string name="team_member_role_update_success">Cargo do membro da equipa atualizado com sucesso!</string>
+    <string name="team_member_role_update_error">Erro ao atualizar o cargo deste membro!</string>
+    <string name="edit_member">Atualizar Membro</string>
 </resources>
