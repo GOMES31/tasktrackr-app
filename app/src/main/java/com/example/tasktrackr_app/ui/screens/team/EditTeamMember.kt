@@ -10,17 +10,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
-import com.example.tasktrackr_app.data.remote.request.AddTeamMemberRequest
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
@@ -28,37 +24,48 @@ import com.example.tasktrackr_app.utils.NotificationHelper
 import java.util.Locale
 
 @Composable
-fun AddTeamMember(
+fun EditTeamMember(
     modifier: Modifier = Modifier,
     navController: NavController,
     teamViewModel: TeamViewModel,
     authViewModel: AuthViewModel,
     onLanguageSelected: (Locale) -> Unit = {},
-    teamId: String
+    teamId: String,
+    memberId: String
 ) {
-    var email by remember { mutableStateOf("") }
     var selectedRole by remember { mutableStateOf("MEMBER") }
     var isSideMenuVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val addMemberSuccess by teamViewModel.addMemberSuccess.collectAsState()
+    val updateMemberSuccess by teamViewModel.updateMemberSuccess.collectAsState()
     val errorCode by teamViewModel.errorCode.collectAsState()
+    val selectedTeam by teamViewModel.selectedTeam.collectAsState()
 
     val roles = listOf(
         Pair("Project Manager", "PROJECT_MANAGER"),
         Pair("Member", "MEMBER")
     )
 
-    LaunchedEffect(addMemberSuccess) {
-        if (addMemberSuccess) {
-            NotificationHelper.showNotification(context, R.string.team_member_added_success, true)
-            teamViewModel.resetAddMemberSuccess()
+    LaunchedEffect(key1 = Unit) {
+        teamViewModel.loadTeam(teamId)
+    }
+
+    LaunchedEffect(selectedTeam) {
+        selectedTeam?.members?.find { it.id == memberId.toLong() }?.let { member ->
+            selectedRole = member.role
+        }
+    }
+
+    LaunchedEffect(updateMemberSuccess) {
+        if (updateMemberSuccess) {
+            NotificationHelper.showNotification(context, R.string.team_member_role_update_success, true)
+            teamViewModel.resetUpdateMemberSuccess()
             navController.popBackStack()
         }
     }
 
     LaunchedEffect(errorCode) {
         if (errorCode != null) {
-            NotificationHelper.showNotification(context, R.string.team_member_added_error, false)
+            NotificationHelper.showNotification(context, R.string.team_member_role_update_error, false)
             teamViewModel.clearData()
         }
     }
@@ -80,7 +87,7 @@ fun AddTeamMember(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = stringResource(R.string.add_member),
+                text = stringResource(R.string.edit_member),
                 color = TaskTrackrTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 style = TaskTrackrTheme.typography.header,
@@ -89,17 +96,41 @@ fun AddTeamMember(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            TextInputField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                label = stringResource(R.string.email),
-                value = email,
-                onValueChange = { email = it },
-                placeholder = stringResource(R.string.email_input_placeholder)
-            )
+            selectedTeam?.members?.find { it.id == memberId.toLong() }?.let { member ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color = TaskTrackrTheme.colorScheme.inputBackground,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .border(
+                            BorderStroke(1.dp, TaskTrackrTheme.colorScheme.primary),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(16.dp)
+                ) {
+                    Column {
+                        Text(
+                            text = member.name,
+                            color = TaskTrackrTheme.colorScheme.secondary,
+                            style = TaskTrackrTheme.typography.smallTitles,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text(
+                            text = member.email,
+                            color = TaskTrackrTheme.colorScheme.text,
+                            style = TaskTrackrTheme.typography.body,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             Text(
                 text = stringResource(R.string.team_role),
@@ -175,16 +206,14 @@ fun AddTeamMember(
 
             Spacer(modifier = Modifier.height(40.dp))
 
-            val formValid = email.isNotBlank() && email.contains("@")
-
             CustomButton(
-                text = stringResource(R.string.add_member),
-                enabled = formValid,
+                text = stringResource(R.string.confirm_changes),
                 modifier = Modifier.width(200.dp),
+                enabled = true,
                 onClick = {
-                    teamViewModel.addMember(
+                    teamViewModel.updateMember(
                         teamId = teamId,
-                        email = email,
+                        memberId = memberId.toLong(),
                         role = selectedRole
                     )
                 }

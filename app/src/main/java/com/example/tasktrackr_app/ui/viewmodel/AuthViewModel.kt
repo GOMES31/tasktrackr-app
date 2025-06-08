@@ -109,7 +109,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             try {
-                authApi.signOut()
+                val response = authApi.signOut()
+                Log.d("AuthViewModel", "Signout response code: ${response.code()}")
+
+                if (!response.isSuccessful) {
+                    Log.w("AuthViewModel", "Signout returned unsuccessful status: ${response.code()}")
+                }
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Signout error: ${e.message}")
             } finally {

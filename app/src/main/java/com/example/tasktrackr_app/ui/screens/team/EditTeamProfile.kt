@@ -175,7 +175,7 @@ fun EditTeamProfile(
             text = stringResource(R.string.confirm_changes),
             enabled = formValid,
             modifier = Modifier
-                .width(110.dp)
+                .width(150.dp)
                 .height(60.dp),
             onClick = {
                 teamViewModel.updateTeam(

@@ -5,16 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.data.remote.response.data.TeamMemberData
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.utils.LocalImageStorage
 
 @Composable
 fun TeamMemberCard(
@@ -25,6 +30,8 @@ fun TeamMemberCard(
     onEditClick: () -> Unit = {},
     onRemoveClick: () -> Unit = {},
 ) {
+    val context = LocalContext.current
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -38,18 +45,31 @@ fun TeamMemberCard(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Member Profile Picture
             Box(
                 modifier = Modifier
-                    .size(40.dp),
+                    .size(40.dp)
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(R.drawable.default_profile),
-                    contentDescription = "Member profile picture",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
+                val imageFile = member.avatarUrl?.let { url ->
+                    LocalImageStorage.getImageFile(context, url)
+                }
+
+                if (imageFile != null) {
+                    AsyncImage(
+                        model = imageFile,
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.default_profile),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
 
             Column {
@@ -79,7 +99,7 @@ fun TeamMemberCard(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.edit_icon),
-                    contentDescription = "Edit member",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(24.dp)
                         .clickable { onEditClick() }
@@ -87,7 +107,7 @@ fun TeamMemberCard(
 
                 Image(
                     painter = painterResource(id = R.drawable.remove_user),
-                    contentDescription = "Remove member",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(24.dp)
                         .clickable { onRemoveClick() }

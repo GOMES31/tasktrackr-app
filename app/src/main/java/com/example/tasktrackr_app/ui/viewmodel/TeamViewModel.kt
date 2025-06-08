@@ -10,6 +10,7 @@ import com.example.tasktrackr_app.data.remote.api.TeamApi
 import com.example.tasktrackr_app.data.local.TokenRepository
 import com.example.tasktrackr_app.data.remote.request.AddTeamMemberRequest
 import com.example.tasktrackr_app.data.remote.request.CreateTeamRequest
+import com.example.tasktrackr_app.data.remote.request.UpdateTeamMemberRequest
 import com.example.tasktrackr_app.data.remote.request.UpdateTeamRequest
 import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.utils.LocalImageStorage
@@ -32,6 +33,8 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
     val createTeamSuccess = _createTeamSuccess.asStateFlow()
     private val _addMemberSuccess = MutableStateFlow(false)
     val addMemberSuccess = _addMemberSuccess.asStateFlow()
+    private val _updateMemberSuccess = MutableStateFlow(false)
+    val updateMemberSuccess = _updateMemberSuccess.asStateFlow()
 
     fun createTeam(name: String, department: String, logoUri: Uri? = null) {
         viewModelScope.launch {
@@ -100,6 +103,7 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
                     imageUrl = logoPath
                 )
 
+
                 try {
                     val response = teamApi.updateTeam(teamId, request)
                     Log.d("TeamViewModel", "Response code: ${response.code()}")
@@ -126,6 +130,7 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
 
     fun removeMember(teamId: String, memberId: Long) {
         viewModelScope.launch {
+
             try {
                 val response = teamApi.removeMember(teamId, memberId)
                 Log.d("TeamViewModel", "Response code: ${response.code()}")
@@ -144,10 +149,16 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun addMember(teamId: String, request: AddTeamMemberRequest) {
+    fun addMember(teamId: String, email: String, role: String) {
+
+        val request = AddTeamMemberRequest(
+            email = email,
+            role = role
+        )
+
         viewModelScope.launch {
             try {
-                val response = teamApi.addMember(teamId, request)
+                val response = teamApi.addMember(teamId,request)
                 Log.d("TeamViewModel", "Response code: ${response.code()}")
 
                 if (response.isSuccessful) {
@@ -159,6 +170,28 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
                 }
             } catch (e: Exception) {
                 Log.e("TeamViewModel", "Error adding member", e)
+                _errorCode.value = -1
+            }
+        }
+    }
+
+    fun updateMember(teamId: String, memberId: Long, role: String) {
+        val request = UpdateTeamMemberRequest(role = role)
+
+        viewModelScope.launch {
+            try {
+                val response = teamApi.updateMember(teamId, memberId, request)
+                Log.d("TeamViewModel", "Response code: ${response.code()}")
+
+                if (response.isSuccessful) {
+                    loadTeam(teamId)
+                    _updateMemberSuccess.value = true
+                } else {
+                    Log.e("TeamViewModel", "Error response: ${response.errorBody()?.string()}")
+                    _errorCode.value = response.code()
+                }
+            } catch (e: Exception) {
+                Log.e("TeamViewModel", "Error updating member", e)
                 _errorCode.value = -1
             }
         }
@@ -178,6 +211,10 @@ class TeamViewModel(application: Application) : AndroidViewModel(application) {
 
     fun resetAddMemberSuccess() {
         _addMemberSuccess.value = false
+    }
+
+    fun resetUpdateMemberSuccess() {
+        _updateMemberSuccess.value = false
     }
 
     fun clearData() {
