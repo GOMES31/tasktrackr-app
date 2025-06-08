@@ -109,16 +109,12 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
             try {
-                Log.d("AuthViewModel", "Calling authApi.signOut()...")
                 authApi.signOut()
-                Log.d("AuthViewModel", "authApi.signOut() completed.")
             } catch (e: Exception) {
                 Log.e("AuthViewModel", "Signout error: ${e.message}")
             } finally {
-                Log.d("AuthViewModel", "Clearing data and finishing sign out.")
                 clearData()
                 _isSigningOut.value = false
-                Log.d("AuthViewModel", "Invoking onSignOutComplete callback.")
                 onSignOutComplete?.invoke()
             }
         }
