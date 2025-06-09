@@ -14,6 +14,11 @@ import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
+import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import java.util.Locale
+import java.util.Date
 
 @Composable
 fun AddTaskButton(
@@ -33,15 +38,32 @@ fun AddTaskButton(
 fun MyTasks(
     modifier: Modifier = Modifier,
     navController: NavController,
-    onLanguageSelected: (java.util.Locale) -> Unit = {}
+    onLanguageSelected: (Locale) -> Unit = {},
+    userViewModel: UserViewModel = viewModel(),
+    taskViewModel: TaskViewModel = viewModel()
 ) {
-    var selectedFilter by remember { mutableStateOf(TaskFilter.TODAY) }
+    var selectedFilter by remember { mutableStateOf(TaskFilter.IN_PROGRESS) }
     var isSideMenuVisible by remember { mutableStateOf(false) }
     var isTaskDetailVisible by remember { mutableStateOf(false) }
     var isTaskFormVisible by remember { mutableStateOf(false) }
+
+
+    val userTasks by userViewModel.userTasks.collectAsState()
+    val isLoadingTasks by userViewModel.isLoadingTasks.collectAsState()
+
+    val currentTask by taskViewModel.currentTask.collectAsState()
+
+
     var taskToEdit by remember { mutableStateOf<Task?>(null) }
+    LaunchedEffect(currentTask) {
+        taskToEdit = currentTask?.toTask()
+    }
 
     var selectedTask by remember { mutableStateOf<Task?>(null) }
+
+    LaunchedEffect(Unit) {
+        userViewModel.fetchUserTasks()
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -69,23 +91,31 @@ fun MyTasks(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                ThreeTabMenu(
-                    selectedFilter = selectedFilter,
-                    onFilterSelected = { selectedFilter = it },
-                    onTaskSelected = { task ->
-                        selectedTask = task
-                        isTaskDetailVisible = true
-                    }
-                )
+                if (isLoadingTasks) {
+                    CircularProgressIndicator()
+                } else {
+                    val tasksToDisplay = userTasks?.map { it.toTask() } ?: emptyList()
+
+                    ThreeTabMenu(
+                        selectedFilter = selectedFilter,
+                        onFilterSelected = { selectedFilter = it },
+                        tasks = tasksToDisplay,
+                        onTaskSelected = { task ->
+                            selectedTask = task
+                            isTaskDetailVisible = true
+                        }
+                    )
+                }
 
                 AddTaskButton(
                     onAddTaskClick = {
-                        taskToEdit = null
+                        taskViewModel.clearCurrentTask()
                         isTaskFormVisible = true
                     }
                 )
-
+                /*
                 TaskSummary()
+                 */
             }
         }
 
@@ -96,20 +126,21 @@ fun MyTasks(
             onLanguageSelected = onLanguageSelected,
         )
 
+        /*
         TaskDetail(
             isVisible = isTaskDetailVisible,
             onDismiss = { isTaskDetailVisible = false },
             taskTitle = selectedTask?.title ?: "",
             taskDescription = selectedTask?.description ?: "",
-            location = selectedTask?.location ?: "",
             startDate = selectedTask?.startDate ?: "",
             endDate = selectedTask?.endDate ?: "",
-            progress = selectedTask?.progress ?: 0,
             timeSpent = selectedTask?.timeSpent ?: "",
             completionStatus = if (selectedTask?.isCompleted == true) "Completed" else "Not Completed",
             observations = selectedTask?.observations ?: emptyList(),
             onEditTask = {
-                taskToEdit = selectedTask
+                selectedTask?.id?.let { taskId ->
+                    taskViewModel.getTaskById(taskId)
+                }
                 isTaskDetailVisible = false
                 isTaskFormVisible = true
             },
@@ -119,32 +150,54 @@ fun MyTasks(
             isVisible = isTaskFormVisible,
             onDismiss = {
                 isTaskFormVisible = false
-                taskToEdit = null
+                taskViewModel.clearCurrentTask()
             },
             onSave = { taskFormData ->
                 if (taskToEdit != null) {
-                    println("Editing task: ${taskFormData.title}")
+                    taskToEdit?.id?.let { id ->
+                        val status = if (taskFormData.isCompleted) "FINISHED" else "PENDING"
+
+                        taskViewModel.updateTask(
+                            id = id,
+                            title = taskFormData.title,
+                            description = taskFormData.description,
+                            status = status,
+                            startDate = Date(),
+                            endDate = Date(),
+                            assigneeIds = null
+                        )
+                    }
                 } else {
-                    println("Adding new task: ${taskFormData.title}")
+                    val status = if (taskFormData.isCompleted) "FINISHED" else "PENDING"
+
+                    taskViewModel.createTask(
+                        title = taskFormData.title,
+                        description = taskFormData.description,
+                        projectId = 1L,
+                        startDate = Date(),
+                        endDate = Date(),
+                        status = status,
+                        assigneeIds = null
+                    )
                 }
 
                 isTaskFormVisible = false
-                taskToEdit = null
+                taskViewModel.clearCurrentTask()
+                userViewModel.fetchUserTasks()
             },
             isEditMode = taskToEdit != null,
             existingTask = taskToEdit?.let { task ->
                 TaskFormData(
                     title = task.title,
-                    description = task.description,
-                    location = task.location,
-                    startDate = task.startDate,
-                    endDate = task.endDate,
-                    progress = task.progress,
+                    description = task.description ?: "",
+                    startDate = task.startDate ?: "",
+                    endDate = task.endDate ?: "",
                     timeSpent = task.timeSpent,
                     isCompleted = task.isCompleted,
                     observations = task.observations
                 )
             }
         )
+        */
     }
 }

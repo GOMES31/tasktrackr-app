@@ -11,8 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
-import androidx.compose.ui.res.stringResource // Import stringResource
-import com.example.tasktrackr_app.R // Import your R class
+import androidx.compose.ui.res.stringResource
+import com.example.tasktrackr_app.R
 
 data class TaskSummaryData(
     val tasksToday: Int = 1,

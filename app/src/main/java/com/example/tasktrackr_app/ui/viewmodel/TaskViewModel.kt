@@ -34,6 +34,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         title: String,
         description: String,
         projectId: Long,
+        startDate: Date? = null,
         endDate: Date? = null,
         status: String? = null,
         assigneeIds: List<Long>? = null
@@ -42,7 +43,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         _errorMessage.value = null
         viewModelScope.launch {
             try {
-                val request = CreateTaskRequest(title, description, projectId, endDate, status, assigneeIds)
+                val request = CreateTaskRequest(title, description, projectId, startDate, endDate, status, assigneeIds)
                 val response: Response<com.example.tasktrackr_app.data.remote.response.ApiResponse<TaskData>> = taskApi.createTask(request)
                 if (response.isSuccessful) {
                     response.body()?.data?.let {
@@ -85,6 +86,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         title: String? = null,
         description: String? = null,
         status: String? = null,
+        startDate: Date? = null,
         endDate: Date? = null,
         assigneeIds: List<Long>? = null
     ) {
@@ -92,7 +94,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         _errorMessage.value = null
         viewModelScope.launch {
             try {
-                val request = UpdateTaskRequest(id, title, description, status, endDate, assigneeIds)
+                val request = UpdateTaskRequest(id, title, description, status, startDate, endDate, assigneeIds)
                 val response: Response<com.example.tasktrackr_app.data.remote.response.ApiResponse<TaskData>> = taskApi.updateTask(request)
                 if (response.isSuccessful) {
                     response.body()?.data?.let {

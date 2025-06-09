@@ -13,6 +13,9 @@ data class UpdateTaskRequest(
 
     val status: String?,
 
+    @SerializedName("start_date")
+    val startDate: Date?,
+
     @SerializedName("end_date")
     val endDate: Date?,
 

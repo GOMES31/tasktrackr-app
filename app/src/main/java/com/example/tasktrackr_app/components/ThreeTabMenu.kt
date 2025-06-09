@@ -1,5 +1,6 @@
 package com.example.tasktrackr_app.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,133 +17,133 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 
+// Updated TaskFilter enum to match new tabs
 enum class TaskFilter {
-    TODAY, PENDING, COMPLETED
+    IN_PROGRESS, PENDING, COMPLETED
 }
 
 data class Task(
-    val id: String = "",
+    val id: Long,
     val title: String,
-    val description: String,
-    val location: String = "",
-    val startDate: String = "",
-    val endDate: String = "",
-    val progress: Int = 0,
-    val timeSpent: String = "",
-    val isCompleted: Boolean = false,
-    val observations: List<String> = emptyList()
-)
+    val description: String?,
+    val startDate: String?,
+    val endDate: String?,
+    val timeSpent: String,
+    val isCompleted: Boolean, // This might need to be adjusted if status is used directly
+    val status: String, // Added status to Task data class
+    val observations: List<Observation>
+) {
+    data class Observation(
+        val id: Long,
+        val message: String,
+        val createdAt: String?
+    )
+}
 
 data class TaskFormData(
     val title: String,
     val description: String,
-    val location: String,
     val startDate: String,
     val endDate: String,
-    val progress: Int,
     val timeSpent: String,
     val isCompleted: Boolean,
-    val observations: List<String>
-)
+    val observations: List<Observation>
+) {
+    data class Observation(
+        val id: Long,
+        val message: String,
+        val createdAt: String?
+    )
+}
 
+// Helper function to calculate time spent between two dates
+private fun calculateTimeSpent(startDate: Date?, endDate: Date?): String {
+    if (startDate == null || endDate == null) return "N/A"
+
+    val diffMillis = endDate.time - startDate.time
+    val hours = TimeUnit.MILLISECONDS.toHours(diffMillis)
+    val minutes = TimeUnit.MILLISECONDS.toMinutes(diffMillis) % 60
+
+    return when {
+        hours > 0 -> "${hours}h ${minutes}m"
+        minutes > 0 -> "${minutes}m"
+        else -> "0m"
+    }
+}
+
+// Helper function to format date to string
+private fun formatDate(date: Date?): String? {
+    return date?.let {
+        SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault()).format(it)
+    }
+}
+
+// Extension function to convert TaskData to Task
+fun com.example.tasktrackr_app.data.remote.response.data.TaskData.toTask(): Task {
+    val timeSpent = calculateTimeSpent(this.startDate, this.endDate)
+
+    return Task(
+        id = this.id,
+        title = this.title,
+        description = this.description,
+        startDate = formatDate(this.startDate),
+        endDate = formatDate(this.endDate),
+        timeSpent = timeSpent,
+        isCompleted = (this.status == "FINISHED"), // Set isCompleted based on backend status
+        status = this.status, // Pass the backend status directly
+        observations = this.observations?.map { it.toObservation() } ?: emptyList()
+    )
+}
+
+fun com.example.tasktrackr_app.data.remote.response.data.TaskData.ObservationData.toObservation(): Task.Observation {
+    return Task.Observation(
+        id = this.id,
+        message = this.message,
+        createdAt = formatDate(this.createdAt)
+    )
+}
+
+// Updated filtering logic in ThreeTabMenu composable
 @Composable
 fun ThreeTabMenu(
     modifier: Modifier = Modifier,
-    selectedFilter: TaskFilter = TaskFilter.TODAY,
+    selectedFilter: TaskFilter = TaskFilter.IN_PROGRESS,
     onFilterSelected: (TaskFilter) -> Unit = {},
+    tasks: List<Task> = emptyList(),
     onTaskSelected: (Task) -> Unit = {}
 ) {
-    val placeholderTasks = remember {
-        listOf(
-            Task(
-                id = "1",
-                title = "Complete Project Proposal",
-                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                location = "Office Building A",
-                startDate = "09:00 01/06/2025",
-                endDate = "17:00 03/06/2025",
-                progress = 75,
-                timeSpent = "2h 30m",
-                isCompleted = false,
-                observations = listOf(
-                    "Initial research completed successfully",
-                    "Need to gather more market data",
-                    "Client feedback incorporated into draft"
-                )
-            ),
-            Task(
-                id = "2",
-                title = "Team Meeting Preparation",
-                description = "Prepare agenda and materials for quarterly team meeting. Include performance metrics and project updates.",
-                location = "Conference Room B",
-                startDate = "14:00 02/06/2025",
-                endDate = "16:00 02/06/2025",
-                progress = 50,
-                timeSpent = "1h 15m",
-                isCompleted = false,
-                observations = listOf(
-                    "Agenda draft completed",
-                    "Still need to compile metrics"
-                )
-            ),
-            Task(
-                id = "3",
-                title = "Database Migration",
-                description = "Migrate legacy database to new cloud infrastructure. Includes data validation and testing phases.",
-                location = "Data Center",
-                startDate = "10:00 28/05/2025",
-                endDate = "18:00 30/05/2025",
-                progress = 100,
-                timeSpent = "8h 45m",
-                isCompleted = true,
-                observations = listOf(
-                    "Migration completed successfully",
-                    "All data validation tests passed",
-                    "Performance improved by 40%"
-                )
-            ),
-            Task(
-                id = "4",
-                title = "Client Presentation Design",
-                description = "Create visual presentation for client proposal including charts, mockups, and timeline.",
-                location = "Design Studio",
-                startDate = "09:30 04/06/2025",
-                endDate = "12:00 05/06/2025",
-                progress = 25,
-                timeSpent = "45m",
-                isCompleted = false,
-                observations = listOf(
-                    "Initial wireframes created"
-                )
-            ),
-            Task(
-                id = "5",
-                title = "Code Review Session",
-                description = "Review and provide feedback on team members' code submissions for the current sprint.",
-                location = "Remote",
-                startDate = "15:00 01/06/2025",
-                endDate = "16:30 01/06/2025",
-                progress = 90,
-                timeSpent = "1h 20m",
-                isCompleted = false,
-                observations = listOf(
-                    "Most code reviews completed",
-                    "Found minor optimization opportunities",
-                    "Good code quality overall"
-                )
-            )
-        )
-    }
-
-    val filteredTasks = remember(selectedFilter) {
+    val filteredTasks = remember(selectedFilter, tasks) {
         when (selectedFilter) {
-            TaskFilter.TODAY -> placeholderTasks
-            TaskFilter.PENDING -> placeholderTasks.filter { !it.isCompleted }
-            TaskFilter.COMPLETED -> placeholderTasks.filter { it.isCompleted }
+            TaskFilter.IN_PROGRESS -> tasks.filter { task ->
+                task.status == "IN_PROGRESS"
+            }
+            TaskFilter.PENDING -> tasks.filter { task ->
+                task.status == "PENDING"
+            }
+            TaskFilter.COMPLETED -> tasks.filter { task ->
+                task.status == "FINISHED"
+            }
         }
     }
 
+    // Debug logging to check what statuses are actually in your tasks
+    LaunchedEffect(tasks) {
+        val uniqueStatuses = tasks.map { it.status }.distinct()
+        Log.d("TaskFilter", "Available task statuses: $uniqueStatuses")
+        Log.d("TaskFilter", "Total tasks: ${tasks.size}")
+
+        // Log count per status for debugging
+        uniqueStatuses.forEach { status ->
+            val count = tasks.count { it.status == status }
+            Log.d("TaskFilter", "Status '$status': $count tasks")
+        }
+    }
+
+    // Rest of your ThreeTabMenu implementation remains the same...
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -172,9 +173,9 @@ fun ThreeTabMenu(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TaskFilterTab(
-                        text = stringResource(R.string.tab_today),
-                        isSelected = selectedFilter == TaskFilter.TODAY,
-                        onClick = { onFilterSelected(TaskFilter.TODAY) },
+                        text = stringResource(R.string.tab_in_progress),
+                        isSelected = selectedFilter == TaskFilter.IN_PROGRESS,
+                        onClick = { onFilterSelected(TaskFilter.IN_PROGRESS) },
                         modifier = Modifier.weight(1f)
                     )
 
@@ -203,7 +204,7 @@ fun ThreeTabMenu(
                         modifier = Modifier.weight(1f),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (selectedFilter == TaskFilter.TODAY) {
+                        if (selectedFilter == TaskFilter.IN_PROGRESS) {
                             Box(
                                 modifier = Modifier
                                     .width(30.dp)
@@ -264,20 +265,54 @@ fun ThreeTabMenu(
                     .height(450.dp),
                 verticalArrangement = Arrangement.Top
             ) {
-                items(filteredTasks.size) { index ->
-                    TaskCard(
-                        task = filteredTasks[index],
-                        onOpenClick = {
-                            onTaskSelected(filteredTasks[index])
-                        }
-                    )
+                if (filteredTasks.isEmpty()) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = when (selectedFilter) {
+                                    TaskFilter.IN_PROGRESS -> "No tasks in progress"
+                                    TaskFilter.PENDING -> "No pending tasks"
+                                    TaskFilter.COMPLETED -> "No completed tasks"
+                                },
+                                style = TaskTrackrTheme.typography.body,
+                                color = TaskTrackrTheme.colorScheme.text,
+                                textAlign = TextAlign.Center
+                            )
 
-                    if (index < filteredTasks.size - 1) {
-                        HorizontalDivider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 1.dp,
-                            color = TaskTrackrTheme.colorScheme.secondary
+                            // Debug info - remove this in production
+                            if (tasks.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Total tasks available: ${tasks.size}",
+                                    style = TaskTrackrTheme.typography.body,
+                                    color = TaskTrackrTheme.colorScheme.text.copy(alpha = 0.6f),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    items(filteredTasks.size) { index ->
+                        TaskCard(
+                            task = filteredTasks[index],
+                            onOpenClick = {
+                                onTaskSelected(filteredTasks[index])
+                            }
                         )
+
+                        if (index < filteredTasks.size - 1) {
+                            HorizontalDivider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = 1.dp,
+                                color = TaskTrackrTheme.colorScheme.secondary
+                            )
+                        }
                     }
                 }
             }
@@ -351,7 +386,7 @@ private fun TaskCard(
                     .weight(1f)
             ) {
                 Text(
-                    text = stringResource(R.string.task_description_label) + " ${task.description}",
+                    text = stringResource(R.string.task_description_label) + " ${task.description ?: "No description"}",
                     style = TaskTrackrTheme.typography.body,
                     color = TaskTrackrTheme.colorScheme.text,
                     maxLines = 3,
@@ -359,10 +394,10 @@ private fun TaskCard(
                 )
             }
 
-            if (task.progress > 0) {
+            if (task.timeSpent != "N/A") {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = stringResource(R.string.task_progress_label) + " ${task.progress}%",
+                    text = stringResource(R.string.time_spent_label) + " ${task.timeSpent}",
                     style = TaskTrackrTheme.typography.body,
                     color = TaskTrackrTheme.colorScheme.accent,
                 )

@@ -12,6 +12,9 @@ data class CreateTaskRequest(
     @SerializedName("project_id")
     val projectId: Long,
 
+    @SerializedName("start_date")
+    val startDate: Date?,
+
     @SerializedName("end_date")
     val endDate: Date? = null,
 
