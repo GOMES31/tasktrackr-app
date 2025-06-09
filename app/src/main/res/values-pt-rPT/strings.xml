@@ -71,7 +71,7 @@
     <string name="error_end_date_empty">A data de fim não pode estar vazia!</string>
     <string name="progress_label">Progresso:</string>
     <string name="time_spent_label">Tempo Gasto:</string>
-    <string name="time_spent_placeholder">ex: 2h 30m</string>
+    <string name="time_spent_placeholder">e.g., 2 horas, 30 minutos</string>
     <string name="completion_status_label">Estado de Conclusão</string>
     <string name="observations_label">Observações:</string>
     <string name="observation_dropdown">Obs</string>
@@ -80,7 +80,7 @@
     <string name="save_task_button">Guardar Tarefa</string>
     <string name="update_task_button">Atualizar Tarefa</string>
     <string name="add_task_button">Adicionar Tarefa</string>
-    <string name="tab_today">Hoje</string>
+    <string name="tab_in_progress">Em Progresso</string>
     <string name="tab_pending">Pendente</string>
     <string name="tab_completed">Concluído</string>
     <string name="task_progress_label">Progresso:</string>

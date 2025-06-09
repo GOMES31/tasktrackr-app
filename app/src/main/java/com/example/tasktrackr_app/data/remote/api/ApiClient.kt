@@ -50,4 +50,13 @@ object ApiClient {
 
     fun teamApi(context: Context): TeamApi =
         retrofit(context).create(TeamApi::class.java)
+
+    fun taskApi(context: Context): TaskApi =
+        retrofit(context).create(TaskApi::class.java)
+
+    fun observationApi(context: Context): ObservationApi =
+        retrofit(context).create(ObservationApi::class.java)
+
+    fun projectApi(context: Context): ProjectApi =
+        retrofit(context).create(ProjectApi::class.java)
 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
@@ -32,19 +31,10 @@ fun TaskForm(
 
     var title by remember { mutableStateOf(existingTask?.title ?: "") }
     var description by remember { mutableStateOf(existingTask?.description ?: "") }
-    var location by remember { mutableStateOf(existingTask?.location ?: "") }
     var startDate by remember { mutableStateOf(existingTask?.startDate ?: "") }
     var endDate by remember { mutableStateOf(existingTask?.endDate ?: "") }
-    var progress by remember { mutableIntStateOf(existingTask?.progress ?: 0) }
     var timeSpent by remember { mutableStateOf(existingTask?.timeSpent ?: "") }
     var isCompleted by remember { mutableStateOf(existingTask?.isCompleted ?: false) }
-    val observations = remember {
-        mutableStateListOf<String>().apply {
-            addAll(existingTask?.observations ?: listOf(""))
-        }
-    }
-    var selectedObservationIndex by remember { mutableIntStateOf(0) }
-    var isDropdownExpanded by remember { mutableStateOf(false) }
 
     var showTitleError by remember { mutableStateOf(false) }
     var showStartDateError by remember { mutableStateOf(false) }
@@ -174,42 +164,8 @@ fun TaskForm(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text(
-                    text = stringResource(R.string.task_location_label),
-                    style = TaskTrackrTheme.typography.label,
-                    color = TaskTrackrTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                OutlinedTextField(
-                    value = location,
-                    onValueChange = { location = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    placeholder = {
-                        Text(
-                            stringResource(R.string.task_location_placeholder),
-                            style = TaskTrackrTheme.typography.placeholder,
-                            color = TaskTrackrTheme.colorScheme.text.copy(alpha = 0.6f)
-                        )
-                    },
-                    trailingIcon = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.globe),
-                            contentDescription = "Location",
-                            tint = TaskTrackrTheme.colorScheme.text,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = TaskTrackrTheme.colorScheme.inputBackground,
-                        focusedContainerColor = TaskTrackrTheme.colorScheme.inputBackground,
-                        unfocusedBorderColor = TaskTrackrTheme.colorScheme.primary,
-                        focusedBorderColor = TaskTrackrTheme.colorScheme.primary
-                    ),
-                    shape = RoundedCornerShape(8.dp)
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
+                // Removed: Location Text and OutlinedTextField
+                // Removed: Spacer(modifier = Modifier.height(12.dp)) after location
 
                 Text(
                     text = stringResource(R.string.start_date_label),
@@ -289,40 +245,6 @@ fun TaskForm(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.progress_label),
-                        style = TaskTrackrTheme.typography.label,
-                        color = TaskTrackrTheme.colorScheme.primary
-                    )
-
-                    Text(
-                        text = "$progress%",
-                        style = TaskTrackrTheme.typography.label,
-                        color = TaskTrackrTheme.colorScheme.accent
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Slider(
-                    value = progress.toFloat(),
-                    onValueChange = { progress = it.toInt() },
-                    valueRange = 0f..100f,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = SliderDefaults.colors(
-                        thumbColor = TaskTrackrTheme.colorScheme.tertiary,
-                        activeTrackColor = TaskTrackrTheme.colorScheme.tertiary,
-                        inactiveTrackColor = TaskTrackrTheme.colorScheme.inputBackground
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
                 Text(
                     text = stringResource(R.string.time_spent_label),
                     style = TaskTrackrTheme.typography.label,
@@ -372,135 +294,6 @@ fun TaskForm(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.observations_label),
-                        style = TaskTrackrTheme.typography.label,
-                        color = TaskTrackrTheme.colorScheme.primary
-                    )
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CustomButton(
-                            icon = painterResource(id = R.drawable.plus),
-                            onClick = {
-                                observations.add("")
-                                selectedObservationIndex = observations.size - 1
-                            },
-                            modifier = Modifier
-                                .padding(end = 4.dp)
-                                .size(24.dp),
-                            iconSize = 12.dp,
-                            enabled = true
-                        )
-
-                        CustomButton(
-                            icon = painterResource(id = R.drawable.minus),
-                            onClick = {
-                                if (observations.isNotEmpty()) {
-                                    observations.removeAt(selectedObservationIndex)
-                                    if (selectedObservationIndex >= observations.size && observations.isNotEmpty()) {
-                                        selectedObservationIndex = observations.size - 1
-                                    } else if (observations.isEmpty()) {
-                                        selectedObservationIndex = 0
-                                        observations.add("")
-                                    }
-                                }
-                            },
-                            modifier = Modifier.size(24.dp),
-                            iconSize = 12.dp,
-                            enabled = observations.size > 1
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Box {
-                            OutlinedButton(
-                                onClick = { isDropdownExpanded = true },
-                                modifier = Modifier
-                                    .height(32.dp)
-                                    .background(
-                                        TaskTrackrTheme.colorScheme.inputBackground,
-                                        RoundedCornerShape(4.dp)
-                                    ),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = TaskTrackrTheme.colorScheme.inputBackground
-                                ),
-                                border = null,
-                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.observation_dropdown) + " ${selectedObservationIndex + 1} ▼",
-                                    style = TaskTrackrTheme.typography.body,
-                                    color = TaskTrackrTheme.colorScheme.text,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-
-                            DropdownMenu(
-                                expanded = isDropdownExpanded,
-                                onDismissRequest = { isDropdownExpanded = false },
-                                modifier = Modifier.background(TaskTrackrTheme.colorScheme.cardBackground)
-                            ) {
-                                observations.forEachIndexed { index, _ ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                text = stringResource(R.string.observation_item_label) + " ${index + 1}",
-                                                style = TaskTrackrTheme.typography.body,
-                                                color = TaskTrackrTheme.colorScheme.text
-                                            )
-                                        },
-                                        onClick = {
-                                            selectedObservationIndex = index
-                                            isDropdownExpanded = false
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                if (observations.isNotEmpty()) {
-                    OutlinedTextField(
-                        value = if (selectedObservationIndex < observations.size)
-                            observations[selectedObservationIndex] else "",
-                        onValueChange = { newValue ->
-                            if (selectedObservationIndex < observations.size) {
-                                observations[selectedObservationIndex] = newValue
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(80.dp),
-                        placeholder = {
-                            Text(
-                                stringResource(R.string.observation_input_placeholder),
-                                style = TaskTrackrTheme.typography.placeholder,
-                                color = TaskTrackrTheme.colorScheme.text.copy(alpha = 0.6f)
-                            )
-                        },
-                        maxLines = 3,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedContainerColor = TaskTrackrTheme.colorScheme.inputBackground,
-                            focusedContainerColor = TaskTrackrTheme.colorScheme.inputBackground,
-                            unfocusedBorderColor = TaskTrackrTheme.colorScheme.primary,
-                            focusedBorderColor = TaskTrackrTheme.colorScheme.primary
-                        ),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                }
-
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Row(
@@ -535,13 +328,11 @@ fun TaskForm(
                                 val taskFormData = TaskFormData(
                                     title = title,
                                     description = description,
-                                    location = location,
                                     startDate = startDate,
                                     endDate = endDate,
-                                    progress = progress,
                                     timeSpent = timeSpent,
                                     isCompleted = isCompleted,
-                                    observations = observations.filter { it.isNotBlank() }
+                                    observations = emptyList()
                                 )
                                 onSave(taskFormData)
                             }

@@ -71,7 +71,7 @@
     <string name="error_end_date_empty">End Date cannot be empty!</string>
     <string name="progress_label">Progress:</string>
     <string name="time_spent_label">Time Spent:</string>
-    <string name="time_spent_placeholder">e.g., 2h 30m</string>
+    <string name="time_spent_placeholder">e.g., 2 hours, 30 minutes</string>
     <string name="completion_status_label">Completion Status</string>
     <string name="observations_label">Observations:</string>
     <string name="observation_dropdown">Obs</string>
@@ -80,7 +80,7 @@
     <string name="save_task_button">Save Task</string>
     <string name="update_task_button">Update Task</string>
     <string name="add_task_button">Add Task</string>
-    <string name="tab_today">Today</string>
+    <string name="tab_in_progress">In Progress</string>
     <string name="tab_pending">Pending</string>
     <string name="tab_completed">Completed</string>
     <string name="task_progress_label">Progress:</string>
