@@ -19,6 +19,8 @@ import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.util.Locale
 import java.util.Date
+import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
+import java.util.Locale
 
 @Composable
 fun AddTaskButton(
@@ -124,6 +126,14 @@ fun MyTasks(
             navController = navController,
             onDismiss = { isSideMenuVisible = false },
             onLanguageSelected = onLanguageSelected,
+            onSignOut = {
+                authViewModel.signOut {
+                    isSideMenuVisible = false
+                    navController.navigate("signin") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
         )
 
         /*

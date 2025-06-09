@@ -23,6 +23,7 @@ import coil.compose.AsyncImage
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import com.example.tasktrackr_app.utils.LocalImageStorage
 import com.example.tasktrackr_app.utils.NotificationHelper
@@ -33,6 +34,7 @@ fun EditTeamProfile(
     modifier: Modifier = Modifier,
     navController: NavController,
     teamViewModel: TeamViewModel,
+    authViewModel: AuthViewModel,
     onLanguageSelected: (Locale) -> Unit = {},
     teamId: String
 ) {
@@ -173,7 +175,7 @@ fun EditTeamProfile(
             text = stringResource(R.string.confirm_changes),
             enabled = formValid,
             modifier = Modifier
-                .width(110.dp)
+                .width(150.dp)
                 .height(60.dp),
             onClick = {
                 teamViewModel.updateTeam(
@@ -191,6 +193,14 @@ fun EditTeamProfile(
         isVisible = isSideMenuVisible,
         navController = navController,
         onDismiss = { isSideMenuVisible = false },
-        onLanguageSelected = onLanguageSelected
+        onLanguageSelected = onLanguageSelected,
+        onSignOut = {
+            authViewModel.signOut {
+                isSideMenuVisible = false
+                navController.navigate("signin") {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        }
     )
 }

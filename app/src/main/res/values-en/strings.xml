@@ -94,4 +94,8 @@
     <string name="summary_time_spent_label">Time Spent:</string>
     <string name="summary_average_progress_label">Average Progress:</string>
     <string name="summary_average_time_spent_label">Average Time Spent:</string>
+    <string name="session_expired">Session expired!</string>
+    <string name="team_member_role_update_success">Team Member role updated successfully!</string>
+    <string name="team_member_role_update_error">Error updating team member role!</string>
+    <string name="edit_member">Edit Member</string>
 </resources>

@@ -38,13 +38,13 @@ fun TeamCard(
         ),
         modifier = modifier
             .fillMaxWidth()
+            .border(2.dp, TaskTrackrTheme.colorScheme.primary)
             .clickable { onTeamClick(teamId) }
     ) {
         Row(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth()
-                .border(2.dp, TaskTrackrTheme.colorScheme.primary),
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {

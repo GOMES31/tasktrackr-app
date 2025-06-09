@@ -26,6 +26,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.tasktrackr_app.ui.screens.team.AddTeamMember
 import com.example.tasktrackr_app.ui.screens.team.CreateTeam
+import com.example.tasktrackr_app.ui.screens.team.EditTeamMember
 import com.example.tasktrackr_app.ui.screens.team.EditTeamProfile
 import com.example.tasktrackr_app.ui.screens.team.TeamMembers
 import com.example.tasktrackr_app.ui.screens.team.TeamProfile
@@ -37,10 +38,18 @@ import androidx.compose.ui.Modifier
 import com.example.tasktrackr_app.components.CustomToast
 import com.example.tasktrackr_app.utils.NotificationHelper
 import androidx.compose.ui.Alignment
+import com.example.tasktrackr_app.components.SideMenu
+import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
+import com.example.tasktrackr_app.ui.screens.user.UserProfile
+import androidx.compose.runtime.rememberCoroutineScope
+import com.example.tasktrackr_app.utils.SessionManager
+import kotlinx.coroutines.launch
+
 
 @SuppressLint("ContextCastToActivity")
 @Composable
 fun TaskTrackrApp() {
+    var isSideMenuVisible by rememberSaveable { mutableStateOf(false) }
     var currentLocale by rememberSaveable { mutableStateOf(Locale.getDefault()) }
     val isDarkTheme by rememberSaveable { mutableStateOf(false) }
     val navController = rememberNavController()
@@ -58,6 +67,33 @@ fun TaskTrackrApp() {
     fun clearAppData() {
         userViewModel.clearData()
         teamViewModel.clearData()
+        authViewModel.clearData()
+    }
+
+    val scope = rememberCoroutineScope()
+
+    // Register session expiration
+    DisposableEffect(Unit) {
+        val job = scope.launch {
+            SessionManager.sessionEvents.collect { event ->
+                when (event) {
+                    is SessionManager.SessionEvent.SessionExpired -> {
+                        // Clear app data on session expiration
+                        clearAppData()
+
+                        // Navigate to sign-in screen
+                        navController.navigate("signin") {
+                            popUpTo(0) { inclusive = true }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        onDispose {
+            job.cancel()
+        }
     }
 
     LocalizationProvider(locale = currentLocale) {
@@ -66,6 +102,21 @@ fun TaskTrackrApp() {
                 LocalActivityResultRegistryOwner provides activity
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
+                    SideMenu(
+                        isVisible = isSideMenuVisible,
+                        navController = navController,
+                        onDismiss = { isSideMenuVisible = false },
+                        onLanguageSelected = { newLocale -> currentLocale = newLocale },
+                        onSignOut = {
+                            authViewModel.signOut {
+                                clearAppData()
+                                isSideMenuVisible = false
+                                navController.navigate("signin") {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }
+                        }
+                    )
                     NavHost(
                         navController = navController,
                         startDestination = "intro"
@@ -96,6 +147,7 @@ fun TaskTrackrApp() {
                             UserProfile(
                                 navController = navController,
                                 viewModel = userViewModel,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -104,6 +156,7 @@ fun TaskTrackrApp() {
                             EditUserProfile(
                                 navController = navController,
                                 viewModel = userViewModel,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -112,6 +165,7 @@ fun TaskTrackrApp() {
                             UserTeams(
                                 navController = navController,
                                 userViewModel = userViewModel,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -120,6 +174,7 @@ fun TaskTrackrApp() {
                             CreateTeam(
                                 navController = navController,
                                 teamViewModel = teamViewModel,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -133,6 +188,7 @@ fun TaskTrackrApp() {
                                 TeamProfile(
                                     navController = navController,
                                     teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
                                 )
@@ -148,6 +204,7 @@ fun TaskTrackrApp() {
                                 EditTeamProfile(
                                     navController = navController,
                                     teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
                                 )
@@ -163,6 +220,7 @@ fun TaskTrackrApp() {
                                 AddTeamMember(
                                     navController = navController,
                                     teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
                                 )
@@ -178,8 +236,29 @@ fun TaskTrackrApp() {
                                 TeamMembers(
                                     navController = navController,
                                     teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
                                     onLanguageSelected = { newLocale -> currentLocale = newLocale },
                                     teamId = teamId
+                                )
+                            }
+                        }
+                        composable(
+                            route = "edit-team-member/{teamId}/member/{memberId}",
+                            arguments = listOf(
+                                navArgument("teamId") { type = NavType.StringType },
+                                navArgument("memberId") { type = NavType.StringType }
+                            )
+                        ) { backStackEntry ->
+                            val teamId = backStackEntry.arguments?.getString("teamId")
+                            val memberId = backStackEntry.arguments?.getString("memberId")
+                            if (teamId != null && memberId != null) {
+                                EditTeamMember(
+                                    navController = navController,
+                                    teamViewModel = teamViewModel,
+                                    authViewModel = authViewModel,
+                                    onLanguageSelected = { newLocale -> currentLocale = newLocale },
+                                    teamId = teamId,
+                                    memberId = memberId.replace("member", "")
                                 )
                             }
                         }
@@ -187,6 +266,7 @@ fun TaskTrackrApp() {
                         composable("my-tasks") {
                             MyTasks(
                                 navController = navController,
+                                authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -203,7 +283,6 @@ fun TaskTrackrApp() {
                             onDismiss = { NotificationHelper.hideToast() }
                         )
                     }
-
                     // Uncomment and implement this if SideMenu becomes active
                     /*
                     SideMenu(

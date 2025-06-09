@@ -3,6 +3,7 @@ package com.example.tasktrackr_app.data.remote.api
 import com.example.tasktrackr_app.data.remote.request.CreateTeamRequest
 import com.example.tasktrackr_app.data.remote.request.UpdateTeamRequest
 import com.example.tasktrackr_app.data.remote.request.AddTeamMemberRequest
+import com.example.tasktrackr_app.data.remote.request.UpdateTeamMemberRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import retrofit2.Response
@@ -18,7 +19,7 @@ interface TeamApi {
 
     @POST("team/create")
     suspend fun createTeam(@Body body: CreateTeamRequest):
-            Response<ApiResponse<Void>>
+            Response<ApiResponse<TeamData>>
 
     @GET("team/{teamId}")
     suspend fun getTeam(@Path("teamId") teamId: String):
@@ -36,5 +37,8 @@ interface TeamApi {
     suspend fun addMember(@Path("teamId") teamId: String, @Body request: AddTeamMemberRequest):
             Response<ApiResponse<Void>>
 
-
+    @PUT("team/{teamId}/update-member/{memberId}")
+    suspend fun updateMember(@Path("teamId") teamId: String, @Path("memberId") memberId: Long,
+                             @Body request: UpdateTeamMemberRequest):
+            Response<ApiResponse<Void>>
 }

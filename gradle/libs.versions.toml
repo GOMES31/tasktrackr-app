@@ -12,6 +12,7 @@ kotlinxCoroutinesCore = "1.6.4"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2024.09.00"
+localbroadcastmanager = "1.1.0"
 loggingInterceptor = "4.9.0"
 navigationCompose = "2.7.3"
 okhttp = "4.9.3"
@@ -21,6 +22,7 @@ securityCryptoVersion = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-localbroadcastmanager = { module = "androidx.localbroadcastmanager:localbroadcastmanager", version.ref = "localbroadcastmanager" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 androidx-security-crypto-v110 = { module = "androidx.security:security-crypto", version.ref = "securityCryptoVersion" }

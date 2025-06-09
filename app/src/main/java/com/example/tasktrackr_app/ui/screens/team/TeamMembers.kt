@@ -18,6 +18,7 @@ import com.example.tasktrackr_app.components.SideMenu
 import com.example.tasktrackr_app.components.TeamMemberCard
 import com.example.tasktrackr_app.components.TopBar
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import com.example.tasktrackr_app.utils.NotificationHelper
 import java.util.Locale
@@ -27,6 +28,7 @@ fun TeamMembers(
     modifier: Modifier = Modifier,
     navController: NavController,
     teamViewModel: TeamViewModel,
+    authViewModel: AuthViewModel,
     onLanguageSelected: (Locale) -> Unit = {},
     teamId: String
 ) {
@@ -34,9 +36,11 @@ fun TeamMembers(
     val teamData by teamViewModel.selectedTeam.collectAsState()
     val memberRemoved by teamViewModel.memberRemoved.collectAsState()
     val context = LocalContext.current
+    val userData by authViewModel.userData.collectAsState()
 
-    val isAdmin = teamData?.members?.any {
-        it.role == "ADMIN"
+    val currentUserEmail = userData?.email
+    val isCurrentUserAdmin = teamData?.members?.any {
+        it.email == currentUserEmail && it.role == "ADMIN"
     } ?: false
 
     LaunchedEffect(teamId) {
@@ -47,6 +51,7 @@ fun TeamMembers(
         if (memberRemoved) {
             NotificationHelper.showNotification(context, R.string.team_member_removed_success, true)
             teamViewModel.resetMemberRemoved()
+            navController.popBackStack()
         }
     }
 
@@ -81,16 +86,14 @@ fun TeamMembers(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(teamData?.members ?: emptyList()) { member ->
-                        val adminMember = teamData?.members?.find { it.role == "ADMIN" }
-
-                        val isCurrentMemberAdmin = member.id == adminMember?.id
+                        val showActions = isCurrentUserAdmin && member.email != currentUserEmail && member.role != "ADMIN"
 
                         TeamMemberCard(
                             member = member,
-                            isAdmin = isAdmin,
-                            showActions = !isCurrentMemberAdmin && isAdmin,
+                            isAdmin = isCurrentUserAdmin,
+                            showActions = showActions,
                             onEditClick = {
-                                navController.navigate("edit-team-member/${teamId}/${member.id}")
+                                navController.navigate("edit-team-member/${teamId}/member/${member.id}")
                             },
                             onRemoveClick = {
                                 teamViewModel.removeMember(teamId, member.id)
@@ -105,7 +108,15 @@ fun TeamMembers(
             isVisible = isSideMenuVisible,
             navController = navController,
             onDismiss = { isSideMenuVisible = false },
-            onLanguageSelected = onLanguageSelected
+            onLanguageSelected = onLanguageSelected,
+            onSignOut = {
+                authViewModel.signOut {
+                    isSideMenuVisible = false
+                    navController.navigate("signin") {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            }
         )
     }
 }

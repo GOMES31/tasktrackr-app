@@ -38,6 +38,9 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _authenticationErrorCode = MutableStateFlow<Int?>(null)
     val errorCode: StateFlow<Int?> = _authenticationErrorCode.asStateFlow()
 
+    private val _isSigningOut = MutableStateFlow(false)
+    val isSigningOut: StateFlow<Boolean> = _isSigningOut.asStateFlow()
+
 
     // Register a new user
     fun signUp(name: String, email: String, password: String) {
@@ -96,24 +99,33 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun signOut(onSignOutComplete: (() -> Unit)? = null) {
+        Log.d("AuthViewModel", "signOut() called")
+        if(_isSigningOut.value){
+            Log.d("AuthViewModel", "Already signing out, aborting.")
+            return
+        }
+
+        _isSigningOut.value = true
+
         viewModelScope.launch {
             try {
                 val response = authApi.signOut()
-                if (response.isSuccessful) {
-                    clearData()
-                    onSignOutComplete?.invoke()
-                } else {
-                    clearData()
-                    onSignOutComplete?.invoke()
+                Log.d("AuthViewModel", "Signout response code: ${response.code()}")
+
+                if (!response.isSuccessful) {
+                    Log.w("AuthViewModel", "Signout returned unsuccessful status: ${response.code()}")
                 }
             } catch (e: Exception) {
+                Log.e("AuthViewModel", "Signout error: ${e.message}")
+            } finally {
                 clearData()
+                _isSigningOut.value = false
                 onSignOutComplete?.invoke()
             }
         }
     }
 
-    private fun clearData() {
+    fun clearData() {
         tokenRepository.clearTokens()
         _userData.value = null
         _signInSuccess.value = false
