@@ -33,27 +33,27 @@ import java.util.Locale
 fun EditUserProfile(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: UserViewModel,
+    userViewModel: UserViewModel,
     authViewModel: AuthViewModel,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
-    val userData by viewModel.userData.collectAsState()
-    val updateProfileSuccess by viewModel.updateProfileSuccess.collectAsState()
-    var name by remember { mutableStateOf(userData?.name.orEmpty()) }
+    val profileData by userViewModel.profileData.collectAsState()
+    val updateProfileSuccess by userViewModel.updateProfileSuccess.collectAsState()
+    var name by remember { mutableStateOf(profileData?.name.orEmpty()) }
     var newPassword by remember { mutableStateOf("") }
     var confirmNewPassword by remember { mutableStateOf("") }
     var avatarUri by remember { mutableStateOf<Uri?>(null) }
     var isSideMenuVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    LaunchedEffect(userData) {
-        name = userData?.name.orEmpty()
+    LaunchedEffect(profileData) {
+        name = profileData?.name.orEmpty()
     }
 
     LaunchedEffect(updateProfileSuccess) {
         if (updateProfileSuccess) {
             NotificationHelper.showNotification(context, R.string.user_edit_profile_success, true)
-            viewModel.resetUpdateProfileSuccess()
+            userViewModel.resetUpdateProfileSuccess()
             navController.popBackStack()
         }
     }
@@ -105,8 +105,8 @@ fun EditUserProfile(
                         contentScale = ContentScale.Crop,
                     )
                 }
-                !userData?.avatarUrl.isNullOrEmpty() -> {
-                    val imageFile = LocalImageStorage.getImageFile(LocalContext.current, userData!!.avatarUrl)
+                !profileData?.avatarUrl.isNullOrEmpty() -> {
+                    val imageFile = LocalImageStorage.getImageFile(LocalContext.current, profileData!!.avatarUrl)
                     if (imageFile != null) {
                         AsyncImage(
                             model = imageFile,
@@ -192,7 +192,7 @@ fun EditUserProfile(
             enabled = formValid,
             modifier = Modifier.width(200.dp),
             onClick = {
-                viewModel.updateProfile(
+                userViewModel.updateProfile(
                     name = name,
                     password = newPassword.takeIf { it.isNotBlank() },
                     avatarUri = avatarUri

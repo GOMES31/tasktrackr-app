@@ -97,5 +97,7 @@
     <string name="team_member_role_update_success">Team Member role updated successfully!</string>
     <string name="team_member_role_update_error">Error updating team member role!</string>
     <string name="edit_member">Edit Member</string>
+    <string name="wifi_required_signin">Connect to the internet to sign in</string>
+    <string name="wifi_required_signup">Connect to the internet to create an account</string>
 </resources>
 

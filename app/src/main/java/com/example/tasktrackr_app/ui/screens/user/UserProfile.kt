@@ -31,12 +31,12 @@ import java.util.Locale
 fun UserProfile(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: UserViewModel,
+    userViewModel: UserViewModel,
     authViewModel: AuthViewModel,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var isSideMenuVisible by remember { mutableStateOf(false) }
-    val userData by viewModel.userData.collectAsState()
+    val profileData by userViewModel.profileData.collectAsState()
     val context = LocalContext.current
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -74,7 +74,7 @@ fun UserProfile(
                         .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    val imageFile = userData?.avatarUrl?.let { url ->
+                    val imageFile = profileData?.avatarUrl?.let { url ->
                         LocalImageStorage.getImageFile(context, url)
                     }
 
@@ -98,7 +98,7 @@ fun UserProfile(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = userData?.name.orEmpty(),
+                    text = profileData?.name.orEmpty(),
                     color = TaskTrackrTheme.colorScheme.secondary,
                     style = TaskTrackrTheme.typography.header
                 )
@@ -106,7 +106,7 @@ fun UserProfile(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = userData?.email.orEmpty(),
+                    text = profileData?.email.orEmpty(),
                     color = TaskTrackrTheme.colorScheme.accent,
                     style = TaskTrackrTheme.typography.body
                 )

@@ -5,7 +5,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tasktrackr_app.data.local.TokenRepository
+import com.example.tasktrackr_app.data.local.entity.UserEntity
+import com.example.tasktrackr_app.data.local.repository.UserRepository
 import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.data.remote.api.ApiClient
 import com.example.tasktrackr_app.data.remote.api.UserApi
@@ -16,19 +17,21 @@ import com.example.tasktrackr_app.utils.LocalImageStorage
 import com.example.tasktrackr_app.data.remote.response.data.TaskData
 import com.example.tasktrackr_app.data.remote.response.data.ProjectData
 import com.example.tasktrackr_app.data.remote.response.data.ObservationData
+import com.example.tasktrackr_app.utils.EncryptedPrefsUtil
+import com.example.tasktrackr_app.utils.NetworkChangeReceiver
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val userApi: UserApi = ApiClient.userApi(application)
-    private val tokenRepository: TokenRepository = TokenRepository(application)
+    private val userRepository: UserRepository = UserRepository(application)
 
     private val _userData = MutableStateFlow<AuthData?>(null)
     val userData = _userData.asStateFlow()
 
     private val _profileData = MutableStateFlow<UserProfileData?>(null)
-    private val profileData = _profileData.asStateFlow()
+    val profileData = _profileData.asStateFlow()
 
     private val _errorCode = MutableStateFlow<Int?>(null)
 
@@ -66,45 +69,86 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             email = data.email,
             avatarUrl = data.avatarUrl
         )
+
+        viewModelScope.launch {
+            val user = UserEntity(
+                email = data.email,
+                name = data.name,
+                avatarUrl = data.avatarUrl,
+                isSynced = NetworkChangeReceiver.isWifiConnected(getApplication())
+            )
+            userRepository.insertUser(user)
+        }
     }
 
     fun updateProfile(name: String?, password: String?, avatarUri: Uri?) {
         _errorCode.value = null
+
         viewModelScope.launch {
-            try {
-                val localAvatarPath = if (avatarUri != null) {
-                    Log.d("UserViewModel", "Processing new avatar: $avatarUri")
-                    LocalImageStorage.saveProfileImage(getApplication(), avatarUri)
-                } else {
-                    profileData.value?.avatarUrl
-                }
+            val localAvatarPath = if (avatarUri != null) {
+                Log.d("UserViewModel", "Processing new avatar: $avatarUri")
+                LocalImageStorage.saveProfileImage(getApplication(), avatarUri)
+            } else {
+                profileData.value?.avatarUrl
+            }
 
-                val request = UpdateUserProfileRequest(
-                    name = name ?: profileData.value?.name,
-                    password = password,
-                    avatarUrl = localAvatarPath
-                )
+            val updatedName = name ?: profileData.value?.name
+            val updatedEmail = profileData.value?.email
+            val currentTime = System.currentTimeMillis()
 
-                val response = userApi.updateProfile(request)
+            val userEntity = UserEntity(
+                email = updatedEmail ?: return@launch,
+                name = updatedName ?: return@launch,
+                avatarUrl = localAvatarPath,
+                updatedAt = currentTime,
+                isSynced = NetworkChangeReceiver.isWifiConnected(getApplication())
+            )
 
-                if (response.isSuccessful) {
-                    val updatedProfile = response.body()?.data
-                    if (updatedProfile != null) {
-                        _profileData.value = updatedProfile
-                        _userData.value = updatedProfile.avatarUrl?.let {
-                            _userData.value?.copy(
-                                name = updatedProfile.name,
-                                avatarUrl = it
-                            )
+            userRepository.insertUser(userEntity)
+
+            _profileData.value = _profileData.value?.copy(
+                name = updatedName,
+                avatarUrl = localAvatarPath
+            )
+
+            // Save the updated password locally if not connected to Wi-Fi
+            if (!NetworkChangeReceiver.isWifiConnected(getApplication()) && !password.isNullOrEmpty()) {
+                EncryptedPrefsUtil.savePassword(getApplication(), password)
+            }
+
+            if (NetworkChangeReceiver.isWifiConnected(getApplication())) {
+                Log.d("UserViewModel", "Wi-Fi is connected. Attempting to update profile via API.")
+                try {
+                    val request = UpdateUserProfileRequest(
+                        name = updatedName,
+                        password = password,
+                        avatarUrl = localAvatarPath,
+                        updatedAt = currentTime
+                    )
+                    Log.d("UserViewModel", "Sending updateProfile request: $request")
+                    val response = userApi.updateProfile(request)
+                    Log.d("UserViewModel", "API response: code=${response.code()}, success=${response.isSuccessful}")
+                    if (response.isSuccessful) {
+                        val updatedProfile = response.body()?.data
+                        if (updatedProfile != null) {
+                            _profileData.value = updatedProfile
+                            _userData.value = updatedProfile.avatarUrl?.let {
+                                _userData.value?.copy(
+                                    name = updatedProfile.name,
+                                    avatarUrl = it
+                                )
+                            }
+                            _updateProfileSuccess.value = true
                         }
-                        _updateProfileSuccess.value = true
+                    } else {
+                        _errorCode.value = response.code()
                     }
-                } else {
-                    _errorCode.value = response.code()
+                } catch (e: Exception) {
+                    Log.e("UserViewModel", "Error updating profile", e)
+                    _errorCode.value = -1
                 }
-            } catch (e: Exception) {
-                Log.e("UserViewModel", "Error updating profile", e)
-                _errorCode.value = -1
+            } else {
+                _updateProfileSuccess.value = true
             }
         }
     }
@@ -202,9 +246,9 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearData() {
+
         _userData.value = null
         _profileData.value = null
-        _userTeams.value = null
         _errorCode.value = null
         _isLoadingTeams.value = false
         _updateProfileSuccess.value = false
@@ -216,3 +260,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         _isLoadingObservations.value = false
     }
 }
+
+
+
+

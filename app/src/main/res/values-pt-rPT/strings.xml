@@ -98,4 +98,6 @@
     <string name="team_member_role_update_success">Cargo do membro da equipa atualizado com sucesso!</string>
     <string name="team_member_role_update_error">Erro ao atualizar o cargo deste membro!</string>
     <string name="edit_member">Atualizar Membro</string>
+    <string name="wifi_required_signin">Conecte-se à internet para iniciar sessão</string>
+    <string name="wifi_required_signup">Conecte-se à internet para criar uma conta</string>
 </resources>

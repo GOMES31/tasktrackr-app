@@ -42,6 +42,7 @@ import com.example.tasktrackr_app.components.SideMenu
 import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
 import com.example.tasktrackr_app.ui.screens.user.UserProfile
 import androidx.compose.runtime.rememberCoroutineScope
+import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.utils.SessionManager
 import kotlinx.coroutines.launch
 
@@ -57,6 +58,7 @@ fun TaskTrackrApp() {
     val authViewModel: AuthViewModel = viewModel()
     val userViewModel: UserViewModel = viewModel()
     val teamViewModel: TeamViewModel = viewModel()
+    val taskViewModel: TaskViewModel = viewModel()
 
     val activity = LocalContext.current as ComponentActivity
 
@@ -146,7 +148,7 @@ fun TaskTrackrApp() {
                         composable("user-profile") {
                             UserProfile(
                                 navController = navController,
-                                viewModel = userViewModel,
+                                userViewModel = userViewModel,
                                 authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
@@ -155,7 +157,7 @@ fun TaskTrackrApp() {
                         composable("edit-user-profile") {
                             EditUserProfile(
                                 navController = navController,
-                                viewModel = userViewModel,
+                                userViewModel = userViewModel,
                                 authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
@@ -267,6 +269,8 @@ fun TaskTrackrApp() {
                             MyTasks(
                                 navController = navController,
                                 authViewModel = authViewModel,
+                                userViewModel = userViewModel,
+                                taskViewModel = taskViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }
@@ -283,23 +287,6 @@ fun TaskTrackrApp() {
                             onDismiss = { NotificationHelper.hideToast() }
                         )
                     }
-                    // Uncomment and implement this if SideMenu becomes active
-                    /*
-                    SideMenu(
-                        isVisible = isSideMenuVisible,
-                        navController = navController,
-                        onDismiss = { isSideMenuVisible = false },
-                        onLanguageSelected = onLanguageSelected,
-                        onSignOut = {
-                            authViewModel.signOut {
-                                clearAppData()
-                                navController.navigate("signin") {
-                                    popUpTo(0) { inclusive = true }
-                                }
-                            }
-                        }
-                    )
-                    */
                 }
             }
         }

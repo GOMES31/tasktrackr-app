@@ -16,11 +16,8 @@ import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import java.util.Locale
-import java.util.Date
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
-import java.util.Locale
 
 @Composable
 fun AddTaskButton(
@@ -41,8 +38,9 @@ fun MyTasks(
     modifier: Modifier = Modifier,
     navController: NavController,
     onLanguageSelected: (Locale) -> Unit = {},
-    userViewModel: UserViewModel = viewModel(),
-    taskViewModel: TaskViewModel = viewModel()
+    userViewModel: UserViewModel,
+    taskViewModel: TaskViewModel,
+    authViewModel: AuthViewModel
 ) {
     var selectedFilter by remember { mutableStateOf(TaskFilter.IN_PROGRESS) }
     var isSideMenuVisible by remember { mutableStateOf(false) }
