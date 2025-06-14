@@ -51,7 +51,6 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Network error"
-                Log.e("ProjectViewModel", "createProject error", e)
             } finally {
                 _loading.value = false
             }
@@ -72,8 +71,6 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
                     _error.value = response.errorBody()?.string() ?: "Project not found"
                 }
             } catch (e: Exception) {
-                _error.value = e.message ?: "Network error"
-                Log.e("ProjectViewModel", "getProjectById error", e)
             } finally {
                 _loading.value = false
             }
@@ -96,7 +93,6 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Network error"
-                Log.e("ProjectViewModel", "updateProject error", e)
             } finally {
                 _loading.value = false
             }
@@ -118,14 +114,17 @@ class ProjectViewModel(application: Application) : AndroidViewModel(application)
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Network error"
-                Log.e("ProjectViewModel", "getTasksForProject error", e)
             } finally {
                 _loading.value = false
             }
         }
     }
 
-    fun clearError() {
+    fun clearData() {
+        _currentProject.value = null
+        _tasksForProject.value = emptyList()
+        _loading.value = false
         _error.value = null
     }
+
 }

@@ -2,15 +2,12 @@ package com.example.tasktrackr_app.data.remote.response.data
 
 import com.google.gson.annotations.SerializedName
 import java.util.Date
+import com.example.tasktrackr_app.data.remote.response.data.ObservationData
 
 data class TaskData(
-
     val id: Long,
-
     val title: String,
-
     val description: String? = null,
-
     val status: String,
 
     @SerializedName("start_date")
@@ -26,9 +23,7 @@ data class TaskData(
     val updatedAt: Date? = null,
 
     val project: ProjectInfo,
-
     val assignees: List<TeamMemberData>,
-
     val observations: List<ObservationData>? = null
 ) {
     data class ProjectInfo(
@@ -48,10 +43,4 @@ data class TaskData(
         val avatarUrl: String?
     )
 
-    data class ObservationData(
-        val id: Long,
-        val message: String,
-        @SerializedName("created_at")
-        val createdAt: Date?
-    )
 }

@@ -3,6 +3,7 @@ package com.example.tasktrackr_app.data.remote.api
 import com.example.tasktrackr_app.data.remote.request.CreateTaskRequest
 import com.example.tasktrackr_app.data.remote.request.UpdateTaskRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
+import com.example.tasktrackr_app.data.remote.response.data.ObservationData
 import com.example.tasktrackr_app.data.remote.response.data.TaskData
 import retrofit2.Response
 import retrofit2.http.Body
@@ -27,5 +28,5 @@ interface TaskApi {
 
     @GET("tasks/{id}/observations")
     suspend fun getObservationsForTask(@Path("id") id: Long):
-            Response<ApiResponse<List<TaskData.ObservationData>>>
+            Response<ApiResponse<List<ObservationData>>>
 }
