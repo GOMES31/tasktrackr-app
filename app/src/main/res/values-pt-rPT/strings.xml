@@ -19,6 +19,7 @@
     <string name="my_profile">Meu Perfil</string>
     <string name="recent_activity">Atividade Recente</string>
     <string name="edit_profile">Editar Perfil</string>
+    <string name="edit_task">Editar Tarefa</string>
     <string name="app_description">A app TaskTrackr permite manter todas as suas tarefas, prazos e projetos de equipa num único lugar.</string>
     <string name="sign_out">Terminar sessão</string>
     <string name="language">Idioma:</string>
@@ -72,7 +73,7 @@
     <string name="progress_label">Progresso:</string>
     <string name="time_spent_label">Tempo Gasto:</string>
     <string name="time_spent_placeholder">e.g., 2 horas, 30 minutos</string>
-    <string name="completion_status_label">Estado de Conclusão</string>
+    <string name="completion_status_label">Estado de Conclusão:</string>
     <string name="observations_label">Observações:</string>
     <string name="observation_dropdown">Obs</string>
     <string name="observation_item_label">Observação</string>
@@ -82,14 +83,15 @@
     <string name="add_task_button">Adicionar Tarefa</string>
     <string name="tab_in_progress">Em Progresso</string>
     <string name="tab_pending">Pendente</string>
-    <string name="tab_completed">Concluído</string>
+    <string name="tab_finished">Concluído</string>
     <string name="task_progress_label">Progresso:</string>
     <string name="button_open">Abrir</string>
-    <string name="no_observations_available">Sem observações disponíveis</string>
+    <string name="no_observations_available">Sem observações</string>
     <string name="task_summary_title">Resumo das Tarefas</string>
     <string name="summary_tasks_today_label">Tarefas Hoje:</string>
-    <string name="summary_completed_label">Concluídas:</string>
+    <string name="summary_finished_label">Concluídas:</string>
     <string name="summary_in_progress_label">Em Progresso:</string>
+    <string name="summary_pending_label">Pendente:</string>
     <string name="summary_not_started_label">Não Iniciadas:</string>
     <string name="summary_time_spent_label">Tempo Gasto:</string>
     <string name="summary_average_progress_label">Progresso Médio:</string>
@@ -98,4 +100,19 @@
     <string name="team_member_role_update_success">Cargo do membro da equipa atualizado com sucesso!</string>
     <string name="team_member_role_update_error">Erro ao atualizar o cargo deste membro!</string>
     <string name="edit_member">Atualizar Membro</string>
+    <string name="no_description_available">Nenhuma descrição disponível</string>
+    <string name="not_available">Não disponível</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancelar</string>
+    <string name="button_close">Fechar</string>
+    <string name="select_date">Selecionar data</string>
+    <string name="add_observation_content_description">Adicionar observação</string>
+    <string name="add_button_text">Adicionar</string>
+    <string name="edit_observation_content_description">Editar observação</string>
+    <string name="no_observations_available_prompt">Ainda não existem observações disponíveis. Clique em \'Adicionar\' para começar a adicionar algumas.</string>
+    <string name="status_placeholder">Selecionar estado</string>
+    <string name="loading_project_details">Projeto A Carregar</string>
+    <string name="project_not_found">Project Não Encontrado</string>
+    <string name="fetching_tasks">A Buscar Tarefas</string>
+    <string name="total_projects_label">Total de Projectos:</string>
 </resources>

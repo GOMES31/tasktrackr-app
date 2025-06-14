@@ -1,6 +1,4 @@
-package com.example.tasktrackr_app.ui.screens.tasks
-
-import android.util.Log
+package com.example.tasktrackr_app.ui.screens.projects
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,35 +14,25 @@ import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.data.remote.response.data.TaskData
+import com.example.tasktrackr_app.ui.screens.tasks.AddTaskButton
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ObservationViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import com.example.tasktrackr_app.ui.viewmodel.ProjectViewModel
 import java.util.Locale
 
 @Composable
-fun AddTaskButton(
-    modifier: Modifier = Modifier,
-    onAddTaskClick: () -> Unit = {}
-) {
-    CustomButton(
-        modifier = modifier,
-        text = stringResource(R.string.add_task_button),
-        icon = painterResource(id = R.drawable.plus),
-        enabled = true,
-        onClick = onAddTaskClick
-    )
-}
-
-@Composable
-fun MyTasks(
+fun ProjectTasks(
     modifier: Modifier = Modifier,
     navController: NavController,
     userViewModel: UserViewModel,
     taskViewModel: TaskViewModel,
     authViewModel: AuthViewModel,
     observationViewModel: ObservationViewModel,
+    projectViewModel: ProjectViewModel,
+    projectId: Long,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var selectedFilter by remember { mutableStateOf(TaskFilter.IN_PROGRESS) }
@@ -54,14 +42,19 @@ fun MyTasks(
     var selectedTaskForDetail by remember { mutableStateOf<TaskData?>(null) }
     var taskToEdit by remember { mutableStateOf<TaskData?>(null) }
 
-    val userTasks by userViewModel.userTasks.collectAsState()
-    val isLoadingTasks by userViewModel.isLoadingTasks.collectAsState()
+    val currentProject by projectViewModel.currentProject.collectAsState()
+    val isLoadingProject by projectViewModel.loading.collectAsState()
+
+    val projectTasks by projectViewModel.tasksForProject.collectAsState()
+
     val fetchedObservations by taskViewModel.observations.collectAsState()
     val taskError by taskViewModel.errorMessage.collectAsState()
     val operationSuccess by taskViewModel.operationSuccess.collectAsState()
 
-    LaunchedEffect(Unit) {
-        userViewModel.fetchUserTasks()
+    LaunchedEffect(projectId) {
+        projectViewModel.clearData()
+        projectViewModel.getProjectById(projectId)
+        projectViewModel.getTasksForProject(projectId)
     }
 
     LaunchedEffect(operationSuccess) {
@@ -69,7 +62,7 @@ fun MyTasks(
             isTaskFormVisible = false
             taskToEdit = null
             taskViewModel.clearData()
-            userViewModel.fetchUserTasks()
+            projectViewModel.getTasksForProject(projectId)
         }
     }
 
@@ -95,39 +88,70 @@ fun MyTasks(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.my_tasks),
-                    style = TaskTrackrTheme.typography.header,
-                    color = TaskTrackrTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                when {
+                    isLoadingProject -> {
+                        Text(
+                            text = stringResource(R.string.loading_project_details),
+                            style = TaskTrackrTheme.typography.header,
+                            color = TaskTrackrTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    currentProject != null -> {
+                        Text(
+                            text = currentProject!!.name,
+                            style = TaskTrackrTheme.typography.header,
+                            color = TaskTrackrTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else -> {
+                        Text(
+                            text = stringResource(R.string.project_not_found),
+                            style = TaskTrackrTheme.typography.header,
+                            color = TaskTrackrTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
 
-                if (isLoadingTasks) {
-                    CircularProgressIndicator()
-                } else {
-                    ThreeTabMenu(
-                        selectedFilter = selectedFilter,
-                        onFilterSelected = { selectedFilter = it },
-                        tasks = userTasks ?: emptyList(),
-                        onTaskSelected = { task ->
-                            selectedTaskForDetail = task
-                            isTaskDetailVisible = true
-                            taskViewModel.getObservationsForTask(task.id)
-                        }
-                    )
+                when {
+                    isLoadingProject -> {
+                        CircularProgressIndicator()
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            stringResource(R.string.fetching_tasks),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = TaskTrackrTheme.colorScheme.text
+                        )
+                    }
+                    currentProject != null -> {
+                        ThreeTabMenu(
+                            selectedFilter = selectedFilter,
+                            onFilterSelected = { selectedFilter = it },
+                            tasks = projectTasks,
+                            onTaskSelected = { task ->
+                                selectedTaskForDetail = task
+                                isTaskDetailVisible = true
+                                taskViewModel.getObservationsForTask(task.id)
+                            }
+                        )
 
-                    AddTaskButton(
-                        onAddTaskClick = {
-                            taskViewModel.clearData()
-                            taskToEdit = null
-                            isTaskFormVisible = true
-                        }
-                    )
+                        AddTaskButton(
+                            onAddTaskClick = {
+                                taskViewModel.clearData()
+                                taskToEdit = null
+                                isTaskFormVisible = true
+                            }
+                        )
 
-                    TaskSummary(
-                        tasks = userTasks ?: emptyList()
-                    )
+                        TaskSummary(
+                            tasks = projectTasks
+                        )
+                    }
                 }
             }
         }
@@ -189,7 +213,7 @@ fun MyTasks(
                     taskViewModel.createTask(
                         title = data.title,
                         description = data.description,
-                        projectId = 1L,
+                        projectId = projectId,
                         status = data.status,
                         startDate = data.startDate,
                         endDate = data.endDate
