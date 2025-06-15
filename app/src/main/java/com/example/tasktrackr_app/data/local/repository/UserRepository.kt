@@ -9,13 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class UserRepository(context: Context) {
-    private val database = Room.databaseBuilder(
-        context.applicationContext,
-        AppDatabase::class.java,
-        "app_database"
-    ).build()
-    private val userDao = database.userDao()
 
+    private val userDao = AppDatabase.getInstance(context).userDao()
 
     suspend fun insertUser(user: UserEntity) = withContext(Dispatchers.IO) {
         userDao.insertUser(user)

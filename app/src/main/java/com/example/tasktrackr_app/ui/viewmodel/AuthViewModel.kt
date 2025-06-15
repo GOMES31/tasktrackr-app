@@ -11,6 +11,8 @@ import com.example.tasktrackr_app.data.remote.request.SignInRequest
 import com.example.tasktrackr_app.data.remote.request.SignUpRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.AuthData
+import com.example.tasktrackr_app.data.local.repository.UserRepository
+import com.example.tasktrackr_app.utils.NetworkChangeReceiver
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -109,30 +111,42 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _isSigningOut.value = true
 
         viewModelScope.launch {
-            try {
+
+
+            if (NetworkChangeReceiver.isWifiConnected(getApplication())) {
                 val response = authApi.signOut()
                 Log.d("AuthViewModel", "Signout response code: ${response.code()}")
 
                 if (!response.isSuccessful) {
-                    Log.w("AuthViewModel", "Signout returned unsuccessful status: ${response.code()}")
+                    Log.w(
+                        "AuthViewModel",
+                        "Signout returned unsuccessful status: ${response.code()}"
+                    )
                 }
-            } catch (e: Exception) {
-                Log.e("AuthViewModel", "Signout error: ${e.message}")
-            } finally {
-                clearData()
-                _isSigningOut.value = false
-                onSignOutComplete?.invoke()
+
             }
+
+            clearData()
+            _isSigningOut.value = false
+            onSignOutComplete?.invoke()
+
         }
     }
 
     fun clearData() {
         viewModelScope.launch {
-            tokenRepository.clearTokens()
+            val userRepository = UserRepository(getApplication())
+            val user = userRepository.getCurrentUser()
+
+            if (user != null && user.isSynced) {
+                tokenRepository.clearTokens()
+            }
+
             _userData.value = null
             _signInSuccess.value = false
             _signUpSuccess.value = false
             _authenticationErrorCode.value = null
+
         }
     }
 
@@ -140,5 +154,3 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _signUpSuccess.value = false
     }
 }
-
-

@@ -6,5 +6,8 @@ data class UpdateTeamRequest(
     val name: String?,
     val department: String?,
     @SerializedName("image_url")
-    val imageUrl: String?
+    val imageUrl: String?,
+
+    @SerializedName("updated_at")
+    val updatedAt: Long
 )
