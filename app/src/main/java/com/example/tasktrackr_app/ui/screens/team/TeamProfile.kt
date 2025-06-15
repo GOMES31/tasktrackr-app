@@ -44,8 +44,10 @@ fun TeamProfile(
 
     // Check if current user is admin
     val isAdmin = remember(teamData, userData) {
+        val currentUserEmail = userData?.email
+
         teamData?.members?.any { member ->
-            member.email == userData?.email && member.role == "ADMIN"
+            member.email == currentUserEmail && member.role == "ADMIN"
         } ?: false
     }
 
