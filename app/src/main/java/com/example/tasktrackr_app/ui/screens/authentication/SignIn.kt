@@ -2,6 +2,8 @@ package com.example.tasktrackr_app.ui.screens.authentication
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,6 +55,7 @@ fun SignIn(
         modifier = modifier
             .fillMaxSize()
             .background(TaskTrackrTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,7 +91,7 @@ fun SignIn(
 
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .width(320.dp)
                 .padding(vertical = 8.dp),
             horizontalAlignment = Alignment.Start
         ) {
@@ -107,7 +110,7 @@ fun SignIn(
 
         Column(
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .width(320.dp)
                 .padding(vertical = 8.dp),
             horizontalAlignment = Alignment.Start
         ) {
@@ -146,7 +149,7 @@ fun SignIn(
                     authViewModel.signIn(email, password)
                 }
             },
-            modifier = Modifier.fillMaxWidth(0.5f)
+            modifier = Modifier.width(320.dp)
         )
         CustomToast(
             message = stringResource(R.string.wifi_required_signin),
@@ -156,3 +159,4 @@ fun SignIn(
         )
     }
 }
+
