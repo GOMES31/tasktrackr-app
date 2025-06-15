@@ -1,15 +1,27 @@
 package com.example.tasktrackr_app.ui.screens.authentication
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.AuthLink
@@ -21,31 +33,36 @@ import com.example.tasktrackr_app.components.TextInputField
 import com.example.tasktrackr_app.components.ToggleTheme
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
+import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.net.HttpURLConnection
 import java.util.Locale
-
 
 @Composable
 fun SignIn(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: AuthViewModel = viewModel(),
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
     val isFormValid = email.isNotBlank() && password.isNotBlank()
-    val signInSuccess by viewModel.signInSuccess.collectAsState()
-    val errorCode by viewModel.errorCode.collectAsState()
+    val signInSuccess by authViewModel.signInSuccess.collectAsState()
+    val errorCode by authViewModel.errorCode.collectAsState()
+    val userData by authViewModel.userData.collectAsState()
 
     LaunchedEffect(signInSuccess) {
-        if (signInSuccess) {
-            navController.navigate("profile") {
+        if (signInSuccess && userData != null) {
+            userViewModel.loadProfile(userData!!)
+            navController.navigate("user-profile") {
                 popUpTo("signin") { inclusive = true }
             }
         }
     }
+
+
 
     Column(
         modifier = modifier
@@ -62,67 +79,69 @@ fun SignIn(
             verticalAlignment = Alignment.CenterVertically
         ) {
             ToggleTheme()
-            Spacer(Modifier.width(1.dp))
             LanguageMenu(onLanguageSelected = onLanguageSelected)
         }
 
-        Spacer(Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         TaskTrackrLogo(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(88.dp)
-                .padding(bottom = 30.dp)
+                .padding(bottom = 16.dp)
         )
 
         Text(
-            modifier = Modifier.fillMaxWidth(),
             text = stringResource(R.string.sign_in),
             color = TaskTrackrTheme.colorScheme.primary,
+            style = TaskTrackrTheme.typography.header,
             textAlign = TextAlign.Center,
-            style = TaskTrackrTheme.typography.header
+            modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-        TextInputField(
+        Column(
             modifier = Modifier
-                .width(320.dp)
+                .fillMaxWidth(0.8f)
                 .padding(vertical = 8.dp),
-            label = stringResource(R.string.email),
-            value = email,
-            onValueChange = { email = it },
-            placeholder = stringResource(R.string.email_input_placeholder)
-        )
-        if (errorCode == HttpURLConnection.HTTP_NOT_FOUND) {
-            ErrorMessage(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(start = 16.dp, bottom = 8.dp),
-                text = stringResource(R.string.error_user_not_found)
+            horizontalAlignment = Alignment.Start
+        ) {
+            TextInputField(
+                value = email,
+                onValueChange = { email = it },
+                label = stringResource(R.string.email),
+                placeholder = stringResource(R.string.email_input_placeholder)
             )
+            if (errorCode == HttpURLConnection.HTTP_NOT_FOUND) {
+                ErrorMessage(
+                    text = stringResource(R.string.error_user_not_found)
+                )
+            }
         }
 
-        TextInputField(
+        Column(
             modifier = Modifier
-                .width(320.dp)
+                .fillMaxWidth(0.8f)
                 .padding(vertical = 8.dp),
-            label = stringResource(R.string.password),
-            value = password,
-            onValueChange = { password = it },
-            placeholder = stringResource(R.string.password_input_placeholder),
-            isPassword = true
-        )
-        if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-            ErrorMessage(
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(start = 16.dp, bottom = 8.dp),
-                text = stringResource(R.string.error_invalid_credentials)
+            horizontalAlignment = Alignment.Start
+        ) {
+            TextInputField(
+                value = password,
+                onValueChange = { password = it },
+                label = stringResource(R.string.password),
+                placeholder = stringResource(R.string.password_input_placeholder),
+                isPassword = true
             )
+            if (errorCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                ErrorMessage(
+                    text = stringResource(R.string.error_invalid_credentials)
+                )
+            }
         }
 
-        Spacer(Modifier.height(20.dp))
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         AuthLink(
             text = stringResource(R.string.sign_up_link_message),
@@ -130,16 +149,13 @@ fun SignIn(
             onClick = { navController.navigate("signup") }
         )
 
-        Spacer(Modifier.height(30.dp))
-
+        Spacer(modifier = Modifier.height(24.dp))
 
         CustomButton(
-            modifier = Modifier.width(200.dp),
             text = stringResource(R.string.sign_in),
             enabled = isFormValid,
-            onClick = {
-                viewModel.signIn(email, password)
-                 }
+            onClick = { authViewModel.signIn(email, password) },
+            modifier = Modifier.fillMaxWidth(0.5f)
         )
     }
 }

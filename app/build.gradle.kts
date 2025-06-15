@@ -53,10 +53,13 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
+    implementation(libs.coil.compose)
+
 
     implementation(libs.okhttp)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.localbroadcastmanager)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

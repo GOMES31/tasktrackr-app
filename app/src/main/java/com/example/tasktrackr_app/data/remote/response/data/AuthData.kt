@@ -1,14 +1,14 @@
-package com.example.tasktrackr_app.data.remote.response
+package com.example.tasktrackr_app.data.remote.response.data
 
 import com.google.gson.annotations.SerializedName
 
-data class AuthResponse(
-    val status: Int,
-    val message: String,
-    val data: Data
-) {
-    data class Data(
+data class AuthData(
+        val name: String,
+
         val email: String,
+
+        @SerializedName("avatar_url")
+        val avatarUrl: String,
 
         @SerializedName("access_token")
         val accessToken: String,
@@ -16,4 +16,5 @@ data class AuthResponse(
         @SerializedName("refresh_token")
         val refreshToken: String
     )
-}
+
+
