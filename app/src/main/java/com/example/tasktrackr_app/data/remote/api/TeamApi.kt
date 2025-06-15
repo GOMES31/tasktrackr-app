@@ -1,18 +1,17 @@
 package com.example.tasktrackr_app.data.remote.api
 
-import com.example.tasktrackr_app.data.remote.request.CreateTeamRequest
-import com.example.tasktrackr_app.data.remote.request.UpdateTeamRequest
 import com.example.tasktrackr_app.data.remote.request.AddTeamMemberRequest
+import com.example.tasktrackr_app.data.remote.request.CreateTeamRequest
 import com.example.tasktrackr_app.data.remote.request.UpdateTeamMemberRequest
+import com.example.tasktrackr_app.data.remote.request.UpdateTeamRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.data.remote.response.data.TeamMemberData
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.PATCH
-import retrofit2.http.DELETE
 import retrofit2.http.PUT
 import retrofit2.http.Path
 

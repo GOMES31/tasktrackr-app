@@ -2,7 +2,6 @@ package com.example.tasktrackr_app.data.remote.interceptor
 
 import android.content.Context
 import android.util.Log
-import androidx.navigation.NavController
 import com.example.tasktrackr_app.data.local.repository.TokenRepository
 import com.example.tasktrackr_app.data.remote.api.AuthApi
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
@@ -13,9 +12,9 @@ import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import kotlinx.coroutines.runBlocking
 
 class TokenInterceptor(
     private val context: Context,

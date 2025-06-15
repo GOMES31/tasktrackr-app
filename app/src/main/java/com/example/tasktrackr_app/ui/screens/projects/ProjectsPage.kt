@@ -1,7 +1,15 @@
 package com.example.tasktrackr_app.ui.screens.projects
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,8 +32,8 @@ import com.example.tasktrackr_app.components.SideMenu
 import com.example.tasktrackr_app.components.TopBar
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
-import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ProjectViewModel
+import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
 
 @Composable
