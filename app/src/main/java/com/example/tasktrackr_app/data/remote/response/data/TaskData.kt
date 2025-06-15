@@ -33,14 +33,4 @@ data class TaskData(
         val status: String? = null
     )
 
-    data class TeamMemberData(
-        val id: Long,
-        val name: String,
-        val email: String,
-        @SerializedName("team_role")
-        val teamRole: String,
-        @SerializedName("avatar_url")
-        val avatarUrl: String?
-    )
-
 }

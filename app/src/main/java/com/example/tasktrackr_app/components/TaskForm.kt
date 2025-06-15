@@ -56,7 +56,6 @@ private fun getTeamMemberRole(member: TeamMemberData): String {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskForm(
     modifier: Modifier = Modifier,
@@ -105,41 +104,50 @@ fun TaskForm(
         mutableStateOf(mutableListOf<TeamMemberData>())
     }
 
+    LaunchedEffect(selectedAssignees) {
+    }
+
     LaunchedEffect(existingTask, teamData, isVisible) {
         if (isVisible && existingTask != null && teamData != null) {
-
             val assigneesFromTask = existingTask.assignees?.let { assignees ->
+
                 when {
                     assignees.isEmpty() -> {
                         emptyList()
                     }
-                    assignees.first() is TeamMemberData -> {
-                        assignees.filterIsInstance<TeamMemberData>()
-                    }
                     else -> {
-                        assignees.mapNotNull { assignee ->
+                        val result = assignees.mapNotNull { assignee ->
+
                             val assigneeEmail = when (assignee) {
-                                is String -> assignee
-                                is Map<*, *> -> assignee["email"] as? String
+                                is TeamMemberData -> {
+                                    assignee.email
+                                }
+                                is String -> {
+                                    assignee
+                                }
+                                is Map<*, *> -> {
+                                    val email = assignee["email"] as? String
+                                    email
+                                }
                                 else -> {
                                     null
                                 }
                             }
 
                             assigneeEmail?.let { email ->
-                                teamData.members?.find { member ->
+                                val foundMember = teamData.members?.find { member ->
                                     member.email == email
-                                }?.also {
                                 }
+                                foundMember
                             }
                         }
+                        result
                     }
                 }
             } ?: emptyList()
 
             selectedAssignees = assigneesFromTask.toMutableList()
-            selectedAssignees.forEach { assignee ->
-            }
+
         }
     }
 
@@ -652,8 +660,14 @@ observationViewModel?.let { viewModel ->
                         Spacer(modifier = Modifier.height(8.dp))
 
 
+
+
                         val unassignedMembers = availableTeamMembers?.filter { member ->
-                            selectedAssignees.none { getTeamMemberIdentifier(it) == getTeamMemberIdentifier(member) }
+                            val isNotAssigned = selectedAssignees.none {
+                                val result = getTeamMemberIdentifier(it) == getTeamMemberIdentifier(member)
+                                result
+                            }
+                            isNotAssigned
                         } ?: emptyList()
 
                         val availableMembersContainerHeight = if (unassignedMembers.isNotEmpty()) {
