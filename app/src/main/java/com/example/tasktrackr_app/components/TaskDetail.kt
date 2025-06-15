@@ -41,6 +41,12 @@ fun TaskDetail(
     val fixedObservationItemHeight = 56.dp
     val observationsCardHeight = (fixedObservationItemHeight * 2) + 40.5.dp
 
+    val statusOptions = listOf(
+        "IN_PROGRESS" to stringResource(R.string.in_progress),
+        "FINISHED" to stringResource(R.string.finished),
+        "PENDING" to stringResource(R.string.pending)
+    )
+
     if (isVisible) {
         Dialog(
             onDismissRequest = { onDismiss() },
@@ -127,12 +133,8 @@ fun TaskDetail(
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    val statusText = when (task.status?.lowercase()) {
-                        "in_progress" -> stringResource(R.string.tab_in_progress)
-                        "pending" -> stringResource(R.string.tab_pending)
-                        "finished" -> stringResource(R.string.tab_finished)
-                        else -> task.status ?: stringResource(R.string.not_available)
-                    }
+                    val statusText = statusOptions.find { it.first == task.status }?.second
+                        ?: task.status ?: stringResource(R.string.not_available)
 
                     Text(
                         text = stringResource(R.string.completion_status_label) + " $statusText",
@@ -226,7 +228,6 @@ fun TaskDetail(
                             onDismiss()
                         },
                         modifier = Modifier
-                            .fillMaxWidth()
                             .align(Alignment.CenterHorizontally)
                     )
                 }

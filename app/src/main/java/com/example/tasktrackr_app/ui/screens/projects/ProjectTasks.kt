@@ -14,7 +14,6 @@ import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.*
 import com.example.tasktrackr_app.data.remote.response.data.TaskData
-import com.example.tasktrackr_app.ui.screens.tasks.AddTaskButton
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ObservationViewModel
@@ -22,6 +21,20 @@ import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ProjectViewModel
 import java.util.Locale
+
+@Composable
+fun AddTaskButton(
+    modifier: Modifier = Modifier,
+    onAddTaskClick: () -> Unit = {}
+) {
+    CustomButton(
+        modifier = modifier,
+        text = stringResource(R.string.add_task_button),
+        icon = painterResource(id = R.drawable.plus),
+        enabled = true,
+        onClick = onAddTaskClick
+    )
+}
 
 @Composable
 fun ProjectTasks(
@@ -41,6 +54,7 @@ fun ProjectTasks(
     var isTaskDetailVisible by remember { mutableStateOf(false) }
     var selectedTaskForDetail by remember { mutableStateOf<TaskData?>(null) }
     var taskToEdit by remember { mutableStateOf<TaskData?>(null) }
+
 
     val currentProject by projectViewModel.currentProject.collectAsState()
     val isLoadingProject by projectViewModel.loading.collectAsState()
@@ -223,7 +237,8 @@ fun ProjectTasks(
             isEditMode = taskToEdit != null,
             existingTask = taskToEdit,
             observationViewModel = observationViewModel,
-            taskViewModel = taskViewModel
+            taskViewModel = taskViewModel,
+            authViewModel = authViewModel
         )
     }
 }

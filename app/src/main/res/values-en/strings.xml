@@ -38,7 +38,7 @@
     <string name="team_name_placeholder">Insert team name here</string>
     <string name="department_placeholder">Insert department here</string>
     <string name="no_teams_message">You are not in a team.\nYou can either create one or be invited to one.</string>
-    <string name="upload_team_logo">"Upload Team Logo "</string>
+    <string name="upload_team_logo">Upload Team Logo</string>
     <string name="team_profile">Team Profile</string>
     <string name="edit_team">Edit Team</string>
     <string name="add_member">Add Member</string>
@@ -65,10 +65,9 @@
     <string name="task_location_label">Location:</string>
     <string name="task_location_placeholder">Location</string>
     <string name="start_date_label">Start Date:</string>
-    <string name="start_date_placeholder">hh:mm dd/mm/yyyy</string>
-    <string name="error_start_date_empty">Start Date cannot be empty!</string>
     <string name="end_date_label">End Date:</string>
-    <string name="end_date_placeholder">hh:mm dd/mm/yyyy</string>
+    <string name="date_placeholder">hh:mm dd/mm/yyyy</string>
+    <string name="error_start_date_empty">Start Date cannot be empty!</string>
     <string name="error_end_date_empty">End Date cannot be empty!</string>
     <string name="progress_label">Progress:</string>
     <string name="time_spent_label">Time Spent:</string>
@@ -81,10 +80,10 @@
     <string name="save_task_button">Save Task</string>
     <string name="update_task_button">Update Task</string>
     <string name="add_task_button">Add Task</string>
-    <string name="tab_in_progress">In Progress</string>
-    <string name="tab_pending">Pending</string>
-    <string name="tab_finished">Finished</string>
-    <string name="task_progress_label">Progress:</string>
+    <string name="in_progress">In Progress</string>
+    <string name="pending">Pending</string>
+    <string name="finished">Finished</string>
+    <!-- Removed: <string name="task_progress_label">Progress:</string> -->
     <string name="button_open">Open</string>
     <string name="no_observations_available">No observations</string>
     <string name="task_summary_title">Task Summary</string>
@@ -109,10 +108,16 @@
     <string name="add_observation_content_description">Add observation</string>
     <string name="add_button_text">Add</string>
     <string name="edit_observation_content_description">Edit observation</string>
-    <string name="no_observations_available_prompt">No observations available yet. Click on \'Add\' to start adding some.</string>
     <string name="status_placeholder">Select Status</string>
     <string name="loading_project_details">Loading Project</string>
     <string name="project_not_found">Project Not Found</string>
     <string name="fetching_tasks">Fetching Tasks</string>
     <string name="total_projects_label">Total Projects:</string>
+    <string name="add_project">Add Project</string>
+    <string name="error_name_empty">Name cannot be empty</string>
+    <string name="project">Project</string>
+    <string name="project_name_placeholder">Project Name</string>
+    <string name="project_description_placeholder">Project description...</string>
+    <string name="error_team_id_empty">Team must be selected!</string>
+    <string name="add_project_button">Add Project</string>
 </resources>
