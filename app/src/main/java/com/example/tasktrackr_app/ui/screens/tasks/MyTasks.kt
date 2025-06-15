@@ -48,7 +48,6 @@ fun MyTasks(
     taskViewModel: TaskViewModel,
     authViewModel: AuthViewModel,
     observationViewModel: ObservationViewModel,
-    onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var selectedFilter by remember { mutableStateOf(TaskFilter.IN_PROGRESS) }
     var isSideMenuVisible by remember { mutableStateOf(false) }
