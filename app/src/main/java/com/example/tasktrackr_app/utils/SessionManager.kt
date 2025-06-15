@@ -1,8 +1,6 @@
 package com.example.tasktrackr_app.utils
 
 import android.content.Context
-import android.util.Log
-import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

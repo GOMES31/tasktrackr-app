@@ -1,40 +1,45 @@
 package com.example.tasktrackr_app.ui.screens.tasks
 
-import android.util.Log
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
-import com.example.tasktrackr_app.components.* // Ensure TaskFormData is imported from here
+import com.example.tasktrackr_app.components.SideMenu
+import com.example.tasktrackr_app.components.TaskDetail
+import com.example.tasktrackr_app.components.TaskFilter
+import com.example.tasktrackr_app.components.TaskForm
+import com.example.tasktrackr_app.components.TaskSummary
+import com.example.tasktrackr_app.components.ThreeTabMenu
+import com.example.tasktrackr_app.components.TopBar
 import com.example.tasktrackr_app.data.remote.response.data.TaskData
 import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ObservationViewModel
-import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
-import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
-import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ProjectViewModel
+import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
+import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
+import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
-import java.util.Date
-
-data class TaskFormData(
-    val title: String,
-    val description: String,
-    val status: String,
-    val startDate: Date?,
-    val endDate: Date?,
-    val assigneeIds: List<Long>?
-)
 
 
 @Composable
@@ -95,10 +100,8 @@ fun MyTasks(
         if (taskToEdit != null) {
             val projectId = taskToEdit?.project?.id
             if (projectId != null) {
-                Log.d("MyTasks", "Fetching project for task edit: Project ID = $projectId")
                 projectViewModel.getProjectById(projectId)
             } else {
-                Log.d("MyTasks", "taskToEdit.project.id is null, cannot fetch team data.")
                 teamDataForForm = null
             }
         } else {
@@ -110,17 +113,13 @@ fun MyTasks(
 
     LaunchedEffect(currentProject) {
         currentProject?.team?.id?.let { teamId ->
-            Log.d("MyTasks", "Project loaded, fetching team data for Team ID: $teamId")
-            // Ensure teamId is converted to String if loadTeam expects String
             teamViewModel.loadTeam(teamId.toString())
         } ?: run {
-            Log.d("MyTasks", "currentProject or currentProject.team.id is null. Cannot load team.")
             teamDataForForm = null
         }
     }
 
     LaunchedEffect(selectedTeam) {
-        Log.d("MyTasks", "selectedTeam from TeamViewModel updated: $selectedTeam")
         teamDataForForm = selectedTeam
     }
 
@@ -214,7 +213,6 @@ fun MyTasks(
                 teamViewModel.clearData()
                 teamDataForForm = null
             },
-            // The 'onSave' lambda now receives TaskFormData which includes assigneeIds
             onSave = { data ->
                 val assigneeIdLongs: List<Long>? = data.assigneeIds
                     ?.mapNotNull { it.toString().toLongOrNull() }

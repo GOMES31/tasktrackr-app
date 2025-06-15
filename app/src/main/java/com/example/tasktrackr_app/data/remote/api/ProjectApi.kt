@@ -5,9 +5,12 @@ import com.example.tasktrackr_app.data.remote.request.UpdateProjectRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.ProjectData
 import com.example.tasktrackr_app.data.remote.response.data.TaskData
-
-import retrofit2.Response;
-import retrofit2.http.*;
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 interface ProjectApi {
 

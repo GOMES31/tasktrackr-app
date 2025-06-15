@@ -2,7 +2,6 @@ package com.example.tasktrackr_app.data.remote.response.data
 
 import com.google.gson.annotations.SerializedName
 import java.util.Date
-import com.example.tasktrackr_app.data.remote.response.data.ObservationData
 
 data class TaskData(
     val id: Long,

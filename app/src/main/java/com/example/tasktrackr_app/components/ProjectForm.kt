@@ -3,33 +3,52 @@ package com.example.tasktrackr_app.ui.screens.projects
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.tasktrackr_app.R
+import com.example.tasktrackr_app.components.CustomButton
+import com.example.tasktrackr_app.components.DatePicker
+import com.example.tasktrackr_app.components.TimePicker
 import com.example.tasktrackr_app.data.remote.response.data.AuthData
 import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
-import com.example.tasktrackr_app.components.DatePicker
-import com.example.tasktrackr_app.components.TimePicker
-import com.example.tasktrackr_app.components.CustomButton
 import com.example.tasktrackr_app.utils.DateUtils
-import java.util.*
+import java.util.Date
 
 data class ProjectFormData(
     val name: String,
@@ -68,12 +87,10 @@ fun ProjectForm(
     var settingTimeForStartDate by remember { mutableStateOf(false) }
     var tempDateForTimePicker by remember { mutableStateOf<Date?>(null) }
 
-    // Error states
     var showNameError by remember { mutableStateOf(false) }
     var showDescriptionError by remember { mutableStateOf(false) }
     var showTeamError by remember { mutableStateOf(false) }
 
-    // Status options
     val statusOptions = listOf(
         "IN_PROGRESS" to stringResource(R.string.in_progress),
         "FINISHED" to stringResource(R.string.finished),
@@ -163,7 +180,6 @@ fun ProjectForm(
                         )
                     }
 
-                    // Close button
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
@@ -177,7 +193,6 @@ fun ProjectForm(
                     return@Column
                 }
 
-                // Project Name Field
                 Text(
                     text = "Project Name",
                     style = TaskTrackrTheme.typography.label,
@@ -216,7 +231,6 @@ fun ProjectForm(
                     )
                 }
 
-                // Project Description Field
                 Text(
                     text = "Description",
                     style = TaskTrackrTheme.typography.label,
@@ -257,7 +271,6 @@ fun ProjectForm(
                     )
                 }
 
-                // Team Selection Dropdown
                 Text(
                     text = "Select Team",
                     style = TaskTrackrTheme.typography.label,
@@ -337,7 +350,6 @@ fun ProjectForm(
                     )
                 }
 
-                // Status Selection Dropdown
                 Text(
                     text = "Project Status",
                     style = TaskTrackrTheme.typography.label,
@@ -400,7 +412,6 @@ fun ProjectForm(
                     }
                 }
 
-                // Start Date
                 Text(
                     text = "Start Date",
                     style = TaskTrackrTheme.typography.label,
@@ -469,7 +480,6 @@ fun ProjectForm(
                     )
                 }
 
-                // End Date
                 Text(
                     text = "End Date",
                     style = TaskTrackrTheme.typography.label,
@@ -538,7 +548,6 @@ fun ProjectForm(
                     )
                 }
 
-                // Date validation error
                 val tempStartDate = startDate
                 val tempEndDate = endDate
                 if (tempStartDate != null && tempEndDate != null && tempEndDate.before(tempStartDate)) {
@@ -551,7 +560,6 @@ fun ProjectForm(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Action Button
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
@@ -602,7 +610,6 @@ fun ProjectForm(
             }
         }
 
-        // Date and Time Pickers
         DatePicker(
             isVisible = showStartDatePicker,
             initialDate = startDate,

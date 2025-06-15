@@ -25,12 +25,7 @@ data class ProjectData(
     @SerializedName("updated_at")
     val updatedAt: Date? = null,
 
-    val team: TeamInfo,
+    val team: TeamData,
 
     val tasks: List<TaskData>
-) {
-    data class TeamInfo(
-        val id: Long,
-        val name: String
-    )
-}
+)
