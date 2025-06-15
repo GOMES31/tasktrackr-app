@@ -49,7 +49,8 @@ data class TaskFormData(
     val startDate: Date?,
     val endDate: Date?,
     val status: String,
-    val observations: List<ObservationData>
+    val observations: List<ObservationData>,
+    val assigneeIds: List<String>
 )
 
 @Composable
@@ -78,6 +79,7 @@ fun ThreeTabMenu(
         val uniqueStatuses = tasks.map { it.status }.distinct()
         uniqueStatuses.forEach { status ->
             val count = tasks.count { it.status == status }
+            Log.d("ThreeTabMenu", "Status: $status, Count: $count")
         }
     }
 
@@ -110,19 +112,19 @@ fun ThreeTabMenu(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TaskFilterTab(
-                        text = stringResource(R.string.tab_in_progress),
+                        text = stringResource(R.string.in_progress),
                         isSelected = selectedFilter == TaskFilter.IN_PROGRESS,
                         onClick = { onFilterSelected(TaskFilter.IN_PROGRESS) },
                         modifier = Modifier.weight(1f)
                     )
                     TaskFilterTab(
-                        text = stringResource(R.string.tab_pending),
+                        text = stringResource(R.string.pending),
                         isSelected = selectedFilter == TaskFilter.PENDING,
                         onClick = { onFilterSelected(TaskFilter.PENDING) },
                         modifier = Modifier.weight(1f)
                     )
                     TaskFilterTab(
-                        text = stringResource(R.string.tab_finished),
+                        text = stringResource(R.string.finished),
                         isSelected = selectedFilter == TaskFilter.FINISHED,
                         onClick = { onFilterSelected(TaskFilter.FINISHED) },
                         modifier = Modifier.weight(1f)
@@ -195,7 +197,7 @@ fun ThreeTabMenu(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(450.dp),
+                    .height(453.dp),
                 verticalArrangement = Arrangement.Top
             ) {
                 if (filteredTasks.isEmpty()) {

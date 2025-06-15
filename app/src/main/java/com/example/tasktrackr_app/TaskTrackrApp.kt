@@ -282,6 +282,8 @@ fun TaskTrackrApp() {
                                 authViewModel = authViewModel,
                                 userViewModel = userViewModel,
                                 taskViewModel = taskViewModel,
+                                teamViewModel = teamViewModel,
+                                projectViewModel = projectViewModel,
                                 observationViewModel = observationViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
@@ -306,6 +308,7 @@ fun TaskTrackrApp() {
                                 userViewModel = userViewModel,
                                 taskViewModel = taskViewModel,
                                 authViewModel = authViewModel,
+                                teamViewModel = teamViewModel,
                                 observationViewModel = observationViewModel,
                                 projectViewModel = projectViewModel,
                                 projectId = projectId,

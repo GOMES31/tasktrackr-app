@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,13 +34,15 @@ import com.example.tasktrackr_app.components.TaskSummary
 import com.example.tasktrackr_app.components.ThreeTabMenu
 import com.example.tasktrackr_app.components.TopBar
 import com.example.tasktrackr_app.data.remote.response.data.TaskData
+import com.example.tasktrackr_app.data.remote.response.data.TeamData
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ObservationViewModel
+import com.example.tasktrackr_app.ui.viewmodel.ProjectViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
+import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
-
 
 @Composable
 fun AddTaskButton(
@@ -63,7 +66,10 @@ fun MyTasks(
     userViewModel: UserViewModel,
     taskViewModel: TaskViewModel,
     authViewModel: AuthViewModel,
+    teamViewModel: TeamViewModel,
     observationViewModel: ObservationViewModel,
+    projectViewModel: ProjectViewModel,
+    onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var selectedFilter by remember { mutableStateOf(TaskFilter.IN_PROGRESS) }
     var isSideMenuVisible by remember { mutableStateOf(false) }
@@ -78,6 +84,10 @@ fun MyTasks(
     val taskError by taskViewModel.errorMessage.collectAsState()
     val operationSuccess by taskViewModel.operationSuccess.collectAsState()
 
+    val currentProject by projectViewModel.currentProject.collectAsState()
+    val selectedTeam by teamViewModel.selectedTeam.collectAsState()
+    var teamDataForForm by remember { mutableStateOf<TeamData?>(null) }
+
     LaunchedEffect(Unit) {
         userViewModel.fetchUserTasks()
     }
@@ -88,19 +98,53 @@ fun MyTasks(
             taskToEdit = null
             taskViewModel.clearData()
             userViewModel.fetchUserTasks()
+            projectViewModel.clearData()
+            teamViewModel.clearData()
+            teamDataForForm = null
         }
     }
 
     LaunchedEffect(taskError) {
         if (taskError != null) {
             taskViewModel.clearData()
+            projectViewModel.clearData()
+            teamViewModel.clearData()
+            teamDataForForm = null
         }
+    }
+
+    LaunchedEffect(taskToEdit) {
+        if (taskToEdit != null) {
+            val projectId = taskToEdit?.project?.id
+            if (projectId != null) {
+                projectViewModel.getProjectById(projectId)
+            } else {
+                teamDataForForm = null
+            }
+        } else {
+            projectViewModel.clearData()
+            teamViewModel.clearData()
+            teamDataForForm = null
+        }
+    }
+
+    LaunchedEffect(currentProject) {
+        currentProject?.team?.id?.let { teamId ->
+            teamViewModel.loadTeam(teamId.toString())
+        } ?: run {
+            teamDataForForm = null
+        }
+    }
+
+    LaunchedEffect(selectedTeam) {
+        teamDataForForm = selectedTeam
     }
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .background(TaskTrackrTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -134,15 +178,6 @@ fun MyTasks(
                             taskViewModel.getObservationsForTask(task.id)
                         }
                     )
-
-                    AddTaskButton(
-                        onAddTaskClick = {
-                            taskViewModel.clearData()
-                            taskToEdit = null
-                            isTaskFormVisible = true
-                        }
-                    )
-
                     TaskSummary(
                         tasks = userTasks ?: emptyList()
                     )
@@ -192,8 +227,15 @@ fun MyTasks(
                 isTaskFormVisible = false
                 taskViewModel.clearData()
                 taskToEdit = null
+                projectViewModel.clearData()
+                teamViewModel.clearData()
+                teamDataForForm = null
             },
             onSave = { data ->
+                val assigneeIdLongs: List<Long>? = data.assigneeIds
+                    ?.mapNotNull { it.toString().toLongOrNull() }
+                    ?.takeIf { it.isNotEmpty() }
+
                 if (taskToEdit != null) {
                     taskViewModel.updateTask(
                         id = taskToEdit!!.id,
@@ -201,7 +243,8 @@ fun MyTasks(
                         description = data.description,
                         status = data.status,
                         startDate = data.startDate,
-                        endDate = data.endDate
+                        endDate = data.endDate,
+                        assigneeIds = assigneeIdLongs
                     )
                 } else {
                     taskViewModel.createTask(
@@ -210,14 +253,17 @@ fun MyTasks(
                         projectId = 1L,
                         status = data.status,
                         startDate = data.startDate,
-                        endDate = data.endDate
+                        endDate = data.endDate,
+                        assigneeIds = assigneeIdLongs
                     )
                 }
             },
             isEditMode = taskToEdit != null,
             existingTask = taskToEdit,
             observationViewModel = observationViewModel,
-            taskViewModel = taskViewModel
+            taskViewModel = taskViewModel,
+            authViewModel = authViewModel,
+            teamData = teamDataForForm
         )
     }
 }
