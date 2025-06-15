@@ -117,4 +117,6 @@
     <string name="project_not_found">Project Não Encontrado</string>
     <string name="fetching_tasks">A Buscar Tarefas</string>
     <string name="total_projects_label">Total de Projectos:</string>
+    <string name="wifi_required_tasks">Conecte-se à internet para conseguir consultar as suas tarefas</string>
+    <string name="wifi_required_projects">Conecte-se à internet para conseguir consultar os seus projetos</string>
 </resources>
