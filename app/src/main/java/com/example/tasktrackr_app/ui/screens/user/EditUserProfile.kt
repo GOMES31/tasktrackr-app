@@ -7,7 +7,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -69,52 +71,66 @@ fun EditUserProfile(
         modifier = modifier
             .fillMaxSize()
             .background(TaskTrackrTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopBar(onMenuClick = { isSideMenuVisible = true })
 
-        Text(
-            text = stringResource(R.string.edit_profile),
-            color = TaskTrackrTheme.colorScheme.primary,
-            style = TaskTrackrTheme.typography.header,
-            modifier = Modifier.padding(vertical = 24.dp)
-        )
-
-        Text(
-            text = stringResource(R.string.upload_avatar),
-            color = TaskTrackrTheme.colorScheme.secondary,
-            style = TaskTrackrTheme.typography.subHeader
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
-                .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.padding(bottom = 80.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            when {
-                avatarUri != null -> {
-                    AsyncImage(
-                        model = avatarUri,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                    )
-                }
-                !profileData?.avatarUrl.isNullOrEmpty() -> {
-                    val imageFile = LocalImageStorage.getImageFile(LocalContext.current, profileData!!.avatarUrl)
-                    if (imageFile != null) {
+            Text(
+                text = stringResource(R.string.edit_profile),
+                color = TaskTrackrTheme.colorScheme.primary,
+                style = TaskTrackrTheme.typography.header,
+                modifier = Modifier.padding(vertical = 24.dp)
+            )
+
+            Text(
+                text = stringResource(R.string.upload_avatar),
+                color = TaskTrackrTheme.colorScheme.secondary,
+                style = TaskTrackrTheme.typography.subHeader
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+                    .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                when {
+                    avatarUri != null -> {
                         AsyncImage(
-                            model = imageFile,
+                            model = avatarUri,
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop,
                         )
-                    } else {
+                    }
+                    !profileData?.avatarUrl.isNullOrEmpty() -> {
+                        val imageFile = LocalImageStorage.getImageFile(LocalContext.current, profileData!!.avatarUrl)
+                        if (imageFile != null) {
+                            AsyncImage(
+                                model = imageFile,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.default_profile),
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+                    else -> {
                         Image(
                             painter = painterResource(R.drawable.default_profile),
                             contentDescription = null,
@@ -123,82 +139,74 @@ fun EditUserProfile(
                         )
                     }
                 }
-                else -> {
-                    Image(
-                        painter = painterResource(R.drawable.default_profile),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
             }
-        }
 
-        Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
 
-        CustomButton(
-            text = stringResource(R.string.upload_avatar),
-            modifier = Modifier.width(200.dp),
-            enabled = true,
-            onClick = { pickImage.launch("image/*") }
-        )
+            CustomButton(
+                text = stringResource(R.string.upload_avatar),
+                modifier = Modifier.width(320.dp),
+                enabled = true,
+                onClick = { pickImage.launch("image/*") }
+            )
 
-        Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(24.dp))
 
-        TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.name),
-            value = name,
-            onValueChange = { name = it }
-        )
-
-        TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.new_password),
-            placeholder = stringResource(R.string.password_input_placeholder),
-            value = newPassword,
-            onValueChange = { newPassword = it },
-            isPassword = true
-        )
-
-        TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.confirm_new_password),
-            placeholder = stringResource(R.string.password_input_placeholder),
-            value = confirmNewPassword,
-            onValueChange = { confirmNewPassword = it },
-            isPassword = true
-        )
-
-        if (newPassword.isNotEmpty() && newPassword != confirmNewPassword) {
-            ErrorMessage(
+            TextInputField(
                 modifier = Modifier
                     .width(320.dp)
-                    .padding(start = 16.dp, top = 4.dp),
-                text = stringResource(R.string.error_password_mismatch)
+                    .padding(vertical = 8.dp),
+                label = stringResource(R.string.name),
+                value = name,
+                onValueChange = { name = it }
             )
-        }
 
-        Spacer(Modifier.height(32.dp))
+            TextInputField(
+                modifier = Modifier
+                    .width(320.dp)
+                    .padding(vertical = 8.dp),
+                label = stringResource(R.string.new_password),
+                placeholder = stringResource(R.string.password_input_placeholder),
+                value = newPassword,
+                onValueChange = { newPassword = it },
+                isPassword = true
+            )
 
-        CustomButton(
-            text = stringResource(R.string.confirm_changes),
-            enabled = formValid,
-            modifier = Modifier.width(200.dp),
-            onClick = {
-                userViewModel.updateProfile(
-                    name = name,
-                    password = newPassword.takeIf { it.isNotBlank() },
-                    avatarUri = avatarUri
+            TextInputField(
+                modifier = Modifier
+                    .width(320.dp)
+                    .padding(vertical = 8.dp),
+                label = stringResource(R.string.confirm_new_password),
+                placeholder = stringResource(R.string.password_input_placeholder),
+                value = confirmNewPassword,
+                onValueChange = { confirmNewPassword = it },
+                isPassword = true
+            )
+
+            if (newPassword.isNotEmpty() && newPassword != confirmNewPassword) {
+                ErrorMessage(
+                    modifier = Modifier
+                        .width(320.dp)
+                        .padding(start = 16.dp, top = 4.dp),
+                    text = stringResource(R.string.error_password_mismatch)
                 )
             }
-        )
+
+            Spacer(Modifier.height(32.dp))
+
+            CustomButton(
+                text = stringResource(R.string.confirm_changes),
+                enabled = formValid,
+                modifier = Modifier.width(320.dp),
+                onClick = {
+                    userViewModel.updateProfile(
+                        name = name,
+                        password = newPassword.takeIf { it.isNotBlank() },
+                        avatarUri = avatarUri
+                    )
+                }
+            )
+        }
     }
 
     SideMenu(

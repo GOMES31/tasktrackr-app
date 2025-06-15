@@ -21,7 +21,6 @@ import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
-import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ObservationViewModel
 import com.example.tasktrackr_app.ui.viewmodel.ProjectViewModel
 import java.util.Locale
@@ -44,7 +43,6 @@ import com.example.tasktrackr_app.utils.NotificationHelper
 import androidx.compose.ui.Alignment
 import com.example.tasktrackr_app.components.SideMenu
 import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
-import com.example.tasktrackr_app.ui.screens.user.UserProfile
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.ui.screens.projects.ProjectTasks
