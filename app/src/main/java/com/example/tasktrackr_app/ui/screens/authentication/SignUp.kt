@@ -10,11 +10,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.AuthLink
 import com.example.tasktrackr_app.components.CustomButton
+import com.example.tasktrackr_app.components.CustomToast
 import com.example.tasktrackr_app.components.ErrorMessage
 import com.example.tasktrackr_app.components.LanguageMenu
 import com.example.tasktrackr_app.components.TaskTrackrLogo
@@ -23,6 +23,7 @@ import com.example.tasktrackr_app.components.ToggleTheme
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import com.example.tasktrackr_app.utils.NetworkChangeReceiver
 import com.example.tasktrackr_app.utils.NotificationHelper
 import java.net.HttpURLConnection
 import java.util.Locale
@@ -40,6 +41,8 @@ fun SignUp(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+    var showWifiToast by remember { mutableStateOf(false) }
 
     val isFormValid = (
             name.isNotBlank() &&
@@ -178,8 +181,18 @@ fun SignUp(
             modifier = Modifier.width(200.dp),
             enabled = isFormValid,
             onClick = {
-                authViewModel.signUp(name, email, password)
+                if (!NetworkChangeReceiver.isWifiConnected(context)) {
+                    showWifiToast = true
+                } else {
+                    authViewModel.signUp(name, email, password)
+                }
             }
+        )
+        CustomToast(
+            message = stringResource(R.string.wifi_required_signup),
+            isVisible = showWifiToast,
+            isSuccess = false,
+            onDismiss = { showWifiToast = false }
         )
     }
 }

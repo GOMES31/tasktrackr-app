@@ -7,5 +7,8 @@ data class UpdateUserProfileRequest(
     val password: String?,
 
     @SerializedName("avatar_url")
-    val avatarUrl: String?
+    val avatarUrl: String?,
+
+    @SerializedName("updated_at")
+    val updatedAt: Long
 )

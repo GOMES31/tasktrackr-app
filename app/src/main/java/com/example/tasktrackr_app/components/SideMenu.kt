@@ -138,7 +138,6 @@ fun SideMenu(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clickable {
-                                    android.util.Log.d("SideMenu", "Sign out icon clicked")
                                     onSignOut()
                                 }
                         )
@@ -242,3 +241,4 @@ private fun MenuItemRow(
         )
     }
 }
+

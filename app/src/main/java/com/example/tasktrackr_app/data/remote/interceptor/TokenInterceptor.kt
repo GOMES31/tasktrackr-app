@@ -3,7 +3,7 @@ package com.example.tasktrackr_app.data.remote.interceptor
 import android.content.Context
 import android.util.Log
 import androidx.navigation.NavController
-import com.example.tasktrackr_app.data.local.TokenRepository
+import com.example.tasktrackr_app.data.local.repository.TokenRepository
 import com.example.tasktrackr_app.data.remote.api.AuthApi
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.RefreshData
@@ -15,16 +15,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Interceptor
 import okhttp3.Response
+import kotlinx.coroutines.runBlocking
 
 class TokenInterceptor(
     private val context: Context,
     private val authApi: AuthApi,
-    private var navController: NavController? = null
 ) : Interceptor {
-
-    fun updateNavController(newNavController: NavController?) {
-        navController = newNavController
-    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
@@ -38,7 +34,7 @@ class TokenInterceptor(
         }
 
         return try {
-            val accessToken = tokenRepo.getAccessToken()
+            val accessToken = runBlocking { tokenRepo.getAccessToken() }
             val requestWithToken = original.newBuilder().apply {
                 accessToken?.let { header("Authorization", "Bearer $it") }
             }.build()
@@ -63,7 +59,7 @@ class TokenInterceptor(
 
             initialResponse.close()
 
-            val newAccess = tokenRepo.getAccessToken()
+            val newAccess = runBlocking { tokenRepo.getAccessToken() }
             val retried = original.newBuilder()
                 .removeHeader("Authorization")
                 .header("Authorization", "Bearer $newAccess")
@@ -88,7 +84,7 @@ class TokenInterceptor(
                 Log.e("TokenInterceptor", "Error during sign out: ${e.message}", e)
             } finally {
                 val tokenRepo = TokenRepository(context.applicationContext)
-                tokenRepo.clearTokens()
+                runBlocking { tokenRepo.clearTokens() }
 
                 try {
                     SessionManager.notifySessionExpired(context, "Session expired")
@@ -101,7 +97,7 @@ class TokenInterceptor(
 
     private fun refreshToken(tokenRepo: TokenRepository): Boolean {
         return try {
-            val refreshToken = tokenRepo.getRefreshToken() ?: ""
+            val refreshToken = runBlocking { tokenRepo.getRefreshToken() } ?: ""
             if (refreshToken.isEmpty()) {
                 Log.e("TokenInterceptor", "Refresh token is empty or null")
                 return false
@@ -112,14 +108,14 @@ class TokenInterceptor(
 
             if (!response.isSuccessful) {
                 Log.e("TokenInterceptor", "Refresh failed with code: ${response.code()}, message: ${response.message()}")
-                tokenRepo.clearTokens()
+                runBlocking { tokenRepo.clearTokens() }
                 return false
             }
 
             val responseBody = response.body()
             if (responseBody == null) {
                 Log.e("TokenInterceptor", "Refresh response body is null")
-                tokenRepo.clearTokens()
+                runBlocking { tokenRepo.clearTokens() }
                 return false
             }
 
@@ -129,13 +125,13 @@ class TokenInterceptor(
                 Gson().fromJson(json, type)
             } catch (e: Exception) {
                 Log.e("TokenInterceptor", "Error parsing refresh response: ${e.message}", e)
-                tokenRepo.clearTokens()
+                runBlocking { tokenRepo.clearTokens() }
                 return false
             }
 
             if (apiResponse.data == null) {
                 Log.e("TokenInterceptor", "API response data is null")
-                tokenRepo.clearTokens()
+                runBlocking { tokenRepo.clearTokens() }
                 return false
             }
 
@@ -144,16 +140,16 @@ class TokenInterceptor(
 
             if (newAccess.isEmpty() || newRefresh.isEmpty()) {
                 Log.e("TokenInterceptor", "New tokens are empty: access=${newAccess.isEmpty()}, refresh=${newRefresh.isEmpty()}")
-                tokenRepo.clearTokens()
+                runBlocking { tokenRepo.clearTokens() }
                 return false
             }
 
-            tokenRepo.saveTokens(newAccess, newRefresh)
+            runBlocking { tokenRepo.saveTokens(newAccess, newRefresh) }
             Log.d("TokenInterceptor", "Token refresh successful")
             true
         } catch (e: Exception) {
-            Log.e("TokenInterceptor", "Exception during token refresh: ${e.message}", e)
-            tokenRepo.clearTokens()
+            Log.e("TokenInterceptor", "Exception durante token refresh: ${e.message}", e)
+            runBlocking { tokenRepo.clearTokens() }
             false
         }
     }

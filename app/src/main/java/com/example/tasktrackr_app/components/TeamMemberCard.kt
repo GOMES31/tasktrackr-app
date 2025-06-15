@@ -27,6 +27,7 @@ fun TeamMemberCard(
     member: TeamMemberData,
     isAdmin: Boolean = false,
     showActions: Boolean = isAdmin,
+    showRemove: Boolean = showActions,
     onEditClick: () -> Unit = {},
     onRemoveClick: () -> Unit = {},
 ) {
@@ -105,13 +106,15 @@ fun TeamMemberCard(
                         .clickable { onEditClick() }
                 )
 
-                Image(
-                    painter = painterResource(id = R.drawable.remove_user),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clickable { onRemoveClick() }
-                )
+                if (showRemove) {
+                    Image(
+                        painter = painterResource(id = R.drawable.remove_user),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable { onRemoveClick() }
+                    )
+                }
             }
         }
     }

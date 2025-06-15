@@ -20,6 +20,7 @@ import com.example.tasktrackr_app.components.TopBar
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
+import com.example.tasktrackr_app.utils.NetworkChangeReceiver
 import com.example.tasktrackr_app.utils.NotificationHelper
 import java.util.Locale
 
@@ -42,6 +43,12 @@ fun TeamMembers(
     val isCurrentUserAdmin = teamData?.members?.any {
         it.email == currentUserEmail && it.role == "ADMIN"
     } ?: false
+
+    val isOnline = remember { mutableStateOf(NetworkChangeReceiver.isWifiConnected(context)) }
+
+    LaunchedEffect(Unit) {
+        isOnline.value = NetworkChangeReceiver.isWifiConnected(context)
+    }
 
     LaunchedEffect(teamId) {
         teamViewModel.loadTeam(teamId)
@@ -87,11 +94,13 @@ fun TeamMembers(
                 ) {
                     items(teamData?.members ?: emptyList()) { member ->
                         val showActions = isCurrentUserAdmin && member.email != currentUserEmail && member.role != "ADMIN"
+                        val showRemove = showActions && isOnline.value
 
                         TeamMemberCard(
                             member = member,
                             isAdmin = isCurrentUserAdmin,
                             showActions = showActions,
+                            showRemove = showRemove,
                             onEditClick = {
                                 navController.navigate("edit-team-member/${teamId}/member/${member.id}")
                             },

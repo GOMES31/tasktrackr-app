@@ -22,6 +22,8 @@ import com.example.tasktrackr_app.ui.viewmodel.ObservationViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
+import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
+
 
 @Composable
 fun AddTaskButton(
@@ -41,6 +43,7 @@ fun AddTaskButton(
 fun MyTasks(
     modifier: Modifier = Modifier,
     navController: NavController,
+    onLanguageSelected: (Locale) -> Unit = {},
     userViewModel: UserViewModel,
     taskViewModel: TaskViewModel,
     authViewModel: AuthViewModel,

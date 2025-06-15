@@ -38,9 +38,14 @@ fun TeamProfile(
     var isSideMenuVisible by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val teamData by teamViewModel.selectedTeam.collectAsState()
-    val isAdmin = teamData?.members?.any {
-        it.role == "ADMIN"
-    } ?: false
+    val userData by authViewModel.userData.collectAsState()
+
+    // Check if current user is admin
+    val isAdmin = remember(teamData, userData) {
+        teamData?.members?.any { member ->
+            member.email == userData?.email && member.role == "ADMIN"
+        } ?: false
+    }
 
     LaunchedEffect(teamId) {
         teamViewModel.loadTeam(teamId)
@@ -126,12 +131,12 @@ fun TeamProfile(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+                ) {
                 // Admin Buttons
                 if (isAdmin) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
-                    ) {
                         CustomButton(
                             text = stringResource(R.string.edit_team),
                             modifier = Modifier
@@ -149,17 +154,19 @@ fun TeamProfile(
                             enabled = true,
                             onClick = { navController.navigate("add-team-members/$teamId") }
                         )
-
-                        CustomButton(
-                            text = stringResource(R.string.view_team_members),
-                            modifier = Modifier
-                                .width(110.dp)
-                                .height(60.dp),
-                            enabled = true,
-                            onClick = { navController.navigate("team-members/$teamId") }
-                        )
                     }
+
+                CustomButton(
+                    text = stringResource(R.string.view_team_members),
+                    modifier = Modifier
+                        .width(110.dp)
+                        .height(60.dp),
+                    enabled = true,
+                    onClick = { navController.navigate("team-members/$teamId") }
+                )
+
                 }
+
 
                 Spacer(modifier = Modifier.height(32.dp))
 
