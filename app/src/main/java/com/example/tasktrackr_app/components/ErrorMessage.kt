@@ -1,8 +1,8 @@
 package com.example.tasktrackr_app.components
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.Text
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 
 
