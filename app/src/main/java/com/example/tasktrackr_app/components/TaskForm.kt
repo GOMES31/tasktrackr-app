@@ -41,6 +41,7 @@ import android.util.Log
 private const val TAG = "TaskFormAssigneeLog"
 
 private fun getTeamMemberIdentifier(member: TeamMemberData): String {
+    return member.email
 }
 
 private fun getTeamMemberName(member: TeamMemberData): String {
