@@ -22,7 +22,6 @@ import com.example.tasktrackr_app.ui.viewmodel.ObservationViewModel
 import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
-import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 
 
 @Composable
