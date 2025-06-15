@@ -101,8 +101,8 @@
     <string name="edit_member">Edit Member</string>
     <string name="wifi_required_signin">Connect to the internet to sign in</string>
     <string name="wifi_required_signup">Connect to the internet to create an account</string>
-    <string name="no_description_available">No description available</string>
-    <string name="not_available">Not available</string>
+    <string name="no_description_available">Nenhuma descrição disponível</string>
+    <string name="not_available">Não disponível</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_close">Close</string>
@@ -116,5 +116,8 @@
     <string name="project_not_found">Project Not Found</string>
     <string name="fetching_tasks">Fetching Tasks</string>
     <string name="total_projects_label">Total Projects:</string>
+    <string name="wifi_required_tasks">Connect to the internet to access your tasks</string>
+    <string name="wifi_required_projects">Connect to the internet to access your projects</string>
 </resources>
+
 

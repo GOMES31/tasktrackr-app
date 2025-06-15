@@ -12,12 +12,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.utils.NetworkChangeReceiver
 import java.util.*
 
 @Composable
@@ -29,6 +31,9 @@ fun SideMenu(
     onLanguageSelected: (Locale) -> Unit = {},
     onSignOut: () -> Unit,
 ) {
+    var showWifiToastTasks by remember { mutableStateOf(false) }
+    var showWifiToastProjects by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     if (isVisible) {
         Box(modifier = modifier.fillMaxSize()) {
@@ -87,8 +92,12 @@ fun SideMenu(
                         text = stringResource(R.string.my_tasks),
                         iconRes = R.drawable.clipboard,
                         onClick = {
-                            navController.navigate("my-tasks")
-                            onDismiss()
+                            if (!NetworkChangeReceiver.isWifiConnected(context)) {
+                                showWifiToastTasks = true
+                            } else {
+                                navController.navigate("my-tasks")
+                                onDismiss()
+                            }
                         }
                     )
                     DividerWithSpecificPadding()
@@ -97,8 +106,12 @@ fun SideMenu(
                         text = stringResource(R.string.my_projects),
                         iconRes = R.drawable.calendar,
                         onClick = {
-                            navController.navigate("projects")
-                            onDismiss()
+                            if (!NetworkChangeReceiver.isWifiConnected(context)) {
+                                showWifiToastProjects = true
+                            } else {
+                                navController.navigate("projects")
+                                onDismiss()
+                            }
                         }
                     )
                     DividerWithSpecificPadding()
@@ -110,13 +123,6 @@ fun SideMenu(
                             onDismiss()
                             navController.navigate("user-teams")
                         }
-                    )
-                    DividerWithSpecificPadding()
-
-                    MenuItemRow(
-                        text = stringResource(R.string.reports),
-                        iconRes = R.drawable.file_text,
-                        onClick = { onDismiss() }
                     )
                     DividerWithSpecificPadding()
 
@@ -204,6 +210,19 @@ fun SideMenu(
                     }
                 }
             }
+
+            CustomToast(
+                message = stringResource(R.string.wifi_required_tasks),
+                isVisible = showWifiToastTasks,
+                isSuccess = false,
+                onDismiss = { showWifiToastTasks = false }
+            )
+            CustomToast(
+                message = stringResource(R.string.wifi_required_projects),
+                isVisible = showWifiToastProjects,
+                isSuccess = false,
+                onDismiss = { showWifiToastProjects = false }
+            )
         }
     }
 }
@@ -245,4 +264,3 @@ private fun MenuItemRow(
         )
     }
 }
-
