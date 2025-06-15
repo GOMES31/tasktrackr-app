@@ -43,10 +43,7 @@ import com.example.tasktrackr_app.components.CustomToast
 import com.example.tasktrackr_app.utils.NotificationHelper
 import androidx.compose.ui.Alignment
 import com.example.tasktrackr_app.components.SideMenu
-import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
-import com.example.tasktrackr_app.ui.screens.user.UserProfile
 import androidx.compose.runtime.rememberCoroutineScope
-import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
 import com.example.tasktrackr_app.ui.screens.projects.ProjectTasks
 import com.example.tasktrackr_app.utils.SessionManager
 import kotlinx.coroutines.launch
