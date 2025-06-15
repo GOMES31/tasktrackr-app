@@ -43,7 +43,6 @@ class ObservationViewModel(application: Application) : AndroidViewModel(applicat
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Network error"
-                Log.e("ObservationViewModel", "createObservation error", e)
             } finally {
                 _loading.value = false
             }
@@ -63,7 +62,6 @@ class ObservationViewModel(application: Application) : AndroidViewModel(applicat
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Network error"
-                Log.e("ObservationViewModel", "getObservationById error", e)
             } finally {
                 _loading.value = false
             }
@@ -84,14 +82,16 @@ class ObservationViewModel(application: Application) : AndroidViewModel(applicat
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Network error"
-                Log.e("ObservationViewModel", "updateObservation error", e)
             } finally {
                 _loading.value = false
             }
         }
     }
 
-    fun clearError() {
+    fun clearData() {
+        _currentObservation.value = null
+        _loading.value = false
         _error.value = null
     }
+
 }

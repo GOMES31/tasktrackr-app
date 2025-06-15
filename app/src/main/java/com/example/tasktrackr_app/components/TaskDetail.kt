@@ -1,9 +1,10 @@
 package com.example.tasktrackr_app.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -11,258 +12,224 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.example.tasktrackr_app.R
+import com.example.tasktrackr_app.data.remote.response.data.ObservationData
+import com.example.tasktrackr_app.data.remote.response.data.TaskData
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
+import com.example.tasktrackr_app.utils.DateUtils
 
 @Composable
 fun TaskDetail(
     modifier: Modifier = Modifier,
     isVisible: Boolean = false,
+    task: TaskData,
     onDismiss: () -> Unit = {},
-    taskTitle: String = "Title of Task",
-    taskDescription: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    location: String = "",
-    startDate: String = "HH:mm dd/MM/yyyy",
-    endDate: String = "HH:mm dd/MM/yyyy",
-    progress: Int = 50,
-    timeSpent: String = "1h 30m",
-    completionStatus: String = "Finished/Not Finished",
-    observations: List<String> = listOf(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco."
-    ),
-    onEditTask: () -> Unit = {}
+    onEditTask: (TaskData) -> Unit
 ) {
-    if (!isVisible) return
+    val observations = task.observations ?: emptyList()
+    val timeSpent = remember(task.startDate, task.endDate) {
+        DateUtils.calculateTimeSpent(task.startDate, task.endDate)
+    }
 
-    var selectedObservationIndex by remember { mutableIntStateOf(0) }
-    var isDropdownExpanded by remember { mutableStateOf(false) }
+    val fixedObservationItemHeight = 56.dp
+    val observationsCardHeight = (fixedObservationItemHeight * 2) + 40.5.dp
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Transparent)
-            .clickable(
-                indication = null,
-                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
-            ) {
-            }
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 125.dp)
-                .height(548.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = TaskTrackrTheme.colorScheme.cardBackground
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            border = BorderStroke(1.dp, TaskTrackrTheme.colorScheme.secondary)
+    if (isVisible) {
+        Dialog(
+            onDismissRequest = { onDismiss() },
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false
+            )
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
+            Card(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 125.dp)
+                    .height(548.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = TaskTrackrTheme.colorScheme.cardBackground
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                border = BorderStroke(1.dp, TaskTrackrTheme.colorScheme.secondary)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Top
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = taskTitle,
-                        style = TaskTrackrTheme.typography.subHeader,
-                        color = TaskTrackrTheme.colorScheme.secondary,
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.size(24.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.close),
-                            contentDescription = "Close",
-                            tint = TaskTrackrTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
+                        Text(
+                            text = task.title,
+                            style = TaskTrackrTheme.typography.subHeader,
+                            color = TaskTrackrTheme.colorScheme.secondary,
+                            modifier = Modifier.weight(1f)
                         )
+                        IconButton(
+                            onClick = { onDismiss() },
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.close),
+                                contentDescription = stringResource(R.string.button_close),
+                                tint = TaskTrackrTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = stringResource(R.string.task_description_label) + " $taskDescription",
-                    style = TaskTrackrTheme.typography.body,
-                    color = TaskTrackrTheme.colorScheme.text,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = stringResource(R.string.task_location_label) + " $location",
-                    style = TaskTrackrTheme.typography.body,
-                    color = TaskTrackrTheme.colorScheme.text
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = stringResource(R.string.start_date_label) + " $startDate",
-                    style = TaskTrackrTheme.typography.body,
-                    color = TaskTrackrTheme.colorScheme.text
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = stringResource(R.string.end_date_label) + " $endDate",
-                    style = TaskTrackrTheme.typography.body,
-                    color = TaskTrackrTheme.colorScheme.text
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = stringResource(R.string.progress_label) + " $progress%",
-                    style = TaskTrackrTheme.typography.body,
-                    color = TaskTrackrTheme.colorScheme.text
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                LinearProgressIndicator(
-                    progress = { progress / 100f },
-                    modifier = Modifier.fillMaxWidth(),
-                    color = TaskTrackrTheme.colorScheme.tertiary,
-                    trackColor = TaskTrackrTheme.colorScheme.inputBackground
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = stringResource(R.string.time_spent_label) + " $timeSpent",
-                    style = TaskTrackrTheme.typography.body,
-                    color = TaskTrackrTheme.colorScheme.text
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = stringResource(R.string.completion_status_label) + " $completionStatus",
-                    style = TaskTrackrTheme.typography.body,
-                    color = TaskTrackrTheme.colorScheme.text
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
                     Text(
-                        text = stringResource(R.string.observations_label),
+                        text = stringResource(R.string.task_description_label) + " ${task.description ?: stringResource(R.string.no_description_available)}",
+                        style = TaskTrackrTheme.typography.body,
+                        color = TaskTrackrTheme.colorScheme.text,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = stringResource(R.string.start_date_label) + " ${task.startDate?.let { DateUtils.formatFullDate(it) } ?: stringResource(R.string.not_available)}",
                         style = TaskTrackrTheme.typography.body,
                         color = TaskTrackrTheme.colorScheme.text
                     )
 
-                    Box {
-                        OutlinedButton(
-                            onClick = { isDropdownExpanded = true },
-                            modifier = Modifier
-                                .background(
-                                    TaskTrackrTheme.colorScheme.inputBackground,
-                                    RoundedCornerShape(4.dp)
-                                ),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                containerColor = TaskTrackrTheme.colorScheme.inputBackground
-                            ),
-                            border = null
-                        ) {
-                            Text(
-                                text = if (observations.isNotEmpty()) {
-                                    "${stringResource(R.string.observation_item_label)} ${selectedObservationIndex + 1} ▼"
-                                } else {
-                                    "${stringResource(R.string.no_observations_available)} ▼"
-                                },
-                                style = TaskTrackrTheme.typography.body,
-                                color = TaskTrackrTheme.colorScheme.text
-                            )
-                        }
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                        DropdownMenu(
-                            expanded = isDropdownExpanded,
-                            onDismissRequest = { isDropdownExpanded = false },
-                            modifier = Modifier.background(TaskTrackrTheme.colorScheme.cardBackground)
-                        ) {
-                            observations.forEachIndexed { index, _ ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = "${stringResource(R.string.observation_item_label)} ${index + 1}",
-                                            style = TaskTrackrTheme.typography.body,
-                                            color = TaskTrackrTheme.colorScheme.text
-                                        )
-                                    },
-                                    onClick = {
-                                        selectedObservationIndex = index
-                                        isDropdownExpanded = false
-                                    }
+                    Text(
+                        text = stringResource(R.string.end_date_label) + " ${task.endDate?.let { DateUtils.formatFullDate(it) } ?: stringResource(R.string.not_available)}",
+                        style = TaskTrackrTheme.typography.body,
+                        color = TaskTrackrTheme.colorScheme.text
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = stringResource(R.string.time_spent_label) + " $timeSpent",
+                        style = TaskTrackrTheme.typography.body,
+                        color = TaskTrackrTheme.colorScheme.text
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    val statusText = when (task.status?.lowercase()) {
+                        "in_progress" -> stringResource(R.string.tab_in_progress)
+                        "pending" -> stringResource(R.string.tab_pending)
+                        "finished" -> stringResource(R.string.tab_finished)
+                        else -> task.status ?: stringResource(R.string.not_available)
+                    }
+
+                    Text(
+                        text = stringResource(R.string.completion_status_label) + " $statusText",
+                        style = TaskTrackrTheme.typography.body,
+                        color = TaskTrackrTheme.colorScheme.text
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(
+                        text = stringResource(R.string.observations_label),
+                        style = TaskTrackrTheme.typography.subHeader,
+                        color = TaskTrackrTheme.colorScheme.secondary
+                    )
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(observationsCardHeight),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = TaskTrackrTheme.colorScheme.inputBackground
+                        ),
+                        border = BorderStroke(1.dp, TaskTrackrTheme.colorScheme.secondary)
+                    ) {
+                        if (observations.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.no_observations_available),
+                                    style = TaskTrackrTheme.typography.body,
+                                    color = TaskTrackrTheme.colorScheme.text.copy(alpha = 0.6f),
+                                    textAlign = TextAlign.Center
                                 )
+                            }
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                items(observations) { observation ->
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(fixedObservationItemHeight),
+                                        verticalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = observation.message,
+                                            style = TaskTrackrTheme.typography.body,
+                                            color = TaskTrackrTheme.colorScheme.text,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                        observation.createdAt?.let { createdAt ->
+                                            Text(
+                                                text = DateUtils.formatDateOnly(createdAt) ?: stringResource(R.string.not_available),
+                                                style = TaskTrackrTheme.typography.body.copy(
+                                                    fontSize = TaskTrackrTheme.typography.body.fontSize * 0.85f
+                                                ),
+                                                color = TaskTrackrTheme.colorScheme.text.copy(alpha = 0.6f)
+                                            )
+                                        }
+                                    }
+                                    if (observations.size > 1 && observations.last() != observation) {
+                                        HorizontalDivider(
+                                            modifier = Modifier.padding(vertical = 4.dp),
+                                            thickness = 0.5.dp,
+                                            color = TaskTrackrTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
-                }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.weight(1f))
 
-                val observationTextLineHeight = TaskTrackrTheme.typography.body.lineHeight.value
-                val desiredObservationCardHeight = (2 * observationTextLineHeight).dp + (12.dp * 2)
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(desiredObservationCardHeight),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = TaskTrackrTheme.colorScheme.inputBackground
-                    )
-                ) {
-                    Column(
+                    CustomButton(
+                        text = stringResource(R.string.update_task_button),
+                        icon = painterResource(id = R.drawable.edit),
+                        enabled = true,
+                        onClick = {
+                            onEditTask(task)
+                            onDismiss()
+                        },
                         modifier = Modifier
-                            .padding(12.dp)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        Text(
-                            text = if (observations.isNotEmpty() && selectedObservationIndex < observations.size) {
-                                observations[selectedObservationIndex]
-                            } else {
-                                stringResource(R.string.no_observations_available)
-                            },
-                            style = TaskTrackrTheme.typography.body,
-                            color = TaskTrackrTheme.colorScheme.text,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                CustomButton(
-                    text = stringResource(R.string.edit_profile),
-                    icon = painterResource(id = R.drawable.edit),
-                    enabled = true,
-                    onClick = onEditTask,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
             }
         }
     }

@@ -16,10 +16,14 @@ import com.example.tasktrackr_app.ui.screens.introduction.IntroSlider
 import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
 import com.example.tasktrackr_app.ui.screens.user.UserProfile
 import com.example.tasktrackr_app.ui.screens.tasks.MyTasks
+import com.example.tasktrackr_app.ui.screens.projects.ProjectsPage
 import com.example.tasktrackr_app.ui.theme.LocalizationProvider
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
+import com.example.tasktrackr_app.ui.viewmodel.ObservationViewModel
+import com.example.tasktrackr_app.ui.viewmodel.ProjectViewModel
 import java.util.Locale
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavType
@@ -43,6 +47,7 @@ import com.example.tasktrackr_app.ui.screens.user.EditUserProfile
 import com.example.tasktrackr_app.ui.screens.user.UserProfile
 import androidx.compose.runtime.rememberCoroutineScope
 import com.example.tasktrackr_app.ui.viewmodel.TaskViewModel
+import com.example.tasktrackr_app.ui.screens.projects.ProjectTasks
 import com.example.tasktrackr_app.utils.SessionManager
 import kotlinx.coroutines.launch
 
@@ -59,7 +64,8 @@ fun TaskTrackrApp() {
     val userViewModel: UserViewModel = viewModel()
     val teamViewModel: TeamViewModel = viewModel()
     val taskViewModel: TaskViewModel = viewModel()
-
+    val observationViewModel: ObservationViewModel = viewModel()
+    val projectViewModel: ProjectViewModel = viewModel()
     val activity = LocalContext.current as ComponentActivity
 
     val toastMessage by NotificationHelper.message
@@ -70,9 +76,13 @@ fun TaskTrackrApp() {
         userViewModel.clearData()
         teamViewModel.clearData()
         authViewModel.clearData()
+        taskViewModel.clearData()
+        observationViewModel.clearData()
+        projectViewModel.clearData()
     }
 
     val scope = rememberCoroutineScope()
+
 
     // Register session expiration
     DisposableEffect(Unit) {
@@ -271,6 +281,33 @@ fun TaskTrackrApp() {
                                 authViewModel = authViewModel,
                                 userViewModel = userViewModel,
                                 taskViewModel = taskViewModel,
+                                observationViewModel = observationViewModel,
+                                onLanguageSelected = { newLocale -> currentLocale = newLocale }
+                            )
+                        }
+
+                        composable("projects") {
+                            ProjectsPage(
+                                navController = navController,
+                                authViewModel = authViewModel,
+                                projectViewModel = projectViewModel,
+                                userViewModel = userViewModel,
+                                onLanguageSelected = { newLocale -> currentLocale = newLocale }
+                            )
+                        }
+                        composable(
+                            route = "projects/{projectId}/",
+                            arguments = listOf(navArgument("projectId") { type = NavType.LongType })
+                        ) { backStackEntry ->
+                            val projectId = backStackEntry.arguments?.getLong("projectId") ?: -1L
+                            ProjectTasks(
+                                navController = navController,
+                                userViewModel = userViewModel,
+                                taskViewModel = taskViewModel,
+                                authViewModel = authViewModel,
+                                observationViewModel = observationViewModel,
+                                projectViewModel = projectViewModel,
+                                projectId = projectId,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
                         }

@@ -92,7 +92,10 @@ fun SideMenu(
                     MenuItemRow(
                         text = stringResource(R.string.my_projects),
                         iconRes = R.drawable.calendar,
-                        onClick = { onDismiss() }
+                        onClick = {
+                            navController.navigate("projects")
+                            onDismiss()
+                        }
                     )
                     DividerWithSpecificPadding()
 
