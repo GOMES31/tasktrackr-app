@@ -5,7 +5,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -51,7 +53,10 @@ fun UserProfile(
             )
 
             Column(
-                modifier = Modifier.padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 80.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -115,7 +120,7 @@ fun UserProfile(
 
                 CustomButton(
                     text = stringResource(R.string.edit_profile),
-                    modifier = Modifier.width(180.dp),
+                    modifier = Modifier.width(320.dp),
                     enabled = true,
                     onClick = { navController.navigate("edit-user-profile") }
                 )
@@ -161,3 +166,5 @@ fun UserProfile(
         )
     }
 }
+
+
