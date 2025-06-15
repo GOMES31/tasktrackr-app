@@ -67,7 +67,6 @@ fun TaskTrackrApp() {
     val taskViewModel: TaskViewModel = viewModel()
     val observationViewModel: ObservationViewModel = viewModel()
     val projectViewModel: ProjectViewModel = viewModel()
-
     val activity = LocalContext.current as ComponentActivity
 
     val toastMessage by NotificationHelper.message
@@ -160,7 +159,7 @@ fun TaskTrackrApp() {
                         composable("user-profile") {
                             UserProfile(
                                 navController = navController,
-                                viewModel = userViewModel,
+                                userViewModel = userViewModel,
                                 authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
@@ -169,7 +168,7 @@ fun TaskTrackrApp() {
                         composable("edit-user-profile") {
                             EditUserProfile(
                                 navController = navController,
-                                viewModel = userViewModel,
+                                userViewModel = userViewModel,
                                 authViewModel = authViewModel,
                                 onLanguageSelected = { newLocale -> currentLocale = newLocale }
                             )
@@ -329,23 +328,6 @@ fun TaskTrackrApp() {
                             onDismiss = { NotificationHelper.hideToast() }
                         )
                     }
-                    // Uncomment and implement this if SideMenu becomes active
-                    /*
-                    SideMenu(
-                        isVisible = isSideMenuVisible,
-                        navController = navController,
-                        onDismiss = { isSideMenuVisible = false },
-                        onLanguageSelected = onLanguageSelected,
-                        onSignOut = {
-                            authViewModel.signOut {
-                                clearAppData()
-                                navController.navigate("signin") {
-                                    popUpTo(0) { inclusive = true }
-                                }
-                            }
-                        }
-                    )
-                    */
                 }
             }
         }

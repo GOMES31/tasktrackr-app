@@ -88,7 +88,8 @@ fun AddTeamMember(
         Column(
             modifier = Modifier
                 .padding(horizontal = 32.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 80.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(24.dp))
@@ -105,7 +106,7 @@ fun AddTeamMember(
 
             TextInputField(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .width(320.dp)
                     .padding(vertical = 8.dp),
                 label = stringResource(R.string.email),
                 value = email,
@@ -119,15 +120,13 @@ fun AddTeamMember(
                 text = stringResource(R.string.team_role),
                 color = TaskTrackrTheme.colorScheme.primary,
                 style = TaskTrackrTheme.typography.body,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
+                modifier = Modifier.width(320.dp)
             )
 
             var dropdownMenuExpanded by remember { mutableStateOf(false) }
 
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.width(320.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -194,7 +193,9 @@ fun AddTeamMember(
             CustomButton(
                 text = stringResource(R.string.add_member),
                 enabled = formValid,
-                modifier = Modifier.width(200.dp),
+                modifier = Modifier
+                    .width(320.dp)
+                    .padding(bottom = 8.dp),
                 onClick = {
                     teamViewModel.addMember(
                         teamId = teamId,

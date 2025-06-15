@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
+import com.example.tasktrackr_app.components.CustomButton
 import com.example.tasktrackr_app.components.SideMenu
 import com.example.tasktrackr_app.components.TaskDetail
 import com.example.tasktrackr_app.components.TaskFilter
@@ -43,11 +44,25 @@ import com.example.tasktrackr_app.ui.viewmodel.TeamViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
 import java.util.Locale
 
+@Composable
+fun AddTaskButton(
+    modifier: Modifier = Modifier,
+    onAddTaskClick: () -> Unit = {}
+) {
+    CustomButton(
+        modifier = modifier,
+        text = stringResource(R.string.add_task_button),
+        icon = painterResource(id = R.drawable.plus),
+        enabled = true,
+        onClick = onAddTaskClick
+    )
+}
 
 @Composable
 fun MyTasks(
     modifier: Modifier = Modifier,
     navController: NavController,
+    onLanguageSelected: (Locale) -> Unit = {},
     userViewModel: UserViewModel,
     taskViewModel: TaskViewModel,
     authViewModel: AuthViewModel,

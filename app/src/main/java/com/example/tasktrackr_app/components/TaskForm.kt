@@ -24,6 +24,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,6 +65,7 @@ private const val TAG = "TaskFormAssigneeLog"
 private fun getTeamMemberIdentifier(member: TeamMemberData): String {
     return member.email
 }
+
 
 private fun getTeamMemberName(member: TeamMemberData): String {
     return member.name

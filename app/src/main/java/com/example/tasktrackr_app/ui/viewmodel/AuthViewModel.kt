@@ -4,13 +4,15 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tasktrackr_app.data.local.TokenRepository
+import com.example.tasktrackr_app.data.local.repository.TokenRepository
+import com.example.tasktrackr_app.data.local.repository.UserRepository
 import com.example.tasktrackr_app.data.remote.api.ApiClient
 import com.example.tasktrackr_app.data.remote.api.AuthApi
 import com.example.tasktrackr_app.data.remote.request.SignInRequest
 import com.example.tasktrackr_app.data.remote.request.SignUpRequest
 import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.AuthData
+import com.example.tasktrackr_app.utils.NetworkChangeReceiver
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +20,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
-
     private val authApi: AuthApi = ApiClient.authApi(application)
 
     // access & refresh tokens
@@ -79,22 +80,24 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     // Handle auth response for both sign-in and sign-up
     private fun handleResponse(response: Response<ApiResponse<AuthData>>, isSignUp: Boolean) {
-        if (response.isSuccessful) {
-            val authData = response.body()?.data
-            if (authData != null) {
-                tokenRepository.saveTokens(authData.accessToken, authData.refreshToken)
-                _userData.value = authData
+        viewModelScope.launch {
+            if (response.isSuccessful) {
+                val authData = response.body()?.data
+                if (authData != null) {
+                    tokenRepository.saveTokens(authData.accessToken, authData.refreshToken)
+                    _userData.value = authData
 
-                if (isSignUp) {
-                    _signUpSuccess.value = true
+                    if (isSignUp) {
+                        _signUpSuccess.value = true
+                    } else {
+                        _signInSuccess.value = true
+                    }
                 } else {
-                    _signInSuccess.value = true
+                    _authenticationErrorCode.value = response.code()
                 }
             } else {
                 _authenticationErrorCode.value = response.code()
             }
-        } else {
-            _authenticationErrorCode.value = response.code()
         }
     }
 
@@ -108,29 +111,43 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _isSigningOut.value = true
 
         viewModelScope.launch {
-            try {
+
+
+            if (NetworkChangeReceiver.isWifiConnected(getApplication())) {
                 val response = authApi.signOut()
                 Log.d("AuthViewModel", "Signout response code: ${response.code()}")
 
                 if (!response.isSuccessful) {
-                    Log.w("AuthViewModel", "Signout returned unsuccessful status: ${response.code()}")
+                    Log.w(
+                        "AuthViewModel",
+                        "Signout returned unsuccessful status: ${response.code()}"
+                    )
                 }
-            } catch (e: Exception) {
-                Log.e("AuthViewModel", "Signout error: ${e.message}")
-            } finally {
-                clearData()
-                _isSigningOut.value = false
-                onSignOutComplete?.invoke()
+
             }
+
+            clearData()
+            _isSigningOut.value = false
+            onSignOutComplete?.invoke()
+
         }
     }
 
     fun clearData() {
-        tokenRepository.clearTokens()
-        _userData.value = null
-        _signInSuccess.value = false
-        _signUpSuccess.value = false
-        _authenticationErrorCode.value = null
+        viewModelScope.launch {
+            val userRepository = UserRepository(getApplication())
+            val user = userRepository.getCurrentUser()
+
+            if (user != null && user.isSynced) {
+                tokenRepository.clearTokens()
+            }
+
+            _userData.value = null
+            _signInSuccess.value = false
+            _signUpSuccess.value = false
+            _authenticationErrorCode.value = null
+
+        }
     }
 
     fun resetSignUpSuccess() {

@@ -19,8 +19,8 @@
     fun AuthLink(
         text: String,
         redirect: String,
-        modifier: Modifier = Modifier,
-        onClick: () -> Unit) {
+        onClick: () -> Unit
+    ) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,

@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,12 +49,12 @@ import java.util.Locale
 fun UserProfile(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: UserViewModel,
+    userViewModel: UserViewModel,
     authViewModel: AuthViewModel,
     onLanguageSelected: (Locale) -> Unit = {}
 ) {
     var isSideMenuVisible by remember { mutableStateOf(false) }
-    val userData by viewModel.userData.collectAsState()
+    val profileData by userViewModel.profileData.collectAsState()
     val context = LocalContext.current
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -67,7 +69,10 @@ fun UserProfile(
             )
 
             Column(
-                modifier = Modifier.padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 80.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -90,7 +95,7 @@ fun UserProfile(
                         .border(2.dp, TaskTrackrTheme.colorScheme.text, CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    val imageFile = userData?.avatarUrl?.let { url ->
+                    val imageFile = profileData?.avatarUrl?.let { url ->
                         LocalImageStorage.getImageFile(context, url)
                     }
 
@@ -114,7 +119,7 @@ fun UserProfile(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = userData?.name.orEmpty(),
+                    text = profileData?.name.orEmpty(),
                     color = TaskTrackrTheme.colorScheme.secondary,
                     style = TaskTrackrTheme.typography.header
                 )
@@ -122,7 +127,7 @@ fun UserProfile(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = userData?.email.orEmpty(),
+                    text = profileData?.email.orEmpty(),
                     color = TaskTrackrTheme.colorScheme.accent,
                     style = TaskTrackrTheme.typography.body
                 )
@@ -131,7 +136,7 @@ fun UserProfile(
 
                 CustomButton(
                     text = stringResource(R.string.edit_profile),
-                    modifier = Modifier.width(180.dp),
+                    modifier = Modifier.width(320.dp),
                     enabled = true,
                     onClick = { navController.navigate("edit-user-profile") }
                 )
@@ -177,3 +182,5 @@ fun UserProfile(
         )
     }
 }
+
+

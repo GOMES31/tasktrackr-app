@@ -114,9 +114,9 @@ fun TeamCard(
                     color = TaskTrackrTheme.colorScheme.text,
                     style = TaskTrackrTheme.typography.bodyStrong
                 )
-                admin?.let {
+                if (admin != null) {
                     Text(
-                        text = it.name,
+                        text = admin.name,
                         color = TaskTrackrTheme.colorScheme.text,
                         style = TaskTrackrTheme.typography.body
                     )

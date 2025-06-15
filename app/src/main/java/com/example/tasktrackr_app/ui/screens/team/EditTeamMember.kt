@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -98,7 +100,9 @@ fun EditTeamMember(
         Column(
             modifier = Modifier
                 .padding(horizontal = 32.dp)
-                .fillMaxWidth(),
+                .width(320.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 80.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(24.dp))
@@ -165,7 +169,7 @@ fun EditTeamMember(
             ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .width(320.dp)
                         .border(
                             BorderStroke(1.dp, TaskTrackrTheme.colorScheme.primary),
                             shape = RoundedCornerShape(8.dp)
@@ -225,7 +229,7 @@ fun EditTeamMember(
 
             CustomButton(
                 text = stringResource(R.string.confirm_changes),
-                modifier = Modifier.width(200.dp),
+                modifier = Modifier.width(320.dp),
                 enabled = true,
                 onClick = {
                     teamViewModel.updateMember(

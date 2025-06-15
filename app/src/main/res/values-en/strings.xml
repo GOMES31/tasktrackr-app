@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">tasktrackr-app</string>
+    <string name="app_name">TaskTrackr</string>
     <string name="sign_in">Sign In</string>
     <string name="email">Email:</string>
     <string name="password">Password:</string>
@@ -99,6 +99,8 @@
     <string name="team_member_role_update_success">Team Member role updated successfully!</string>
     <string name="team_member_role_update_error">Error updating team member role!</string>
     <string name="edit_member">Edit Member</string>
+    <string name="wifi_required_signin">Connect to the internet to sign in</string>
+    <string name="wifi_required_signup">Connect to the internet to create an account</string>
     <string name="no_description_available">No description available</string>
     <string name="not_available">Not available</string>
     <string name="button_ok">OK</string>
@@ -120,4 +122,9 @@
     <string name="project_description_placeholder">Project description...</string>
     <string name="error_team_id_empty">Team must be selected!</string>
     <string name="add_project_button">Add Project</string>
+    <string name="wifi_required_tasks">Connect to the internet to access your tasks</string>
+    <string name="wifi_required_projects">Connect to the internet to access your projects</string>
+    <string name="wifi_required_tasks">Connect to the internet to access your tasks</string>
+    <string name="wifi_required_projects">Connect to the internet to access your projects</string>
 </resources>
+

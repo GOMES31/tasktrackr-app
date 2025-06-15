@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +30,7 @@ import androidx.navigation.NavController
 import com.example.tasktrackr_app.R
 import com.example.tasktrackr_app.components.AuthLink
 import com.example.tasktrackr_app.components.CustomButton
+import com.example.tasktrackr_app.components.CustomToast
 import com.example.tasktrackr_app.components.ErrorMessage
 import com.example.tasktrackr_app.components.LanguageMenu
 import com.example.tasktrackr_app.components.TaskTrackrLogo
@@ -36,6 +39,7 @@ import com.example.tasktrackr_app.components.ToggleTheme
 import com.example.tasktrackr_app.ui.theme.TaskTrackrTheme
 import com.example.tasktrackr_app.ui.viewmodel.AuthViewModel
 import com.example.tasktrackr_app.ui.viewmodel.UserViewModel
+import com.example.tasktrackr_app.utils.NetworkChangeReceiver
 import com.example.tasktrackr_app.utils.NotificationHelper
 import java.net.HttpURLConnection
 import java.util.Locale
@@ -53,6 +57,8 @@ fun SignUp(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     val context = LocalContext.current
+
+    var showWifiToast by remember { mutableStateOf(false) }
 
     val isFormValid = (
             name.isNotBlank() &&
@@ -82,6 +88,7 @@ fun SignUp(
         modifier = modifier
             .fillMaxSize()
             .background(TaskTrackrTheme.colorScheme.background)
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -116,63 +123,82 @@ fun SignUp(
 
         Spacer(Modifier.height(30.dp))
 
-        TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.name),
-            value = name,
-            onValueChange = { name = it },
-            placeholder = stringResource(R.string.name_input_placeholder)
-        )
-
-        TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.email),
-            value = email,
-            onValueChange = { email = it },
-            placeholder = stringResource(R.string.email_input_placeholder)
-        )
-        if (errorCode == HttpURLConnection.HTTP_CONFLICT) {
-            ErrorMessage(
+        Column(
+            modifier = Modifier.width(320.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            TextInputField(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(start = 16.dp, bottom = 8.dp),
-                text = stringResource(R.string.error_user_exists)
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                label = stringResource(R.string.name),
+                value = name,
+                onValueChange = { name = it },
+                placeholder = stringResource(R.string.name_input_placeholder)
             )
         }
 
-        TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.password),
-            value = password,
-            onValueChange = { password = it },
-            placeholder = stringResource(R.string.password_input_placeholder),
-            isPassword = true
-
-        )
-
-        TextInputField(
-            modifier = Modifier
-                .width(320.dp)
-                .padding(vertical = 8.dp),
-            label = stringResource(R.string.confirm_password),
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            placeholder = stringResource(R.string.password_input_placeholder),
-            isPassword = true
-        )
-        if (confirmPassword.isNotEmpty() && confirmPassword != password) {
-            ErrorMessage(
+        Column(
+            modifier = Modifier.width(320.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            TextInputField(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(start = 16.dp, bottom = 8.dp),
-                text = stringResource(R.string.error_password_mismatch)
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                label = stringResource(R.string.email),
+                value = email,
+                onValueChange = { email = it },
+                placeholder = stringResource(R.string.email_input_placeholder)
             )
+            if (errorCode == HttpURLConnection.HTTP_CONFLICT) {
+                ErrorMessage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
+                    text = stringResource(R.string.error_user_exists)
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier.width(320.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            TextInputField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                label = stringResource(R.string.password),
+                value = password,
+                onValueChange = { password = it },
+                placeholder = stringResource(R.string.password_input_placeholder),
+                isPassword = true
+            )
+        }
+
+        Column(
+            modifier = Modifier.width(320.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            TextInputField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                label = stringResource(R.string.confirm_password),
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                placeholder = stringResource(R.string.password_input_placeholder),
+                isPassword = true
+            )
+            if (confirmPassword.isNotEmpty() && confirmPassword != password) {
+                ErrorMessage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
+                    text = stringResource(R.string.error_password_mismatch)
+                )
+            }
         }
 
         Spacer(Modifier.height(20.dp))
@@ -191,8 +217,18 @@ fun SignUp(
             modifier = Modifier.width(200.dp),
             enabled = isFormValid,
             onClick = {
-                authViewModel.signUp(name, email, password)
+                if (!NetworkChangeReceiver.isWifiConnected(context)) {
+                    showWifiToast = true
+                } else {
+                    authViewModel.signUp(name, email, password)
+                }
             }
+        )
+        CustomToast(
+            message = stringResource(R.string.wifi_required_signup),
+            isVisible = showWifiToast,
+            isSuccess = false,
+            onDismiss = { showWifiToast = false }
         )
     }
 }

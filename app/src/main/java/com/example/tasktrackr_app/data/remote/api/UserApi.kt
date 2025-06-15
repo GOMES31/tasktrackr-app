@@ -34,3 +34,4 @@ interface UserApi {
     suspend fun getUserObservations():
             Response<ApiResponse<List<ObservationData>>>
 }
+

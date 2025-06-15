@@ -64,7 +64,9 @@ fun UserTeams(
             )
 
             Column(
-                modifier = Modifier.padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .padding(bottom = 80.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(24.dp))
@@ -77,43 +79,62 @@ fun UserTeams(
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                if (isLoading) {
-                    CircularProgressIndicator(color = TaskTrackrTheme.colorScheme.primary)
-                } else if (teams.isNullOrEmpty()) {
-                    Text(
-                        text = stringResource(R.string.no_teams_message),
-                        color = TaskTrackrTheme.colorScheme.text,
-                        textAlign = TextAlign.Center,
-                        style = TaskTrackrTheme.typography.body,
-                        modifier = Modifier.fillMaxWidth()
+                if (!teams.isNullOrEmpty()) {
+                    CustomButton(
+                        text = stringResource(R.string.create_team),
+                        modifier = Modifier.width(320.dp),
+                        enabled = true,
+                        onClick = { navController.navigate("create-team") }
                     )
-                } else {
-                    LazyColumn {
-                        items(teams!!) { team ->
-                            TeamCard(
-                                name = team.name,
-                                members = team.members,
-                                imageUrl = team.imageUrl,
-                                teamId = team.id.toString(),
-                                onTeamClick = { teamId ->
-                                    navController.navigate("team-profile/$teamId")
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
-                        }
-                    }
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                CustomButton(
-                    text = stringResource(R.string.create_team),
-                    modifier = Modifier.width(180.dp),
-                    enabled = true,
-                    onClick = { navController.navigate("create-team") }
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(color = TaskTrackrTheme.colorScheme.primary)
+                } else {
+                    if (teams.isNullOrEmpty()) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(R.string.no_teams_message),
+                                color = TaskTrackrTheme.colorScheme.text,
+                                textAlign = TextAlign.Center,
+                                style = TaskTrackrTheme.typography.body,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(modifier = Modifier.height(32.dp))
+
+                            CustomButton(
+                                text = stringResource(R.string.create_team),
+                                modifier = Modifier.width(320.dp),
+                                enabled = true,
+                                onClick = { navController.navigate("create-team") }
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            items(teams!!) { team ->
+                                TeamCard(
+                                    name = team.name,
+                                    members = team.members,
+                                    imageUrl = team.imageUrl,
+                                    teamId = team.id.toString(),
+                                    onTeamClick = { teamId ->
+                                        navController.navigate("team-profile/$teamId")
+                                    }
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                            }
+                        }
+                    }
+                }
             }
         }
 

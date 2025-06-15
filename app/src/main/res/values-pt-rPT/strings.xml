@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">tasktrackr-app</string>
+    <string name="app_name">TaskTrackr</string>
     <string name="sign_in">Iniciar Sessão</string>
     <string name="email">Email:</string>
     <string name="password">Palavra-passe:</string>
@@ -97,6 +97,8 @@
     <string name="team_member_role_update_success">Cargo do membro da equipa atualizado com sucesso!</string>
     <string name="team_member_role_update_error">Erro ao atualizar o cargo deste membro!</string>
     <string name="edit_member">Atualizar Membro</string>
+    <string name="wifi_required_signin">Conecte-se à internet para iniciar sessão</string>
+    <string name="wifi_required_signup">Conecte-se à internet para criar uma conta</string>
     <string name="no_description_available">Nenhuma descrição disponível</string>
     <string name="not_available">Não disponível</string>
     <string name="button_ok">OK</string>
@@ -119,4 +121,7 @@
     <string name="project_description_placeholder">Descrição do projeto...</string>
     <string name="error_team_id_empty">A equipa deve ser selecionada!</string>
     <string name="add_project_button">Adicionar Projeto</string>
+    <string name="total_projects_label">Total de Projectos:</string>
+    <string name="wifi_required_tasks">Conecte-se à internet para conseguir consultar as suas tarefas</string>
+    <string name="wifi_required_projects">Conecte-se à internet para conseguir consultar os seus projetos</string>
 </resources>
