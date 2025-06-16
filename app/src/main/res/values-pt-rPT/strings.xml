@@ -113,7 +113,6 @@
     <string name="loading_project_details">Projeto A Carregar</string>
     <string name="project_not_found">Projeto Não Encontrado</string>
     <string name="fetching_tasks">A Buscar Tarefas</string>
-    <string name="total_projects_label">Total de Projetos:</string>
     <string name="add_project">Adicionar Projeto</string>
     <string name="error_name_empty">O nome não pode estar vazio!</string>
     <string name="project">Projeto</string>

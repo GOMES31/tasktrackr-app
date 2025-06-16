@@ -1,5 +1,6 @@
 package com.example.tasktrackr_app.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -98,12 +99,10 @@ fun TaskForm(
     val currentUserEmail = userData?.email
 
     val canAssignMembers = teamData?.members?.any { member ->
-        val isCurrentUser = member.email == currentUserEmail
-        val isAdminOrPM = member.role == "ADMIN" || member.role == "PROJECT_MANAGER"
-        isCurrentUser && isAdminOrPM
-    } ?: run {
-        false
-    }
+        val emailMatch = member.email.equals(currentUserEmail, ignoreCase = true)
+        val roleMatch = (member.role == "ADMIN" || member.role == "PROJECT_MANAGER")
+        emailMatch && roleMatch
+    } ?: false
 
     val availableTeamMembers = teamData?.members
 
@@ -127,51 +126,36 @@ fun TaskForm(
         mutableStateOf(mutableListOf<TeamMemberData>())
     }
 
-    LaunchedEffect(selectedAssignees) {
-    }
+    LaunchedEffect(existingTask, teamData) {
+            if (existingTask != null && teamData != null && !teamData.members.isNullOrEmpty()) {
+                val assigneesSource: List<Any>? = existingTask.assignees
+                val mappedTeamMembers = mutableListOf<TeamMemberData>()
 
-    LaunchedEffect(existingTask, teamData, isVisible) {
-        if (isVisible && existingTask != null && teamData != null) {
-            val assigneesFromTask = existingTask.assignees?.let { assignees ->
-
-                when {
-                    assignees.isEmpty() -> {
-                        emptyList()
-                    }
-                    else -> {
-                        val result = assignees.mapNotNull { assignee ->
-
-                            val assigneeEmail = when (assignee) {
-                                is TeamMemberData -> {
-                                    assignee.email
-                                }
-                                is String -> {
-                                    assignee
-                                }
-                                is Map<*, *> -> {
-                                    val email = assignee["email"] as? String
-                                    email
-                                }
-                                else -> {
-                                    null
-                                }
-                            }
-
-                            assigneeEmail?.let { email ->
-                                val foundMember = teamData.members?.find { member ->
-                                    member.email == email
-                                }
-                                foundMember
+                if (!assigneesSource.isNullOrEmpty()) {
+                    for (assigneeItem in assigneesSource) {
+                        val emailToFind: String? = when (assigneeItem) {
+                            is TeamMemberData -> assigneeItem.email
+                            is String -> assigneeItem
+                            is Map<*, *> -> assigneeItem["email"] as? String
+                            else -> {
+                                null
                             }
                         }
-                        result
+
+                        if (emailToFind != null) {
+                            val foundMember = teamData.members.find { teamMember ->
+                                teamMember.email.equals(emailToFind, ignoreCase = true)
+                            }
+                            if (foundMember != null) {
+                                mappedTeamMembers.add(foundMember)
+                            }
+                        }
                     }
                 }
-            } ?: emptyList()
-
-            selectedAssignees = assigneesFromTask.toMutableList()
-
-        }
+                selectedAssignees = mappedTeamMembers
+            } else {
+                selectedAssignees = mutableListOf()
+            }
     }
 
     var isAssigneeDropdownExpanded by remember { mutableStateOf(false) }
@@ -571,7 +555,8 @@ observationViewModel?.let { viewModel ->
                         }
                     }
 
-                    if (isEditMode && canAssignMembers) {
+
+                    if (isEditMode) {
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
@@ -640,17 +625,19 @@ observationViewModel?.let { viewModel ->
                                                     )
                                                 }
 
-                                                CustomButton(
-                                                    icon = painterResource(id = R.drawable.minus),
-                                                    onClick = {
-                                                        selectedAssignees = selectedAssignees.filter {
-                                                            getTeamMemberIdentifier(it) != getTeamMemberIdentifier(assignee)
-                                                        }.toMutableList()
-                                                    },
-                                                    modifier = Modifier.size(24.dp),
-                                                    iconSize = 12.dp,
-                                                    enabled = true
-                                                )
+                                                if (canAssignMembers) {
+                                                    CustomButton(
+                                                        icon = painterResource(id = R.drawable.minus),
+                                                        onClick = {
+                                                            selectedAssignees = selectedAssignees.filter {
+                                                                getTeamMemberIdentifier(it) != getTeamMemberIdentifier(assignee)
+                                                            }.toMutableList()
+                                                        },
+                                                        modifier = Modifier.size(24.dp),
+                                                        iconSize = 12.dp,
+                                                        enabled = true
+                                                    )
+                                                }
                                             }
                                         }
                                     }
@@ -672,128 +659,131 @@ observationViewModel?.let { viewModel ->
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
 
-                        Text(
-                            text = "Available Team Members",
-                            style = TaskTrackrTheme.typography.label,
-                            color = TaskTrackrTheme.colorScheme.primary
-                        )
+                        if (canAssignMembers) {
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "Available Team Members",
+                                style = TaskTrackrTheme.typography.label,
+                                color = TaskTrackrTheme.colorScheme.primary
+                            )
+
+                            Spacer(modifier = Modifier.height(8.dp))
 
 
 
 
-                        val unassignedMembers = availableTeamMembers?.filter { member ->
-                            val isNotAssigned = selectedAssignees.none {
-                                val result = getTeamMemberIdentifier(it) == getTeamMemberIdentifier(member)
-                                result
+                            val unassignedMembers = availableTeamMembers?.filter { member ->
+                                val isNotAssigned = selectedAssignees.none {
+                                    val result = getTeamMemberIdentifier(it) == getTeamMemberIdentifier(member)
+                                    result
+                                }
+                                isNotAssigned
+                            } ?: emptyList()
+
+
+                            val availableMembersContainerHeight = if (unassignedMembers.isNotEmpty()) {
+                                val visibleMembers = minOf(unassignedMembers.size, 3)
+                                memberCardHeight * visibleMembers + 24.dp
+                            } else {
+                                80.dp
                             }
-                            isNotAssigned
-                        } ?: emptyList()
-
-                        val availableMembersContainerHeight = if (unassignedMembers.isNotEmpty()) {
-                            val visibleMembers = minOf(unassignedMembers.size, 3)
-                            memberCardHeight * visibleMembers + 24.dp
-                        } else {
-                            80.dp
-                        }
 
 
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(availableMembersContainerHeight),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = TaskTrackrTheme.colorScheme.inputBackground
-                            ),
-                            border = BorderStroke(1.dp, TaskTrackrTheme.colorScheme.primary)
-                        ) {
-                            if (unassignedMembers.isNotEmpty()) {
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(12.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    items(unassignedMembers) { member ->
-                                        Card(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(memberCardHeight),
-                                            shape = RoundedCornerShape(4.dp),
-                                            colors = CardDefaults.cardColors(
-                                                containerColor = TaskTrackrTheme.colorScheme.cardBackground
-                                            ),
-                                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                                        ) {
-                                            Row(
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(availableMembersContainerHeight),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = TaskTrackrTheme.colorScheme.inputBackground
+                                ),
+                                border = BorderStroke(1.dp, TaskTrackrTheme.colorScheme.primary)
+                            ) {
+                                if (unassignedMembers.isNotEmpty()) {
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(12.dp),
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        items(unassignedMembers) { member ->
+                                            Card(
                                                 modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
+                                                    .fillMaxWidth()
+                                                    .height(memberCardHeight),
+                                                shape = RoundedCornerShape(4.dp),
+                                                colors = CardDefaults.cardColors(
+                                                    containerColor = TaskTrackrTheme.colorScheme.cardBackground
+                                                ),
+                                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                                             ) {
-                                                Column(
-                                                    modifier = Modifier.weight(1f),
-                                                    verticalArrangement = Arrangement.Center
+                                                Row(
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
                                                 ) {
-                                                    Text(
-                                                        text = getTeamMemberName(member),
-                                                        style = TaskTrackrTheme.typography.body,
-                                                        color = TaskTrackrTheme.colorScheme.text,
-                                                        maxLines = 1,
-                                                        overflow = TextOverflow.Ellipsis
-                                                    )
-                                                    Text(
-                                                        text = getTeamMemberRole(member),
-                                                        style = TaskTrackrTheme.typography.caption,
-                                                        color = TaskTrackrTheme.colorScheme.primary
+                                                    Column(
+                                                        modifier = Modifier.weight(1f),
+                                                        verticalArrangement = Arrangement.Center
+                                                    ) {
+                                                        Text(
+                                                            text = getTeamMemberName(member),
+                                                            style = TaskTrackrTheme.typography.body,
+                                                            color = TaskTrackrTheme.colorScheme.text,
+                                                            maxLines = 1,
+                                                            overflow = TextOverflow.Ellipsis
+                                                        )
+                                                        Text(
+                                                            text = getTeamMemberRole(member),
+                                                            style = TaskTrackrTheme.typography.caption,
+                                                            color = TaskTrackrTheme.colorScheme.primary
+                                                        )
+                                                    }
+
+                                                    CustomButton(
+                                                        icon = painterResource(id = R.drawable.plus),
+                                                        onClick = {
+                                                            selectedAssignees = (selectedAssignees + member).toMutableList()
+                                                            showAssigneeError = false
+                                                        },
+                                                        modifier = Modifier.size(24.dp),
+                                                        iconSize = 12.dp,
+                                                        enabled = true
                                                     )
                                                 }
-
-                                                CustomButton(
-                                                    icon = painterResource(id = R.drawable.plus),
-                                                    onClick = {
-                                                        selectedAssignees = (selectedAssignees + member).toMutableList()
-                                                        showAssigneeError = false
-                                                    },
-                                                    modifier = Modifier.size(24.dp),
-                                                    iconSize = 12.dp,
-                                                    enabled = true
-                                                )
                                             }
                                         }
                                     }
-                                }
-                            } else {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(12.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "All team members are assigned",
-                                        style = TaskTrackrTheme.typography.body,
-                                        color = TaskTrackrTheme.colorScheme.text.copy(alpha = 0.6f),
-                                        textAlign = TextAlign.Center
-                                    )
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(12.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "All team members are assigned",
+                                            style = TaskTrackrTheme.typography.body,
+                                            color = TaskTrackrTheme.colorScheme.text.copy(alpha = 0.6f),
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
                                 }
                             }
-                        }
 
-                        if (showAssigneeError) {
-                            Text(
-                                text = "Please assign at least one team member",
-                                color = Color.Red,
-                                style = TaskTrackrTheme.typography.caption,
-                                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
-                            )
-                        }
-                    } else {
+                            if (showAssigneeError) {
+                                Text(
+                                    text = "Please assign at least one team member",
+                                    color = Color.Red,
+                                    style = TaskTrackrTheme.typography.caption,
+                                    modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                                )
+                            }
+                        } //
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -979,18 +969,11 @@ observationViewModel?.let { viewModel ->
                                 if (!hasError) {
                                     val assigneeIds = selectedAssignees.mapNotNull { assignee ->
                                         try {
-                                            when {
-                                                assignee.id is String && assignee.id.isNotBlank() -> assignee.id
-                                                assignee.id is Number -> assignee.id.toString()
-                                                else -> {
-                                                    null
-                                                }
-                                            }
+                                            assignee.id?.toString()
                                         } catch (e: Exception) {
                                             null
                                         }
-                                    }.also { ids ->
-                                    }
+                                    }.distinct()
 
                                     val taskFormData = TaskFormData(
                                         title = title.trim(),
@@ -1002,11 +985,8 @@ observationViewModel?.let { viewModel ->
                                         assigneeIds = assigneeIds
                                     )
 
-                                    if (isEditMode && canAssignMembers && (taskFormData.assigneeIds.isNullOrEmpty())) {
-                                    } else {
                                         onSave(taskFormData)
-                                    }
-                                } else {
+
                                 }
                             }
                         )
@@ -1177,3 +1157,4 @@ observationViewModel?.let { viewModel ->
             )
         }
     }
+

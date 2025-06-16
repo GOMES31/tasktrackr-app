@@ -8,6 +8,7 @@ import com.example.tasktrackr_app.data.remote.api.ApiClient
 import com.example.tasktrackr_app.data.remote.api.TaskApi
 import com.example.tasktrackr_app.data.remote.request.CreateTaskRequest
 import com.example.tasktrackr_app.data.remote.request.UpdateTaskRequest
+import com.example.tasktrackr_app.data.remote.response.ApiResponse
 import com.example.tasktrackr_app.data.remote.response.data.ObservationData
 import com.example.tasktrackr_app.data.remote.response.data.TaskData
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,7 +75,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         _operationSuccess.value = false
         viewModelScope.launch {
             try {
-                val response: Response<com.example.tasktrackr_app.data.remote.response.ApiResponse<TaskData>> = taskApi.getTaskById(id)
+                val response: Response<ApiResponse<TaskData>> = taskApi.getTaskById(id)
                 if (response.isSuccessful) {
                     _currentTask.value = response.body()?.data
                     Log.d("TaskViewModel", "Task fetched successfully: ${_currentTask.value?.title}")
@@ -106,7 +107,7 @@ class TaskViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             try {
                 val request = UpdateTaskRequest(id, title, description, status, startDate, endDate, assigneeIds)
-                val response: Response<com.example.tasktrackr_app.data.remote.response.ApiResponse<TaskData>> = taskApi.updateTask(request)
+                val response: Response<ApiResponse<TaskData>> = taskApi.updateTask(request)
                 if (response.isSuccessful) {
                     response.body()?.data?.let {
                         _currentTask.value = it

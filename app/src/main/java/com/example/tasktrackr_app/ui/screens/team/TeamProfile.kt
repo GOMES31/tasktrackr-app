@@ -221,12 +221,6 @@ fun TeamProfile(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                     )
-                } else {
-                    // Placeholder for projects
-                    repeat(3) {
-                        ActivityCard()
-                        Spacer(modifier = Modifier.height(12.dp))
-                    }
                 }
             }
         }

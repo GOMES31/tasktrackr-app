@@ -124,7 +124,5 @@
     <string name="add_project_button">Add Project</string>
     <string name="wifi_required_tasks">Connect to the internet to access your tasks</string>
     <string name="wifi_required_projects">Connect to the internet to access your projects</string>
-    <string name="wifi_required_tasks">Connect to the internet to access your tasks</string>
-    <string name="wifi_required_projects">Connect to the internet to access your projects</string>
 </resources>
 

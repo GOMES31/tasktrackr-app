@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -68,8 +69,7 @@ fun MyTasks(
     authViewModel: AuthViewModel,
     teamViewModel: TeamViewModel,
     observationViewModel: ObservationViewModel,
-    projectViewModel: ProjectViewModel,
-    onLanguageSelected: (Locale) -> Unit = {}
+    projectViewModel: ProjectViewModel
 ) {
     var selectedFilter by remember { mutableStateOf(TaskFilter.IN_PROGRESS) }
     var isSideMenuVisible by remember { mutableStateOf(false) }

@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -224,7 +225,6 @@ fun ProjectTasks(
                             }
                         )
 
-                        // --- Conditionally display the AddTaskButton ---
                         if (canAddTask) {
                             AddTaskButton(
                                 onAddTaskClick = {
@@ -263,6 +263,7 @@ fun ProjectTasks(
                     Log.d(TAG, "User signed out. Navigating to signin.")
                 }
             }
+
         )
 
         selectedTaskForDetail?.let { task ->
@@ -302,7 +303,8 @@ fun ProjectTasks(
                         description = data.description,
                         status = data.status,
                         startDate = data.startDate,
-                        endDate = data.endDate
+                        endDate = data.endDate,
+                        assigneeIds = data.assigneeIds.toList().map { it.toLong() },
                     )
                     Log.d(TAG, "Updating task: ${data.title}")
                 } else {
@@ -321,7 +323,8 @@ fun ProjectTasks(
             existingTask = taskToEdit,
             observationViewModel = observationViewModel,
             taskViewModel = taskViewModel,
-            authViewModel = authViewModel
+            authViewModel = authViewModel,
+            teamData = selectedTeam
         )
     }
 }

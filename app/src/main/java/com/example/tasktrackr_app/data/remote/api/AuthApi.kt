@@ -26,6 +26,6 @@ interface AuthApi {
 
     @POST("auth/signout")
     suspend fun signOut():
-            Response<ApiResponse<Void>>
+            Response<Void>
 
 }
